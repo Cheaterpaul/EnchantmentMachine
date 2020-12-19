@@ -70,7 +70,7 @@ minecraft {
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
             workingDirectory project.file('run/data').canonicalPath
-            args '--mod', 'werewolves', '--all', '--output', file('src/generated/resources/'),  '--existing', sourceSets.main.resources.srcDirs[0]
+            args '--mod', 'enchantmentmachine', '--all', '--output', file('src/generated/resources/'),  '--existing', sourceSets.main.resources.srcDirs[0]
             mods {
                 enchantmentmachine {
                     source sourceSets.main
@@ -172,10 +172,4 @@ jar {
         ])
     }
 
-}
-
-apply plugin: 'org.spongepowered.mixin'
-
-mixin {
-    add sourceSets.main, "werewolves.refmap.json"
 }
