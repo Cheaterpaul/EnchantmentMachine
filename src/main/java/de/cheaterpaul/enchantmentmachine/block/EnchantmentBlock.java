@@ -1,16 +1,14 @@
 package de.cheaterpaul.enchantmentmachine.block;
 
 import de.cheaterpaul.enchantmentmachine.core.ModData;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockReader;
 
 import javax.annotation.Nullable;
 
-public class EnchantmentMachineBlock extends EnchantmentMachineBaseBlock {
-    public EnchantmentMachineBlock(Properties properties) {
+public class EnchantmentBlock extends EnchantmentBaseBlock {
+    public EnchantmentBlock(Properties properties) {
         super(properties);
     }
 

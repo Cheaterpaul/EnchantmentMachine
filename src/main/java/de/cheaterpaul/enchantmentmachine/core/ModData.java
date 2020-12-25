@@ -1,9 +1,17 @@
 package de.cheaterpaul.enchantmentmachine.core;
 
-import de.cheaterpaul.enchantmentmachine.block.EnchantmentMachineBlock;
-import de.cheaterpaul.enchantmentmachine.inventory.EnchantmentMachineContainer;
+import de.cheaterpaul.enchantmentmachine.block.DisenchanterBlock;
+import de.cheaterpaul.enchantmentmachine.block.EnchanterBlock;
+import de.cheaterpaul.enchantmentmachine.block.EnchantmentBlock;
+import de.cheaterpaul.enchantmentmachine.inventory.DisenchanterContainer;
+import de.cheaterpaul.enchantmentmachine.inventory.EnchanterContainer;
+import de.cheaterpaul.enchantmentmachine.inventory.EnchantmentBaseContainer;
+import de.cheaterpaul.enchantmentmachine.inventory.EnchantmentContainer;
 import de.cheaterpaul.enchantmentmachine.item.EnchantmentMachineItem;
-import de.cheaterpaul.enchantmentmachine.tiles.EnchantmentMachineTileEntity;
+import de.cheaterpaul.enchantmentmachine.tiles.DisenchanterTileEntity;
+import de.cheaterpaul.enchantmentmachine.tiles.EnchanterTileEntity;
+import de.cheaterpaul.enchantmentmachine.tiles.EnchantmentBaseTileEntity;
+import de.cheaterpaul.enchantmentmachine.tiles.EnchantmentTileEntity;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -17,35 +25,51 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class ModData {
 
-    public static final EnchantmentMachineBlock enchantment_machine_block;
-    public static final EnchantmentMachineItem enchantment_machine_item;
-    public static final TileEntityType<EnchantmentMachineTileEntity> enchantment_machine_tile;
-    public static final ContainerType<EnchantmentMachineContainer> enchantment_machine_container;
+    public static final EnchanterBlock enchanter_block;
+    public static final DisenchanterBlock disenchanter_block;
+    public static final EnchantmentBlock enchantment_block;
+    public static final TileEntityType<EnchanterTileEntity> enchanter_tile;
+    public static final TileEntityType<DisenchanterTileEntity> disenchanter_tile;
+    public static final TileEntityType<EnchantmentTileEntity> enchantment_tile;
+    public static final ContainerType<EnchanterContainer> enchanter_container;
+    public static final ContainerType<DisenchanterContainer> disenchanter_container;
+    public static final ContainerType<EnchantmentContainer> enchantment_container;
 
     @SubscribeEvent
-    public static void registerItems(RegistryEvent.Register<Block> event) {
-        event.getRegistry().register(enchantment_machine_block);
+    public static void registerBlocks(RegistryEvent.Register<Block> event) {
+        event.getRegistry().register(enchanter_block);
+        event.getRegistry().register(disenchanter_block);
+        event.getRegistry().register(enchantment_block);
     }
 
-    @SubscribeEvent
-    public static void registerBlocks(RegistryEvent.Register<Item> event) {
-        event.getRegistry().register(enchantment_machine_item);
-    }
+    //@SubscribeEvent
+    //public static void registerBlocks(RegistryEvent.Register<Item> event) {
+    //    event.getRegistry().register(enchantment_machine_item);
+    //}
 
     @SubscribeEvent
     public static void registerTiles(RegistryEvent.Register<TileEntityType<?>> event) {
-        event.getRegistry().register(enchantment_machine_tile);
+        event.getRegistry().register(enchanter_tile);
+        event.getRegistry().register(disenchanter_tile);
+        event.getRegistry().register(enchantment_tile);
     }
 
     @SubscribeEvent
     public static void registerContainer(RegistryEvent.Register<ContainerType<?>> event) {
-        event.getRegistry().register(enchantment_machine_container);
+        event.getRegistry().register(enchanter_container);
+        event.getRegistry().register(disenchanter_container);
+        event.getRegistry().register(enchantment_container);
     }
 
     static {
-        (enchantment_machine_block = new EnchantmentMachineBlock(AbstractBlock.Properties.create(Material.IRON, MaterialColor.IRON))).setRegistryName(REFERENCE.MODID, "enchantment_machine");
-        (enchantment_machine_item = new EnchantmentMachineItem(new Item.Properties())).setRegistryName(REFERENCE.MODID, "enchantment_machine");
-        (enchantment_machine_tile = TileEntityType.Builder.create(EnchantmentMachineTileEntity::new, enchantment_machine_block).build(null)).setRegistryName(REFERENCE.MODID, "enchantment_machine");
-        (enchantment_machine_container = new ContainerType<>(EnchantmentMachineContainer::new)).setRegistryName(REFERENCE.MODID, "enchantment_machine");
+        (enchanter_block = new EnchanterBlock(AbstractBlock.Properties.create(Material.IRON, MaterialColor.IRON))).setRegistryName(REFERENCE.MODID, "enchanter_block");
+        (disenchanter_block = new DisenchanterBlock(AbstractBlock.Properties.create(Material.IRON, MaterialColor.IRON))).setRegistryName(REFERENCE.MODID, "disenchanter_block");
+        (enchantment_block = new EnchantmentBlock(AbstractBlock.Properties.create(Material.IRON, MaterialColor.IRON))).setRegistryName(REFERENCE.MODID, "enchantment_block");
+        (enchanter_tile = TileEntityType.Builder.create(EnchanterTileEntity::new, enchanter_block).build(null)).setRegistryName(REFERENCE.MODID, "enchanter_tile");
+        (disenchanter_tile = TileEntityType.Builder.create(DisenchanterTileEntity::new, disenchanter_block).build(null)).setRegistryName(REFERENCE.MODID, "disenchanter_tile");
+        (enchantment_tile = TileEntityType.Builder.create(EnchantmentTileEntity::new, enchantment_block).build(null)).setRegistryName(REFERENCE.MODID, "enchantment_tile");
+        (enchanter_container = new ContainerType<>(EnchanterContainer::new)).setRegistryName(REFERENCE.MODID, "enchanter_container");
+        (disenchanter_container = new ContainerType<>(DisenchanterContainer::new)).setRegistryName(REFERENCE.MODID, "disenchanter_container");
+        (enchantment_container = new ContainerType<>(EnchantmentContainer::new)).setRegistryName(REFERENCE.MODID, "enchantment_container");
     }
 }

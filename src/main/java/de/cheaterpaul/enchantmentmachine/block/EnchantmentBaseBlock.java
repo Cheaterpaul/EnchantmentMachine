@@ -3,9 +3,9 @@ package de.cheaterpaul.enchantmentmachine.block;
 import net.minecraft.block.Block;
 import net.minecraft.block.ContainerBlock;
 
-public abstract class EnchantmentMachineBaseBlock extends ContainerBlock {
+public abstract class EnchantmentBaseBlock extends ContainerBlock {
 
-    public EnchantmentMachineBaseBlock(Properties properties) {
+    public EnchantmentBaseBlock(Properties properties) {
         super(properties);
     }
 }

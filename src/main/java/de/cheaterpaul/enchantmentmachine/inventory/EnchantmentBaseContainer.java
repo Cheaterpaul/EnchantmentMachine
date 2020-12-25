@@ -6,13 +6,13 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 
-public class EnchantmentMachineContainer extends Container {
-    public EnchantmentMachineContainer(int id, PlayerInventory playerInventory) {
-        super(ModData.enchantment_machine_container, id);
+public abstract class EnchantmentBaseContainer extends Container {
+    public EnchantmentBaseContainer(ContainerType<?> containerType, int id) {
+        super(containerType, id);
     }
 
     @Override
     public boolean canInteractWith(PlayerEntity playerIn) {
-        return false;
+        return true;
     }
 }
