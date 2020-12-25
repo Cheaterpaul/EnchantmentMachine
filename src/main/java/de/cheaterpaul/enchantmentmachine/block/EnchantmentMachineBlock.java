@@ -7,24 +7,23 @@ import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockReader;
 
-public class EnchantmentMachineBlock extends Block {
+import javax.annotation.Nullable;
+
+public class EnchantmentMachineBlock extends EnchantmentMachineBaseBlock {
     public EnchantmentMachineBlock(Properties properties) {
         super(properties);
     }
 
-    @Override
-    public boolean hasTileEntity(BlockState state) {
-        return true;
-    }
-
-    @Override
-    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return ModData.enchantment_machine_tile.create();
-    }
 
     @SuppressWarnings("NullableProblems")
     @Override
     public Item asItem() {
         return ModData.enchantment_machine_item;
+    }
+
+    @Nullable
+    @Override
+    public TileEntity createNewTileEntity(IBlockReader worldIn) {
+       return ModData.enchantment_machine_tile.create();
     }
 }
