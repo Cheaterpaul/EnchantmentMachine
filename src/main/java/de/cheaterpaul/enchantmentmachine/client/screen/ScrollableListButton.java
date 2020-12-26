@@ -1,17 +1,21 @@
 package de.cheaterpaul.enchantmentmachine.client.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstance;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 
 import javax.annotation.Nullable;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 /**
@@ -26,7 +30,7 @@ public class ScrollableListButton extends ExtendedButton {
     private boolean scrollerPressed;
     protected final Button[] elements;
     private final Consumer<Integer> pressConsumer;
-    private final ITextComponent[] desc;
+    private ITextComponent[] desc;
     private final boolean alternate;
 
     public ScrollableListButton(int xPos, int yPos, int width, int shownItems, int maxItemCount, @Nullable ITextComponent[] strings, ITextComponent displayString, Consumer<Integer> elementPressAction, boolean alternate) {
@@ -44,6 +48,15 @@ public class ScrollableListButton extends ExtendedButton {
 
     public ScrollableListButton(int xPos, int yPos, int width, int height, int itemCount, ITextComponent[] strings, ITextComponent displayString, Consumer<Integer> elementPressAction) {
         this(xPos, yPos, width, height, itemCount, strings, displayString, elementPressAction, false);
+    }
+
+    public void updateList(Object2IntMap<EnchantmentInstance> list) {
+        this.itemCount = list.size();
+        this.desc = new ITextComponent[this.itemCount];
+        AtomicInteger index = new AtomicInteger();
+        list.forEach((inst, count) -> {
+            this.desc[index.getAndIncrement()] = new TranslationTextComponent(inst.getEnchantment().getRegistryName().toString()).appendString(" " + inst.getLevel() + "    " + count);
+        });
     }
 
     @Override

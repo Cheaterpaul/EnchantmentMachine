@@ -1,9 +1,17 @@
 package de.cheaterpaul.enchantmentmachine.block;
 
+import de.cheaterpaul.enchantmentmachine.EnchantmentMachineMod;
+import de.cheaterpaul.enchantmentmachine.client.screen.EnchantmentScreen;
 import de.cheaterpaul.enchantmentmachine.core.ModData;
+import de.cheaterpaul.enchantmentmachine.network.message.EnchantmentPacket;
+import de.cheaterpaul.enchantmentmachine.tiles.EnchanterTileEntity;
 import de.cheaterpaul.enchantmentmachine.tiles.EnchantmentTileEntity;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
@@ -27,9 +35,14 @@ public class EnchantmentBlock extends EnchantmentBaseBlock {
     }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState p_225533_1_, World p_225533_2_, BlockPos p_225533_3_, PlayerEntity p_225533_4_, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
-        TileEntity tile = p_225533_2_.getTileEntity(p_225533_3_);
+    public ActionResultType onBlockActivated(BlockState blockState, World world, BlockPos blockPos, PlayerEntity playerEntity, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
+        TileEntity tile = world.getTileEntity(blockPos);
         if (tile instanceof EnchantmentTileEntity) {
+            if (world.isRemote()) {
+                Minecraft.getInstance().displayGuiScreen(new EnchantmentScreen());
+            }else {
+                EnchantmentMachineMod.DISPATCHER.sendTo(new EnchantmentPacket(blockPos, ((EnchantmentTileEntity) tile).getEnchantments()), ((ServerPlayerEntity) playerEntity));
+            }
             return ActionResultType.CONSUME;
         }
         return ActionResultType.SUCCESS;
