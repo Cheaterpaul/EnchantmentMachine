@@ -5,6 +5,6 @@ import net.minecraft.entity.player.PlayerInventory;
 
 public class EnchanterContainer extends EnchantmentBaseContainer {
     public EnchanterContainer(int id, PlayerInventory playerInventory) {
-        super(ModData.enchantment_machine_container, id);
+        super(ModData.enchanter_container, id);
     }
 }

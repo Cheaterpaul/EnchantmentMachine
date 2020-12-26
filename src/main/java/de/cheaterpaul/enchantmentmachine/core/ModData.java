@@ -5,12 +5,9 @@ import de.cheaterpaul.enchantmentmachine.block.EnchanterBlock;
 import de.cheaterpaul.enchantmentmachine.block.EnchantmentBlock;
 import de.cheaterpaul.enchantmentmachine.inventory.DisenchanterContainer;
 import de.cheaterpaul.enchantmentmachine.inventory.EnchanterContainer;
-import de.cheaterpaul.enchantmentmachine.inventory.EnchantmentBaseContainer;
 import de.cheaterpaul.enchantmentmachine.inventory.EnchantmentContainer;
-import de.cheaterpaul.enchantmentmachine.item.EnchantmentMachineItem;
 import de.cheaterpaul.enchantmentmachine.tiles.DisenchanterTileEntity;
 import de.cheaterpaul.enchantmentmachine.tiles.EnchanterTileEntity;
-import de.cheaterpaul.enchantmentmachine.tiles.EnchantmentBaseTileEntity;
 import de.cheaterpaul.enchantmentmachine.tiles.EnchantmentTileEntity;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
 import net.minecraft.block.AbstractBlock;
@@ -18,6 +15,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.event.RegistryEvent;
@@ -42,10 +40,12 @@ public class ModData {
         event.getRegistry().register(enchantment_block);
     }
 
-    //@SubscribeEvent
-    //public static void registerBlocks(RegistryEvent.Register<Item> event) {
-    //    event.getRegistry().register(enchantment_machine_item);
-    //}
+    @SubscribeEvent
+    public static void registerItems(RegistryEvent.Register<Item> event) {
+        event.getRegistry().register(new BlockItem(enchanter_block, new Item.Properties()).setRegistryName(REFERENCE.MODID,"enchanter_block"));
+        event.getRegistry().register(new BlockItem(disenchanter_block, new Item.Properties()).setRegistryName(REFERENCE.MODID,"disenchanter_block"));
+        event.getRegistry().register(new BlockItem(enchantment_block, new Item.Properties()).setRegistryName(REFERENCE.MODID,"enchantment_block"));
+    }
 
     @SubscribeEvent
     public static void registerTiles(RegistryEvent.Register<TileEntityType<?>> event) {

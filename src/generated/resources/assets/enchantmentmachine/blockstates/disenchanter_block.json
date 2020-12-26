@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "enchantmentmachine:block/disenchanter_block"
+    }
+  }
+}

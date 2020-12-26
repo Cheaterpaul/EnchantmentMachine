@@ -7,6 +7,6 @@ import net.minecraft.inventory.container.Container;
 
 public class DisenchanterContainer extends EnchantmentBaseContainer {
     public DisenchanterContainer(int id, PlayerInventory playerInventory) {
-        super(ModData.enchantment_machine_container, id);
+        super(ModData.disenchanter_container, id);
     }
 }
