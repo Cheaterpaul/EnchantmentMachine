@@ -3,6 +3,7 @@ package de.cheaterpaul.enchantmentmachine.tiles;
 import de.cheaterpaul.enchantmentmachine.core.ModData;
 import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstance;
 import de.cheaterpaul.enchantmentmachine.util.Utils;
+import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
@@ -10,6 +11,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
@@ -26,7 +28,7 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
 
     private static final ITextComponent name = Utils.genTranslation("tile", "enchanter.name");
 
-    private NonNullList<ItemStack> inventory = NonNullList.withSize(2, ItemStack.EMPTY);
+    private NonNullList<ItemStack> inventory = NonNullList.withSize(1, ItemStack.EMPTY);
 
 
     public EnchanterTileEntity() {
@@ -110,9 +112,9 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
             //TODO experience
             for (Map.Entry<Enchantment,Integer> entry : enchantmentMap.entrySet()) {
                 Enchantment enchantment = entry.getKey();
-                if(enchantment==enchInst.getEnchantment()){
+                if(enchantment==enchInst.getEnchantment()){ //Combine enchantments if it is already present. Choose highest level or level +1 if both have the same.
                     int newLevel = Math.min(enchantment.getMaxLevel(),enchInst.getLevel()==entry.getValue() ? enchInst.getLevel()+1 : Math.max(enchInst.getLevel(), entry.getValue()));
-                    enchInst = new EnchantmentInstance(enchantment,newLevel);
+                    enchInst = new EnchantmentInstance(enchantment,newLevel); //Override enchInst in loop. It will be added to the map later on (and override previous entry for this enchantment)
                     continue;
                 }
                else if(enchInst.getEnchantment().isCompatibleWith(enchantment)){
