@@ -37,4 +37,12 @@ public class EnchantmentInstance {
     public int hashCode() {
         return Objects.hash(enchantment, level);
     }
+
+    @Override
+    public String toString() {
+        return "EnchantmentInstance{" +
+                "enchantment=" + enchantment +
+                ", level=" + level +
+                '}';
+    }
 }
