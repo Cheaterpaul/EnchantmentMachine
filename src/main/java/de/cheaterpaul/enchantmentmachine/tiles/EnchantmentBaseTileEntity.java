@@ -73,4 +73,10 @@ public abstract class EnchantmentBaseTileEntity extends LockableTileEntity imple
         }
         return Optional.empty();
     }
+
+    @Override
+    public boolean hasConnectedTE() {
+        return storageBlockPos!=null;
+    }
+
 }

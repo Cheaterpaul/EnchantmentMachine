@@ -133,4 +133,9 @@ public class EnchantmentTileEntity extends TileEntity implements IEnchantmentMac
     public Optional<EnchantmentTileEntity> getConnectedEnchantmentTE() {
         return Optional.of(this);
     }
+
+    @Override
+    public boolean hasConnectedTE() {
+        return true;
+    }
 }
