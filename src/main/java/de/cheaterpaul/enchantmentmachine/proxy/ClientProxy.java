@@ -17,9 +17,9 @@ public class ClientProxy implements Proxy {
     }
 
     @Override
-    public void handleEnchantmentpacket(EnchantmentPacket tileEntity) {
+    public void handleEnchantmentpacket(EnchantmentPacket packet) {
         if (Minecraft.getInstance().currentScreen instanceof EnchantmentScreen) {
-            ((EnchantmentScreen) Minecraft.getInstance().currentScreen).updateEnchantments(tileEntity.getEnchantments());
+            ((EnchantmentScreen) Minecraft.getInstance().currentScreen).updateEnchantments(packet.getEnchantments());
         }
     }
 }

@@ -1,5 +1,6 @@
 package de.cheaterpaul.enchantmentmachine.network;
 
+import de.cheaterpaul.enchantmentmachine.network.message.EnchantingPacket;
 import de.cheaterpaul.enchantmentmachine.network.message.EnchantmentPacket;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
 import net.minecraft.util.ResourceLocation;
@@ -16,5 +17,6 @@ public class ModPacketDispatcher extends AbstractPacketDispatcher {
     @Override
     public void registerPackets() {
         dispatcher.registerMessage(nextID(), EnchantmentPacket.class, EnchantmentPacket::encode, EnchantmentPacket::decode, EnchantmentPacket::handle);
+        dispatcher.registerMessage(nextID(), EnchantingPacket.class, EnchantingPacket::encode, EnchantingPacket::decode, EnchantingPacket::handle);
     }
 }
