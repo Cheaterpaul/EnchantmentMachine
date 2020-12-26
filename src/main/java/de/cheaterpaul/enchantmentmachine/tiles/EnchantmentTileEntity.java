@@ -18,7 +18,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class EnchantmentTileEntity extends TileEntity {
+import java.util.Optional;
+
+public class EnchantmentTileEntity extends TileEntity implements IEnchantmentMachine{
     
     private static final Logger LOGGER = LogManager.getLogger();
     
@@ -127,4 +129,8 @@ public class EnchantmentTileEntity extends TileEntity {
         return compound;
     }
 
+    @Override
+    public Optional<EnchantmentTileEntity> getConnectedEnchantmentTE() {
+        return Optional.of(this);
+    }
 }
