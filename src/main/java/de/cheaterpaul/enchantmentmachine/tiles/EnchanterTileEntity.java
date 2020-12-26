@@ -97,6 +97,7 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
         if(stack.isEmpty())return false;
         Map<Enchantment, Integer> enchantmentMap =EnchantmentHelper.getEnchantments(stack);
         EnchantmentTileEntity te=        getConnectedEnchantmentTE().get();
+
         for(EnchantmentInstance enchInst : enchantments){
             if(!te.hasEnchantment(enchInst)){
                 LOGGER.warn("Enchantment {} requested but not available",enchInst);
@@ -107,8 +108,14 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
                 return false;
             }
             //TODO experience
-            for (Enchantment enchantment : enchantmentMap.keySet()) {
-               if(enchInst.getEnchantment().isCompatibleWith(enchantment)){
+            for (Map.Entry<Enchantment,Integer> entry : enchantmentMap.entrySet()) {
+                Enchantment enchantment = entry.getKey();
+                if(enchantment==enchInst.getEnchantment()){
+                    int newLevel = Math.min(enchantment.getMaxLevel(),enchInst.getLevel()==entry.getValue() ? enchInst.getLevel()+1 : Math.max(enchInst.getLevel(), entry.getValue()));
+                    enchInst = new EnchantmentInstance(enchantment,newLevel);
+                    continue;
+                }
+               else if(enchInst.getEnchantment().isCompatibleWith(enchantment)){
                    LOGGER.warn("Incompatible enchantments {} and {}", enchInst, enchantment);
                    return false;
                }
