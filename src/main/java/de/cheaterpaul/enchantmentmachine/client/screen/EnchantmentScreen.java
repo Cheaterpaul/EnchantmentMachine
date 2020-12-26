@@ -1,22 +1,22 @@
 package de.cheaterpaul.enchantmentmachine.client.screen;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import de.cheaterpaul.enchantmentmachine.inventory.DisenchanterContainer;
-import de.cheaterpaul.enchantmentmachine.inventory.EnchantmentContainer;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.text.ITextComponent;
+import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstance;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class EnchantmentScreen extends EnchantmentBaseScreen<EnchantmentContainer> {
+public class EnchantmentScreen extends Screen {
 
-    public EnchantmentScreen(EnchantmentContainer container, PlayerInventory playerInventory, ITextComponent name) {
-        super(container, playerInventory, name);
+    public EnchantmentScreen(Object2IntMap<EnchantmentInstance> enchantments) {
+        super( new StringTextComponent("Test"));
+        updateEnchantments(enchantments);
+    }
+    
+    public void updateEnchantments(Object2IntMap<EnchantmentInstance> enchantments){
+
     }
 
-    @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float v, int i, int i1) {
-
-    }
 }

@@ -5,7 +5,6 @@ import de.cheaterpaul.enchantmentmachine.block.EnchanterBlock;
 import de.cheaterpaul.enchantmentmachine.block.EnchantmentBlock;
 import de.cheaterpaul.enchantmentmachine.inventory.DisenchanterContainer;
 import de.cheaterpaul.enchantmentmachine.inventory.EnchanterContainer;
-import de.cheaterpaul.enchantmentmachine.inventory.EnchantmentContainer;
 import de.cheaterpaul.enchantmentmachine.tiles.DisenchanterTileEntity;
 import de.cheaterpaul.enchantmentmachine.tiles.EnchanterTileEntity;
 import de.cheaterpaul.enchantmentmachine.tiles.EnchantmentTileEntity;
@@ -31,7 +30,6 @@ public class ModData {
     public static final TileEntityType<EnchantmentTileEntity> enchantment_tile;
     public static final ContainerType<EnchanterContainer> enchanter_container;
     public static final ContainerType<DisenchanterContainer> disenchanter_container;
-    public static final ContainerType<EnchantmentContainer> enchantment_container;
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -58,7 +56,6 @@ public class ModData {
     public static void registerContainer(RegistryEvent.Register<ContainerType<?>> event) {
         event.getRegistry().register(enchanter_container);
         event.getRegistry().register(disenchanter_container);
-        event.getRegistry().register(enchantment_container);
     }
 
     static {
@@ -70,6 +67,5 @@ public class ModData {
         (enchantment_tile = TileEntityType.Builder.create(EnchantmentTileEntity::new, enchantment_block).build(null)).setRegistryName(REFERENCE.MODID, "enchantment_tile");
         (enchanter_container = new ContainerType<>(EnchanterContainer::new)).setRegistryName(REFERENCE.MODID, "enchanter_container");
         (disenchanter_container = new ContainerType<>(DisenchanterContainer::new)).setRegistryName(REFERENCE.MODID, "disenchanter_container");
-        (enchantment_container = new ContainerType<>(EnchantmentContainer::new)).setRegistryName(REFERENCE.MODID, "enchantment_container");
     }
 }
