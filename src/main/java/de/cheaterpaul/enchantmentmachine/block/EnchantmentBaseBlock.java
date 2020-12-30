@@ -1,12 +1,14 @@
 package de.cheaterpaul.enchantmentmachine.block;
 
+import de.cheaterpaul.enchantmentmachine.core.ModData;
 import de.cheaterpaul.enchantmentmachine.tiles.EnchantmentBaseTileEntity;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ContainerBlock;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.World;
 
 public abstract class EnchantmentBaseBlock extends ContainerBlock {
 
@@ -19,13 +21,14 @@ public abstract class EnchantmentBaseBlock extends ContainerBlock {
         return BlockRenderType.MODEL;
     }
 
-
     @Override
-    public void onNeighborChange(BlockState state, IWorldReader world, BlockPos pos, BlockPos neighbor) {
-        TileEntity te = world.getTileEntity(pos);
-        if(te instanceof EnchantmentBaseTileEntity){
-            ((EnchantmentBaseTileEntity) te).onNeighbourChanged(world, neighbor);
+    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+        if (worldIn.getBlockState(fromPos).getBlock() == ModData.enchantment_block) {
+            TileEntity te = worldIn.getTileEntity(pos);
+            if(te instanceof EnchantmentBaseTileEntity){
+                ((EnchantmentBaseTileEntity) te).onNeighbourChanged(worldIn, fromPos);
+            }
         }
+        super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
     }
-
 }
