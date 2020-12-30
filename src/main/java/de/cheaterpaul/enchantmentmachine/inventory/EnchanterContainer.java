@@ -15,7 +15,7 @@ public class EnchanterContainer extends EnchantmentBaseContainer {
 
     public EnchanterContainer(int id, IInventory inventory, PlayerInventory playerInventory) {
         super(ModData.enchanter_container, id);
-        this.addSlot(new Slot(inventory, 0, 400, 20));
-        this.addPlayerSlots(playerInventory);
+        this.addSlot(new Slot(inventory, 0, 147, 19));
+        this.addPlayerSlots(playerInventory,8,140);
     }
 }
