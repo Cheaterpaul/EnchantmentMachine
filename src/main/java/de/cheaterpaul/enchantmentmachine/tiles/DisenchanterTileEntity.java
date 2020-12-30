@@ -4,6 +4,7 @@ import de.cheaterpaul.enchantmentmachine.core.ModData;
 import de.cheaterpaul.enchantmentmachine.inventory.DisenchanterContainer;
 import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstance;
 import de.cheaterpaul.enchantmentmachine.util.Utils;
+import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerInventory;
@@ -11,6 +12,10 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
@@ -53,10 +58,7 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
 
     @Override
     public boolean isEmpty() {
-        for (ItemStack item : this.inventory) {
-            if (!item.isEmpty()) return false;
-        }
-        return true;
+        return this.inventory.isEmpty();
     }
 
     @Override
@@ -105,6 +107,9 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
                         te.addEnchantment(inst);
                     });
                     EnchantmentHelper.setEnchantments(Collections.emptyMap(),stack);
+                    if (stack.getItem() == Items.ENCHANTED_BOOK) {
+                        stack = new ItemStack(Items.BOOK);
+                    }
                     this.inventory.set(1,stack);
                     this.inventory.set(0,ItemStack.EMPTY);
                 });
@@ -140,5 +145,29 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
     @Override
     public boolean canExtractItem(int index, ItemStack stack, Direction direction) {
         return index==1;
+    }
+
+    @Override
+    public void read(BlockState state, CompoundNBT nbt) {
+        super.read(state, nbt);
+        this.inventory.clear();
+        ItemStackHelper.loadAllItems(nbt, this.inventory);
+    }
+
+    @Override
+    public CompoundNBT write(CompoundNBT compound) {
+        super.write(compound);
+        ItemStackHelper.saveAllItems(compound, this.inventory);
+        return compound;
+    }
+
+    @Override
+    public CompoundNBT getUpdateTag() {
+        return write(new CompoundNBT());
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+        this.read(this.world.getBlockState(pkt.getPos()), pkt.getNbtCompound());
     }
 }

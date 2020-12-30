@@ -20,7 +20,7 @@ public class DisenchanterContainer extends EnchantmentBaseContainer {
         this.addSlot(new Slot(inventory, 0, 80,17) {
             @Override
             public boolean isItemValid(ItemStack itemStack) {
-                return inventory.isItemValidForSlot(0,itemStack);
+                return !EnchantmentHelper.getEnchantments(itemStack).isEmpty();
             }
         });
         this.addSlot(new Slot(inventory, 1, 80, 53){
