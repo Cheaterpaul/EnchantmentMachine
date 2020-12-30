@@ -20,7 +20,12 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Map;
@@ -29,7 +34,9 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
 
     private static final ITextComponent name = Utils.genTranslation("tile", "disenchanter.name");
 
+    private LazyOptional<? extends IItemHandler>[] itemHandler = SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
     private NonNullList<ItemStack> inventory = NonNullList.withSize(2, ItemStack.EMPTY);
+
     private final static int DURATION = 20;
     /**
      * Countdown to disenchantment
@@ -131,20 +138,19 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
     public boolean isItemValidForSlot(int index, ItemStack stack) {
         if(index==0){
             return !EnchantmentHelper.getEnchantments(stack).isEmpty();
-        }
-        else{
-            return EnchantmentHelper.getEnchantments(stack).isEmpty();
+        } else{
+            return false;
         }
     }
 
     @Override
     public boolean canInsertItem(int index, ItemStack itemStackIn, @Nullable Direction direction) {
-        return index==0&&isItemValidForSlot(index, itemStackIn);
+        return index == 0 && isItemValidForSlot(index, itemStackIn);
     }
 
     @Override
     public boolean canExtractItem(int index, ItemStack stack, Direction direction) {
-        return index==1;
+        return index == 1;
     }
 
     @Override
@@ -169,5 +175,27 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
         this.read(this.world.getBlockState(pkt.getPos()), pkt.getNbtCompound());
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction facing) {
+        if (!this.removed && facing != null && cap == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            if (facing == Direction.UP)
+                return itemHandler[0].cast();
+            else if (facing == Direction.DOWN)
+                return itemHandler[1].cast();
+            else
+                return itemHandler[2].cast();
+        }
+        return super.getCapability(cap, facing);
+    }
+
+    @Override
+    public void remove() {
+        super.remove();
+        for (int x = 0; x < itemHandler.length; x++) {
+            itemHandler[x].invalidate();
+        }
     }
 }
