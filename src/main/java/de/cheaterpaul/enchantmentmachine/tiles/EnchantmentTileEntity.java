@@ -86,31 +86,27 @@ public class EnchantmentTileEntity extends TileEntity implements IEnchantmentMac
     @Override
     public void read(BlockState state, CompoundNBT nbt) {
         super.read(state, nbt);
-        if(nbt.hasUniqueId("enchantments")){
-            enchantmentMaps.clear();
-            nbt.getList("enchantment",10).forEach(i->{
-                CompoundNBT entry = (CompoundNBT)i;
-                try {
-                    ResourceLocation eID = new ResourceLocation(entry.getString("id"));
-                    int level = entry.getInt("level");
-                    int count = entry.getInt("count");
-                    Enchantment enchantment = ForgeRegistries.ENCHANTMENTS.getValue(eID);
-                    if(enchantment==null){
-                        LOGGER.info("Cannot find stored enchantment {} in registry", eID);
+        enchantmentMaps.clear();
+        nbt.getList("enchantments", 10).forEach(i -> {
+            CompoundNBT entry = (CompoundNBT) i;
+            try {
+                ResourceLocation eID = new ResourceLocation(entry.getString("id"));
+                int level = entry.getInt("level");
+                int count = entry.getInt("count");
+                Enchantment enchantment = ForgeRegistries.ENCHANTMENTS.getValue(eID);
+                if (enchantment == null) {
+                    LOGGER.info("Cannot find stored enchantment {} in registry", eID);
+                } else {
+                    EnchantmentInstance inst = new EnchantmentInstance(enchantment, level);
+                    if (enchantmentMaps.containsKey(inst)) {
+                        LOGGER.warn("Multiple entries of the same enchantment instance in NBT");
                     }
-                    else{
-                        EnchantmentInstance inst = new EnchantmentInstance(enchantment,level);
-                        if(enchantmentMaps.containsKey(inst)){
-                            LOGGER.warn("Multiple entries of the same enchantment instance in NBT");
-                        }
-                        enchantmentMaps.put(inst, count);
-                    }
+                    enchantmentMaps.put(inst, count);
                 }
-                catch (NullPointerException | ResourceLocationException e){
-                    LOGGER.error("Illegal enchantment id in NBT {} {}",entry.getString("id"), e);
-                }
-            });
-        }
+            } catch (NullPointerException | ResourceLocationException e) {
+                LOGGER.error("Illegal enchantment id in NBT {} {}", entry.getString("id"), e);
+            }
+        });
     }
 
     @Override
@@ -123,6 +119,7 @@ public class EnchantmentTileEntity extends TileEntity implements IEnchantmentMac
             enchantment.putString("id",inst.getEnchantment().getRegistryName().toString());
             enchantment.putInt("level",inst.getLevel());
             enchantment.putInt("count", count);
+            enchantments.add(enchantment);
         });
 
         compound.put("enchantments",enchantments);

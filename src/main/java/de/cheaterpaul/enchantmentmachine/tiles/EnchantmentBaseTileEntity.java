@@ -1,14 +1,14 @@
 package de.cheaterpaul.enchantmentmachine.tiles;
 
 import de.cheaterpaul.enchantmentmachine.core.ModData;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.LockableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -52,19 +52,6 @@ public abstract class EnchantmentBaseTileEntity extends LockableTileEntity imple
     }
 
     @Override
-    public void setWorldAndPos(World world, BlockPos pos) {
-        super.setWorldAndPos(world, pos);
-
-        for(Direction d : Direction.values()) {
-            TileEntity te = world.getTileEntity(pos.offset(d));
-            if (te instanceof EnchantmentTileEntity) {
-                this.storageBlockPos = pos.offset(d);
-            }
-        }
-    }
-    
-
-    @Override
     public Optional<EnchantmentTileEntity> getConnectedEnchantmentTE() {
         if(storageBlockPos==null)return Optional.empty();
         TileEntity te = this.world.getTileEntity(storageBlockPos);
@@ -79,4 +66,21 @@ public abstract class EnchantmentBaseTileEntity extends LockableTileEntity imple
         return storageBlockPos!=null;
     }
 
+    @Override
+    public CompoundNBT write(CompoundNBT compound) {
+        super.write(compound);
+        if (this.storageBlockPos != null) {
+            compound.putIntArray("storageblock", new int[]{this.storageBlockPos.getX(), this.storageBlockPos.getY(), this.storageBlockPos.getZ()});
+        }
+        return compound;
+    }
+
+    @Override
+    public void read(BlockState state, CompoundNBT nbt) {
+        super.read(state, nbt);
+        if (nbt.contains("storageblock")) {
+            int[] pos = nbt.getIntArray("storageblock");
+            this.storageBlockPos = new BlockPos(pos[0], pos[1], pos[2]);
+        }
+    }
 }
