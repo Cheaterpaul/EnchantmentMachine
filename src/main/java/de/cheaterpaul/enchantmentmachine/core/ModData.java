@@ -1,5 +1,6 @@
 package de.cheaterpaul.enchantmentmachine.core;
 
+import de.cheaterpaul.enchantmentmachine.EnchantmentMachineMod;
 import de.cheaterpaul.enchantmentmachine.block.DisenchanterBlock;
 import de.cheaterpaul.enchantmentmachine.block.EnchanterBlock;
 import de.cheaterpaul.enchantmentmachine.block.EnchantmentBlock;
@@ -40,9 +41,9 @@ public class ModData {
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
-        event.getRegistry().register(new BlockItem(enchanter_block, new Item.Properties()).setRegistryName(REFERENCE.MODID,"enchanter_block"));
-        event.getRegistry().register(new BlockItem(disenchanter_block, new Item.Properties()).setRegistryName(REFERENCE.MODID,"disenchanter_block"));
-        event.getRegistry().register(new BlockItem(enchantment_block, new Item.Properties()).setRegistryName(REFERENCE.MODID,"enchantment_block"));
+        event.getRegistry().register(new BlockItem(enchanter_block, new Item.Properties().group(EnchantmentMachineMod.CREATIVE_TAB)).setRegistryName(REFERENCE.MODID,"enchanter_block"));
+        event.getRegistry().register(new BlockItem(disenchanter_block, new Item.Properties().group(EnchantmentMachineMod.CREATIVE_TAB)).setRegistryName(REFERENCE.MODID,"disenchanter_block"));
+        event.getRegistry().register(new BlockItem(enchantment_block, new Item.Properties().group(EnchantmentMachineMod.CREATIVE_TAB)).setRegistryName(REFERENCE.MODID,"enchantment_block"));
     }
 
     @SubscribeEvent

@@ -8,8 +8,9 @@ import de.cheaterpaul.enchantmentmachine.proxy.ClientProxy;
 import de.cheaterpaul.enchantmentmachine.proxy.Proxy;
 import de.cheaterpaul.enchantmentmachine.proxy.ServerProxy;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -21,6 +22,12 @@ public class EnchantmentMachineMod {
 
     public static final Proxy PROXY = DistExecutor.safeRunForDist(() -> ClientProxy::new, ()-> ServerProxy::new);
     public static final AbstractPacketDispatcher DISPATCHER = new ModPacketDispatcher();
+    public static final ItemGroup CREATIVE_TAB = new ItemGroup(REFERENCE.MODID) {
+        @Override
+        public ItemStack createIcon() {
+            return new ItemStack(ModData.enchantment_block);
+        }
+    };
 
     public EnchantmentMachineMod() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();

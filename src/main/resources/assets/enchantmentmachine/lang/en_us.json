@@ -1,0 +1,8 @@
+{
+  "block.enchantmentmachine.enchanter_block": "Enchanter",
+  "tile.enchantmentmachine.enchanter.name": "Enchanter",
+  "block.enchantmentmachine.disenchanter_block": "Disenchanter",
+  "tile.enchantmentmachine.disenchanter.name": "Disenchanter",
+  "block.enchantmentmachine.enchantment_block": "Enchantment Block",
+  "itemGroup.enchantmentmachine": "Enchantment Machine"
+}

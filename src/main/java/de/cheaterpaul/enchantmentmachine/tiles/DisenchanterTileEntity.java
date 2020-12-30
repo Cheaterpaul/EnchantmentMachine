@@ -88,10 +88,6 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
         }
     }
 
-
-    
-    
-
     @Override
     public void clear() {
         this.inventory.clear();
@@ -112,7 +108,6 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
                     this.inventory.set(1,stack);
                     this.inventory.set(0,ItemStack.EMPTY);
                 });
-                
             }
         }
     }
