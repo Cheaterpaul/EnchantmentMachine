@@ -54,7 +54,7 @@ public class EnchantingPacket implements IMessage {
 
     public static void handle(final EnchantingPacket msg, Supplier<NetworkEvent.Context> contextSupplier) {
         final NetworkEvent.Context ctx = contextSupplier.get();
-        ctx.enqueueWork(() -> EnchantmentMachineMod.PROXY.handleEnchantingPacket(msg));
+        ctx.enqueueWork(() -> EnchantmentMachineMod.PROXY.handleEnchantingPacket(msg, contextSupplier.get().getSender()));
         ctx.setPacketHandled(true);
     }
 }
