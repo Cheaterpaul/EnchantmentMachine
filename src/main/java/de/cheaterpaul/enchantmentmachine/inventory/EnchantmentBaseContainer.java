@@ -6,10 +6,19 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.ItemStack;
 
 public abstract class EnchantmentBaseContainer extends Container {
-    public EnchantmentBaseContainer(ContainerType<?> containerType, int id) {
+
+    private final int size;
+
+    /**
+     *
+     * @param sizeInventory inventory size of the container except the player slots
+     */
+    public EnchantmentBaseContainer(ContainerType<?> containerType, int id, int sizeInventory) {
         super(containerType, id);
+        this.size = sizeInventory;
     }
 
     @Override
@@ -31,5 +40,48 @@ public abstract class EnchantmentBaseContainer extends Container {
 
     protected void addPlayerSlots(PlayerInventory playerInventory) {
         this.addPlayerSlots(playerInventory, 8, 84);
+    }
+
+    @Override
+    public ItemStack transferStackInSlot(PlayerEntity playerEntity, int index) {
+        ItemStack result = ItemStack.EMPTY;
+        Slot slot = this.inventorySlots.get(index);
+        if (slot != null && slot.getHasStack()) {
+            ItemStack slotStack = slot.getStack();
+            result = slotStack.copy();
+            if (index < size) {
+                if (!this.mergeItemStack(slotStack, size, 36 + size, false)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (index >= 2 && index < 27 + size) {
+                if (!this.mergeItemStack(slotStack, 0, size, false)) {
+                    if (slotStack.isEmpty()) {
+                        return ItemStack.EMPTY;
+                    }
+                }
+                if (!this.mergeItemStack(slotStack, 27 + size, 36 + size, false)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (index >= 27 + 2 && index < 36 + size) {
+                if (!this.mergeItemStack(slotStack, 0, 27 + size, false)) {
+                    return ItemStack.EMPTY;
+                }
+            }
+
+            if (slotStack.isEmpty()) {
+                slot.putStack(ItemStack.EMPTY);
+            } else {
+                slot.onSlotChanged();
+            }
+
+            if (slotStack.getCount() == result.getCount()) {
+                return ItemStack.EMPTY;
+            }
+
+            slot.onTake(playerEntity, slotStack);
+            detectAndSendChanges();
+        }
+
+        return result;
     }
 }

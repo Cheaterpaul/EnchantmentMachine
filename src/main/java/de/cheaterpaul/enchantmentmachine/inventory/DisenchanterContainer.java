@@ -2,7 +2,6 @@ package de.cheaterpaul.enchantmentmachine.inventory;
 
 import de.cheaterpaul.enchantmentmachine.core.ModData;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
@@ -16,7 +15,7 @@ public class DisenchanterContainer extends EnchantmentBaseContainer {
     }
 
     public DisenchanterContainer(int id, IInventory inventory, PlayerInventory playerInventory) {
-        super(ModData.disenchanter_container, id);
+        super(ModData.disenchanter_container, id,2);
         this.addSlot(new Slot(inventory, 0, 80,17) {
             @Override
             public boolean isItemValid(ItemStack itemStack) {
@@ -29,6 +28,7 @@ public class DisenchanterContainer extends EnchantmentBaseContainer {
                 return false;
             }
         });
+        inventory.openInventory(playerInventory.player);
         this.addPlayerSlots(playerInventory);
     }
 
