@@ -42,6 +42,7 @@ public class EnchantmentScreen extends Screen {
 
     @Override
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(matrixStack);
         this.minecraft.getTextureManager().bindTexture(BACKGROUND);
         int i = this.guiLeft;
         int j = this.guiTop;

@@ -29,4 +29,9 @@ public class DisenchanterScreen extends EnchantmentBaseScreen<DisenchanterContai
         this.blit(matrixStack, i, j, 0, 0, this.xSize, this.ySize);
     }
 
+    @Override
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        super.render(matrixStack, mouseX, mouseY, partialTicks);
+        this.renderHoveredTooltip(matrixStack, mouseX, mouseY);
+    }
 }
