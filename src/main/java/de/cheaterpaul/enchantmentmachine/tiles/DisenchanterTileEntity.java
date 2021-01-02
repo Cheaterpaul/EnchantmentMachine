@@ -11,6 +11,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.inventory.container.Container;
+import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
@@ -75,12 +76,16 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
 
     @Override
     public ItemStack decrStackSize(int i, int i1) {
-        return ItemStackHelper.getAndSplit(this.inventory, i, i1);
+        ItemStack result = ItemStackHelper.getAndSplit(this.inventory, i, i1);
+        this.setTimer();
+        return result;
     }
 
     @Override
     public ItemStack removeStackFromSlot(int i) {
-        return ItemStackHelper.getAndRemove(this.inventory, i);
+        ItemStack stack = ItemStackHelper.getAndRemove(this.inventory, i);
+        this.setTimer();
+        return stack;
     }
 
     @Override
@@ -89,12 +94,25 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
         if (itemStack.getCount() > this.getInventoryStackLimit()) {
             itemStack.setCount(this.getInventoryStackLimit());
         }
-        if(getStackInSlot(1).isEmpty()&&!getStackInSlot(0).isEmpty()){
+        setTimer();
+    }
+
+
+
+    private void setTimer() {
+        if (!getStackInSlot(0).isEmpty() && (getStackInSlot(1).isEmpty() || (resultItem(getStackInSlot(0)).isItemEqual(getStackInSlot(1)) && getStackInSlot(1).getCount() + 1 <= getStackInSlot(1).getMaxStackSize()))) {
             this.timer = DURATION;
-        }
-        else{
+        } else{
             this.timer = 0;
         }
+    }
+
+    private ItemStack resultItem(ItemStack stack) {
+        if (stack.getItem() instanceof EnchantedBookItem) {
+            return new ItemStack(Items.BOOK);
+        }
+        EnchantmentHelper.setEnchantments(Collections.emptyMap(), stack.copy());
+        return stack;
     }
 
     @Override
@@ -117,8 +135,12 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
                     if (stack.getItem() == Items.ENCHANTED_BOOK) {
                         stack = new ItemStack(Items.BOOK);
                     }
-                    this.inventory.set(1,stack);
-                    this.inventory.set(0,ItemStack.EMPTY);
+                    ItemStack slot = getStackInSlot(1);
+                    if (!slot.isEmpty() && slot.isItemEqual(stack)) {
+                        stack.shrink(-slot.getCount());
+                    }
+                    setInventorySlotContents(1,stack);
+                    setInventorySlotContents(0,ItemStack.EMPTY);
                 });
             }
         }
