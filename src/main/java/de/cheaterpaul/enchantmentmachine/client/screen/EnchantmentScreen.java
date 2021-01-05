@@ -20,7 +20,7 @@ public class EnchantmentScreen extends Screen {
     private static final ResourceLocation BACKGROUND = new ResourceLocation(REFERENCE.MODID, "textures/gui/container/enchantment.png");
 
     private Object2IntMap<EnchantmentInstance> enchantments = new Object2IntArrayMap<>();
-    private ScrollableListButton list;
+    private ScrollableListButton<Object2IntMap.Entry<EnchantmentInstance>> list;
 
     private final int xSize = 176;
     private final int ySize = 222;
@@ -35,9 +35,9 @@ public class EnchantmentScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        this.addButton(list = new ScrollableListButton(100,100,130,10,enchantments.size(),null, new TranslationTextComponent("testname"), this::onPress));
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
+        this.addButton(list = new ScrollableListButton<>(this.guiLeft + 10,this.guiTop + 10,this.xSize - 20,this.ySize - 20, 14));
     }
 
     @Override
@@ -50,13 +50,9 @@ public class EnchantmentScreen extends Screen {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
     }
 
-    private void onPress(Integer pressed) {
-
-    }
-
     public void updateEnchantments(Object2IntMap<EnchantmentInstance> enchantments){
         this.enchantments = enchantments;
-        this.list.updateList(enchantments);
+        this.list.setItems(enchantments.object2IntEntrySet());
     }
 
 }
