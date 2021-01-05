@@ -5,6 +5,8 @@ import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstance;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
@@ -22,6 +24,7 @@ import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -36,14 +39,6 @@ import java.util.function.Supplier;
 public class ScrollableListButton<T> extends ExtendedButton {
 
     private static final ResourceLocation MISC = new ResourceLocation(REFERENCE.MODID, "textures/gui/misc.png");
-//    protected final int menuSize;
-//    protected int itemCount;
-//    protected int scrolled;
-//    private boolean scrollerPressed;
-//    protected final Button[] elements;
-//    private final Consumer<Integer> pressConsumer;
-//    private ITextComponent[] desc;
-//    private final boolean alternate;
 
     private final ItemCreator<T> itemSupplier;
     private final int itemHeight;
@@ -66,11 +61,11 @@ public class ScrollableListButton<T> extends ExtendedButton {
 
     public void setItems(Set<T> elements) {
         this.listItems.clear();
-        elements.forEach(item -> this.listItems.add(this.itemSupplier.apply(item, this.width, this.itemHeight)));
+        elements.forEach(item -> this.listItems.add(this.itemSupplier.apply(item)));
     }
 
     public void addItem(T element) {
-        this.listItems.add(this.itemSupplier.apply(element, this.width, this.itemHeight));
+        this.listItems.add(this.itemSupplier.apply(element));
     }
 
     public void removeItem(T element) {
@@ -94,6 +89,9 @@ public class ScrollableListButton<T> extends ExtendedButton {
 
         }
         this.renderScrollBar(matrixStack, mouseX, mouseY, partialTicks);
+        if (mouseX > this.x && mouseX < this.x + this.width && mouseY > this.y && mouseY < this.y + this.height) {
+            this.renderToolTip(matrixStack, mouseX, mouseY);
+        }
     }
 
     private void renderScrollBar(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks){
@@ -142,6 +140,26 @@ public class ScrollableListButton<T> extends ExtendedButton {
     }
 
     @Override
+    public void renderToolTip(MatrixStack matrixStack, int mouseX, int mouseY) {
+        int itemHeight = this.itemHeight-1; // only 1 pixel between items
+        for (int i = 0; i < this.listItems.size(); i++) {
+
+            int y = i*itemHeight - scrolled;
+
+            if (y < -itemHeight) {
+                continue;
+            }
+
+            ListItem<T> item = this.listItems.get(i);
+            if (i != 10){
+                continue;
+            }
+            item.renderToolTip(matrixStack, this.x, this.y + y, this.width  - scrollerWidth, this.height, this.itemHeight, y,  mouseX, mouseY, this.getBlitOffset());
+
+        }
+    }
+
+    @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         this.scrollerClicked = false;
         return super.mouseReleased(mouseX, mouseY, button);
@@ -149,17 +167,17 @@ public class ScrollableListButton<T> extends ExtendedButton {
 
     @FunctionalInterface
     public interface ItemCreator<T> {
-        ListItem<T> apply(T item, int width, int height);
+        ListItem<T> apply(T item);
     }
 
     public static class ListItem<T> {
 
-        private final T item;
-        private final int width;
+        private static final ResourceLocation WIDGETS = new ResourceLocation("textures/gui/widgets.png");
 
-        public ListItem(T item, int width, int height) {
+        private final T item;
+
+        public ListItem(T item) {
             this.item = item;
-            this.width = width;
         }
 
         public void render(MatrixStack matrixStack, int x, int y, int listWidth, int listHeight, int itemHeight, int yOffset, int mouseX, int mouseY, float partialTicks, float zLevel) {
@@ -186,122 +204,20 @@ public class ScrollableListButton<T> extends ExtendedButton {
                 }
                 yOffset=0;
             }
-            GuiUtils.drawContinuousTexturedBox(matrixStack, new ResourceLocation("textures/gui/widgets.png"), x, y + yOffset,0,v, listWidth+1, ySize, 200, textureHeight, yTopBorder, yBottomBorder,3,3, zLevel);
+            renderBox(matrixStack, WIDGETS, x, y + yOffset,0,v, listWidth+1, ySize, 200, textureHeight, yTopBorder, yBottomBorder,3,3, zLevel);
         }
 
+        public void renderBox(MatrixStack matrixStack, ResourceLocation texture, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight, int topBorder, int bottomBorder, int leftBorder, int rightBorder, float partialTicks) {
+            GuiUtils.drawContinuousTexturedBox(matrixStack, texture, x, y, u, v, width, height, textureWidth, textureHeight, topBorder, bottomBorder, leftBorder, rightBorder, partialTicks);
+        }
+
+        public void renderToolTip(MatrixStack matrixStack, int x, int y, int listWidth, int listHeight, int itemHeight, int yOffset, int mouseX, int mouseY, float zLevel) {
+            int ySize = MathHelper.clamp(listHeight - yOffset,0,itemHeight);
+
+            Screen screen = Minecraft.getInstance().currentScreen;;
+            if (mouseX > x && mouseX < x + listWidth && mouseY> y && mouseY < y + ySize) {
+                screen.renderTooltip(matrixStack, new StringTextComponent("test"), mouseX, mouseY);
+            }
+        }
     }
-
-
-    //    public ScrollableListButton(int xPos, int yPos, int width, int shownItems, int maxItemCount, @Nullable ITextComponent[] strings, ITextComponent displayString, Consumer<Integer> elementPressAction, boolean alternate) {
-//        super(xPos, yPos + 1, width, Math.min(shownItems, maxItemCount) * 20, displayString, button -> {
-//        });
-//        this.itemCount = maxItemCount;
-//        this.menuSize = shownItems;
-//        this.visible = true;
-//        this.elements = new Button[menuSize];
-//        this.pressConsumer = elementPressAction;
-//        this.desc = strings;
-//        this.alternate = alternate;
-//        this.fillElements();
-//    }
-
-//    public ScrollableListButton(int xPos, int yPos, int width, int height, int itemCount, ITextComponent[] strings, ITextComponent displayString, Consumer<Integer> elementPressAction) {
-//        this(xPos, yPos, width, height, itemCount, strings, displayString, elementPressAction, false);
-//    }
-
-//    public void updateList(Object2IntMap<EnchantmentInstance> list) {
-//        this.itemCount = list.size();
-//        this.desc = new ITextComponent[this.itemCount];
-//        AtomicInteger index = new AtomicInteger();
-//        list.forEach((inst, count) -> {
-//            this.desc[index.getAndIncrement()] = new TranslationTextComponent(inst.getEnchantment().getRegistryName().toString()).appendString(" " + inst.getLevel() + "    " + count);
-//        });
-//    }
-//
-//    @Override
-//    public boolean mouseClicked(double mouseX, double mouseY, int buttonId) {
-//        if (this.visible) {
-//            this.scrollerPressed = false;
-//            if (mouseX > this.x && mouseX < this.x + this.width && mouseY > this.y && mouseY < this.y + height) {
-//                if (this.itemCount - this.menuSize > 0 && mouseX > this.x + this.width - 8) {
-//                    this.scrollerPressed = true;
-//                }
-//                for (Button button : this.elements) {
-//                    if (button.mouseClicked(mouseX, mouseY, buttonId)) {
-//                        return true;
-//                    }
-//                }
-//            }
-//        }
-//        return super.mouseClicked(mouseX, mouseY, buttonId);
-//    }
-
-//    @Override
-//    public void renderButton(MatrixStack mStack, int mouseX, int mouseY, float partialTicks) {
-//        if (this.visible) {
-//            this.hLine(mStack, this.x, this.x + this.width, this.y - 1, alternate ? 0xff373737 : 0xff000000);
-//            GuiUtils.drawContinuousTexturedBox(mStack, MISC, this.x + width - 8, this.y - 1, alternate ? 23 : 0, 0, 9, this.height + 2, 9, 200, 2, 2, 2, 2, this.getBlitOffset());
-//            this.renderScroller(mStack);
-//            this.renderListButtons(mStack, mouseX, mouseY, partialTicks);
-//            if (this.elements.length != 0 && this.elements[this.elements.length - 1].visible) {
-//                this.hLine(mStack, this.x, this.x + this.width, this.y + this.height, alternate ? 0xffffffff : 0xff000000);
-//            }
-//        }
-//    }
-//
-//    protected void fillElements() {
-//        for (int i = 0; i < this.elements.length; i++) {
-//            int finalI = i;
-//            this.elements[i] = new ExtendedButton(this.x, this.y + i * 20, width - 7, 20, new StringTextComponent(""), (button -> this.pressConsumer.accept(finalI + this.scrolled)));
-//        }
-//    }
-//
-//    protected void renderScroller(MatrixStack mStack) {
-//        Minecraft.getInstance().textureManager.bindTexture(MISC);
-//        int i = this.itemCount - this.menuSize;
-//        if (i >= 1) {
-//            float k = (float) (this.height + 3 - 30) / i;
-//            int i1 = Math.min(this.height + 3 - 30, (int) (this.scrolled * k));
-//            if (this.scrolled >= i) {
-//                i1 = this.height + 3 - 30;
-//            }
-//            blit(mStack, x + this.width - 7, y + i1, this.getBlitOffset(), (alternate ? 23 : 0) + 10 - 1, 0, 7, 27, 256, 256);
-//        } else {
-//            //blit(mStack, x + this.width - 7, y, this.getBlitOffset(), (alternate ? 23 : 0) + 10 + 6, 0, 7, this.elements.length == 1 ? 20 : 27, 256, 256); Don't render (disabled) scroller if there are not enough items
-//        }
-//    }
-//
-//    private void renderListButtons(MatrixStack mStack, int mouseX, int mouseY, float partialTicks) {
-//        for (int i = 0; i < this.elements.length; i++) {
-//            this.elements[i].visible = itemCount > menuSize || i < itemCount;
-//            if (this.elements[i].visible) {
-//                this.elements[i].render(mStack, mouseX, mouseY, partialTicks);
-//                ITextComponent desc = this.desc != null ? this.desc[this.scrolled + i] : new StringTextComponent("Type " + (i + this.scrolled + 1));
-//                int x = this.x + (this.width - 8) / 2 - Minecraft.getInstance().fontRenderer.getStringPropertyWidth(desc) / 2;
-//                Minecraft.getInstance().fontRenderer.func_243246_a(mStack, desc, x, this.y + 6 + i * 20, this.elements[i].getFGColor());
-//            }
-//        }
-//    }
-//
-//    @Override
-//    public boolean mouseScrolled(double p_mouseScrolled_1_, double p_mouseScrolled_3_, double p_mouseScrolled_5_) {
-//        int scrollItems = this.itemCount - this.menuSize;
-//        if (scrollItems > 0) {
-//            this.scrolled = (int) ((double) this.scrolled - p_mouseScrolled_5_);
-//            this.scrolled = MathHelper.clamp(this.scrolled, 0, scrollItems);
-//        }
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean mouseDragged(double p_mouseDragged_1_, double p_mouseDragged_3_, int p_mouseDragged_5_, double p_mouseDragged_6_, double p_mouseDragged_8_) {
-//        if (scrollerPressed) {
-//            float amount = ((float) p_mouseDragged_3_ - (float) this.y - 13.5F) / ((float) (this.height) - 27.0F);
-//            amount = amount * (float) (this.itemCount - this.menuSize) + 0.5f;
-//            this.scrolled = MathHelper.clamp((int) amount, 0, this.itemCount - this.menuSize);
-//            return true;
-//        } else {
-//            return super.mouseDragged(p_mouseDragged_1_, p_mouseDragged_3_, p_mouseDragged_5_, p_mouseDragged_6_, p_mouseDragged_8_);
-//        }
-//    }
 }

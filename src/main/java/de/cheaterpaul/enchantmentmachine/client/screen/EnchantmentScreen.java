@@ -6,6 +6,7 @@ import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -55,4 +56,8 @@ public class EnchantmentScreen extends Screen {
         this.list.setItems(enchantments.object2IntEntrySet());
     }
 
+    @Override
+    protected void renderTooltip(MatrixStack matrixStack, ItemStack itemStack, int mouseX, int mouseY) {
+        super.renderTooltip(matrixStack, itemStack, mouseX, mouseY);
+    }
 }
