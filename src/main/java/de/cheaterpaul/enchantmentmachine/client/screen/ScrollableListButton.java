@@ -1,37 +1,19 @@
 package de.cheaterpaul.enchantmentmachine.client.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstance;
+import com.mojang.blaze3d.systems.RenderSystem;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * add this buttons first and render them last and call {@link #mouseDragged(double, double, int, double, double)}
@@ -74,6 +56,22 @@ public class ScrollableListButton<T> extends ExtendedButton {
 
     @Override
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+
+        RenderSystem.pushMatrix();
+
+        //remove everything
+        RenderSystem.translatef(this.x, this.y, 950.0F);
+        RenderSystem.colorMask(false, false, false, false);
+        fill(matrixStack, -4000, -4000, 4000, 4000 , -16777216);
+        RenderSystem.colorMask(true, true, true, true);
+        RenderSystem.translatef(0.0F, 0.0F, -950.0F);
+
+        //only render in specific area
+        RenderSystem.depthFunc(518);
+        fill(matrixStack, 0, 0, this.width, this.height, -3815994);
+        RenderSystem.depthFunc(515);
+        RenderSystem.translatef(-this.x, -this.y, 0.0F);
+
         int itemHeight = this.itemHeight-1; // only 1 pixel between items
         for (int i = 0; i < this.listItems.size(); i++) {
 
@@ -89,9 +87,21 @@ public class ScrollableListButton<T> extends ExtendedButton {
 
         }
         this.renderScrollBar(matrixStack, mouseX, mouseY, partialTicks);
+
+        RenderSystem.depthFunc(518);
+        RenderSystem.translatef(0.0F, 0.0F, -950.0F);
+        RenderSystem.colorMask(false, false, false, false);
+        fill(matrixStack, 4680, 2260, -4680, -2260, -16777216);
+        RenderSystem.colorMask(true, true, true, true);
+        RenderSystem.translatef(0.0F, 0.0F, 950.0F);
+        RenderSystem.depthFunc(515);
+
+        RenderSystem.popMatrix();
+
         if (mouseX > this.x && mouseX < this.x + this.width && mouseY > this.y && mouseY < this.y + this.height) {
             this.renderToolTip(matrixStack, mouseX, mouseY);
         }
+
     }
 
     private void renderScrollBar(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks){
@@ -151,10 +161,7 @@ public class ScrollableListButton<T> extends ExtendedButton {
             }
 
             ListItem<T> item = this.listItems.get(i);
-            if (i != 10){
-                continue;
-            }
-            item.renderToolTip(matrixStack, this.x, this.y + y, this.width  - scrollerWidth, this.height, this.itemHeight, y,  mouseX, mouseY, this.getBlitOffset());
+            item.preRenderToolTip(matrixStack, this.x, this.y + y, this.width  - scrollerWidth, this.height, this.itemHeight, y,  mouseX, mouseY, this.getBlitOffset());
 
         }
     }
@@ -181,43 +188,44 @@ public class ScrollableListButton<T> extends ExtendedButton {
         }
 
         public void render(MatrixStack matrixStack, int x, int y, int listWidth, int listHeight, int itemHeight, int yOffset, int mouseX, int mouseY, float partialTicks, float zLevel) {
-            int ySize = MathHelper.clamp(listHeight - yOffset,0,itemHeight);
+            int ySize = MathHelper.clamp(listHeight - yOffset, 0, itemHeight);
             int yTopBorder = 3;
             int yBottomBorder = 3;
             int v = 66;
-            int textureHeight= 20;
-            if (ySize <= 0)return;
+            int textureHeight = 20;
+            if (ySize <= 0) return;
             if (ySize < itemHeight) {
                 if (ySize < 3) {
                     yTopBorder = ySize;
                 }
                 yBottomBorder = 0;
-                textureHeight-=3;
+                textureHeight -= 3;
             }
             if (yOffset < 0) {
-                ySize+=yOffset;
+                ySize += yOffset;
                 yTopBorder = Math.max(0, yTopBorder + yOffset);
-                v += 3-yTopBorder;
-                textureHeight -=3-yTopBorder;
-                if (-yOffset >= itemHeight-2) {
+                v += 3 - yTopBorder;
+                textureHeight -= 3 - yTopBorder;
+                if (-yOffset >= itemHeight - 2) {
                     yBottomBorder = 1;
                 }
-                yOffset=0;
+                yOffset = 0;
             }
-            renderBox(matrixStack, WIDGETS, x, y + yOffset,0,v, listWidth+1, ySize, 200, textureHeight, yTopBorder, yBottomBorder,3,3, zLevel);
+            renderBox(matrixStack, WIDGETS, x, y + yOffset, 0, v, listWidth + 1, ySize, 200, textureHeight, yTopBorder, yBottomBorder, 3, 3, zLevel);
         }
 
         public void renderBox(MatrixStack matrixStack, ResourceLocation texture, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight, int topBorder, int bottomBorder, int leftBorder, int rightBorder, float partialTicks) {
             GuiUtils.drawContinuousTexturedBox(matrixStack, texture, x, y, u, v, width, height, textureWidth, textureHeight, topBorder, bottomBorder, leftBorder, rightBorder, partialTicks);
         }
 
-        public void renderToolTip(MatrixStack matrixStack, int x, int y, int listWidth, int listHeight, int itemHeight, int yOffset, int mouseX, int mouseY, float zLevel) {
-            int ySize = MathHelper.clamp(listHeight - yOffset,0,itemHeight);
+        public void preRenderToolTip(MatrixStack matrixStack, int x, int y, int listWidth, int listHeight, int itemHeight, int yOffset, int mouseX, int mouseY, float zLevel) {
+            int ySize = MathHelper.clamp(listHeight - yOffset, 0, itemHeight);
 
-            Screen screen = Minecraft.getInstance().currentScreen;;
-            if (mouseX > x && mouseX < x + listWidth && mouseY> y && mouseY < y + ySize) {
-                screen.renderTooltip(matrixStack, new StringTextComponent("test"), mouseX, mouseY);
+            if (mouseX > x && mouseX < x + listWidth && mouseY > y && mouseY < y + ySize) {
+                this.renderToolTip(matrixStack, x, y, listWidth, listHeight, itemHeight, yOffset, mouseX, mouseY, zLevel);
             }
         }
+
+        public void renderToolTip(MatrixStack matrixStack, int x, int y, int listWidth, int listHeight, int itemHeight, int yOffset, int mouseX, int mouseY, float zLevel) { }
     }
 }
