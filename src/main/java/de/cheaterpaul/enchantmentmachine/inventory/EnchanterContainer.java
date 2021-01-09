@@ -24,7 +24,7 @@ public class EnchanterContainer extends EnchantmentBaseContainer {
                 return stack.isEnchantable();
             }
         });
-        this.addPlayerSlots(playerInventory,8,140);
+        this.addPlayerSlots(playerInventory,28 + 8,140 + 19);
 
         this.worldPosCallable = worldPosCallable;
     }

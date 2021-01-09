@@ -75,19 +75,25 @@ public class ScrollableListButton<T> extends ExtendedButton {
 
         this.renderItems(matrixStack, mouseX, mouseY, partialTicks);
 
+        RenderSystem.depthFunc(518);
+        RenderSystem.translatef(0,0, 950.0F);
+        RenderSystem.colorMask(false, false, false, false);
+        fill(matrixStack, -4000, -4000, 4680, 2260, -16777216);
+        RenderSystem.colorMask(true, true, true, true);
+        RenderSystem.translatef(0,0, -950.0F);
+        RenderSystem.depthFunc(515);
+
         RenderSystem.disableDepthTest();
         RenderSystem.popMatrix();
 
+
         RenderSystem.pushMatrix();
-        RenderSystem.translatef(0,0, 400.0F);
-        RenderSystem.pushMatrix();
-        RenderSystem.translatef(0.0F, 0.0F, 190.0F);
-        RenderSystem.color4f(1,1,1,1);
+        RenderSystem.translatef(0,0, 590);
 
         this.renderToolTip(matrixStack, mouseX, mouseY);
 
         RenderSystem.popMatrix();
-        RenderSystem.popMatrix();
+        RenderSystem.translatef(0,0,950);
 
     }
 
