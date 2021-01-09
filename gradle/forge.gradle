@@ -25,6 +25,8 @@ dependencies {
     minecraft "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
     compileOnly fg.deobf("mezz.jei:jei-${project.jei_version}:api") //API for compile (not POM)
     runtimeOnly fg.deobf("mezz.jei:jei-${project.jei_version}") //Full for runtime (not POM)
+    implementation fg.deobf("curse.maven:enchantment-description-250419:3112901")
+    implementation fg.deobf("curse.maven:bookshelf-228525:3133712")
 }
 
 minecraft {

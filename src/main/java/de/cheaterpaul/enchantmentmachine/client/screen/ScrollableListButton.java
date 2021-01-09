@@ -60,6 +60,7 @@ public class ScrollableListButton<T> extends ExtendedButton {
         RenderSystem.pushMatrix();
 
         //remove everything
+        RenderSystem.enableDepthTest();
         RenderSystem.translatef(this.x, this.y, 950.0F);
         RenderSystem.colorMask(false, false, false, false);
         fill(matrixStack, -4000, -4000, 4000, 4000 , -16777216);
@@ -72,6 +73,25 @@ public class ScrollableListButton<T> extends ExtendedButton {
         RenderSystem.depthFunc(515);
         RenderSystem.translatef(-this.x, -this.y, 0.0F);
 
+        this.renderItems(matrixStack, mouseX, mouseY, partialTicks);
+
+        RenderSystem.disableDepthTest();
+        RenderSystem.popMatrix();
+
+        RenderSystem.pushMatrix();
+        RenderSystem.translatef(0,0, 400.0F);
+        RenderSystem.pushMatrix();
+        RenderSystem.translatef(0.0F, 0.0F, 190.0F);
+        RenderSystem.color4f(1,1,1,1);
+
+        this.renderToolTip(matrixStack, mouseX, mouseY);
+
+        RenderSystem.popMatrix();
+        RenderSystem.popMatrix();
+
+    }
+
+    private void renderItems(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         int itemHeight = this.itemHeight-1; // only 1 pixel between items
         for (int i = 0; i < this.listItems.size(); i++) {
 
@@ -87,21 +107,6 @@ public class ScrollableListButton<T> extends ExtendedButton {
 
         }
         this.renderScrollBar(matrixStack, mouseX, mouseY, partialTicks);
-
-        RenderSystem.depthFunc(518);
-        RenderSystem.translatef(0.0F, 0.0F, -950.0F);
-        RenderSystem.colorMask(false, false, false, false);
-        fill(matrixStack, 4680, 2260, -4680, -2260, -16777216);
-        RenderSystem.colorMask(true, true, true, true);
-        RenderSystem.translatef(0.0F, 0.0F, 950.0F);
-        RenderSystem.depthFunc(515);
-
-        RenderSystem.popMatrix();
-
-        if (mouseX > this.x && mouseX < this.x + this.width && mouseY > this.y && mouseY < this.y + this.height) {
-            this.renderToolTip(matrixStack, mouseX, mouseY);
-        }
-
     }
 
     private void renderScrollBar(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks){
@@ -120,8 +125,7 @@ public class ScrollableListButton<T> extends ExtendedButton {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-        this.scrolled = Math.max(this.scrolled +  4 *((int) delta), 0);
-        this.scrolled = Math.min(this.scrolled, this.listItems.size() * this.itemHeight - this.height);
+        this.scrolled = MathHelper.clamp(this.scrolled +  4 *((int) -delta), 0, this.listItems.size() * this.itemHeight - this.height);
         this.scrolledD = scrolled;
         return true;
     }
@@ -131,8 +135,7 @@ public class ScrollableListButton<T> extends ExtendedButton {
         if(scrollerClicked) {
             this.scrolledD += dragY * 1.5;
             this.scrolled = ((int) this.scrolledD);
-            this.scrolled = Math.max(this.scrolled, 0);
-            this.scrolled = Math.min(this.scrolled, this.listItems.size() * this.itemHeight - this.height);
+            this.scrolled = MathHelper.clamp(this.scrolled, 0 , this.listItems.size() * this.itemHeight - this.height);
             return true;
         }
         return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
@@ -151,18 +154,22 @@ public class ScrollableListButton<T> extends ExtendedButton {
 
     @Override
     public void renderToolTip(MatrixStack matrixStack, int mouseX, int mouseY) {
-        int itemHeight = this.itemHeight-1; // only 1 pixel between items
-        for (int i = 0; i < this.listItems.size(); i++) {
+        if (this.scrollerClicked) return;
+        if (mouseX > this.x && mouseX < this.x + this.width && mouseY > this.y && mouseY < this.y + this.height) {
 
-            int y = i*itemHeight - scrolled;
+            int itemHeight = this.itemHeight - 1; // only 1 pixel between items
+            for (int i = 0; i < this.listItems.size(); i++) {
 
-            if (y < -itemHeight) {
-                continue;
+                int y = i * itemHeight - scrolled;
+
+                if (y < -itemHeight) {
+                    continue;
+                }
+
+                ListItem<T> item = this.listItems.get(i);
+                item.preRenderToolTip(matrixStack, this.x, this.y + y, this.width - scrollerWidth, this.height, this.itemHeight, y, mouseX, mouseY, this.getBlitOffset());
+
             }
-
-            ListItem<T> item = this.listItems.get(i);
-            item.preRenderToolTip(matrixStack, this.x, this.y + y, this.width  - scrollerWidth, this.height, this.itemHeight, y,  mouseX, mouseY, this.getBlitOffset());
-
         }
     }
 
