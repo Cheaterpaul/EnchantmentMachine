@@ -4,7 +4,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.StringTextComponent;
@@ -12,8 +11,8 @@ import net.minecraftforge.fml.client.gui.GuiUtils;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
  * add this buttons first and render them last and call {@link #mouseDragged(double, double, int, double, double)}
@@ -41,7 +40,7 @@ public class ScrollableListButton<T> extends ExtendedButton {
         this.itemSupplier = itemSupplier;
     }
 
-    public void setItems(Set<T> elements) {
+    public void setItems(Collection<T> elements) {
         this.listItems.clear();
         elements.forEach(item -> this.listItems.add(this.itemSupplier.apply(item)));
     }
@@ -58,42 +57,37 @@ public class ScrollableListButton<T> extends ExtendedButton {
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 
         RenderSystem.pushMatrix();
-
-        //remove everything
         RenderSystem.enableDepthTest();
-        RenderSystem.translatef(this.x, this.y, 950.0F);
+        RenderSystem.translatef(0.0F, 0.0F, 950.0F);
         RenderSystem.colorMask(false, false, false, false);
-        fill(matrixStack, -4000, -4000, 4000, 4000 , -16777216);
+        fill(matrixStack, 4680, 2260, -4680, -2260, -16777216);
         RenderSystem.colorMask(true, true, true, true);
         RenderSystem.translatef(0.0F, 0.0F, -950.0F);
-
-        //only render in specific area
         RenderSystem.depthFunc(518);
-        fill(matrixStack, 0, 0, this.width, this.height, -3815994);
+        RenderSystem.translatef(this.x, this.y,0.0f);
+        RenderSystem.colorMask(false, false, false, false);
+
+        fill(matrixStack, this.width, this.height, 0, 0, -0xffffff);
+        RenderSystem.colorMask(true, true, true, true);
+
+        RenderSystem.translatef(-this.x, -this.y,0.0f);
         RenderSystem.depthFunc(515);
-        RenderSystem.translatef(-this.x, -this.y, 0.0F);
 
         this.renderItems(matrixStack, mouseX, mouseY, partialTicks);
 
         RenderSystem.depthFunc(518);
-        RenderSystem.translatef(0,0, 950.0F);
+        RenderSystem.translatef(0.0F, 0.0F, -950.0F);
         RenderSystem.colorMask(false, false, false, false);
-        fill(matrixStack, -4000, -4000, 4680, 2260, -16777216);
+        fill(matrixStack, 4680, 2260, -4680, -2260, -16777216);
         RenderSystem.colorMask(true, true, true, true);
-        RenderSystem.translatef(0,0, -950.0F);
+        RenderSystem.translatef(0.0F, 0.0F, 950.0F);
         RenderSystem.depthFunc(515);
-
-        RenderSystem.disableDepthTest();
         RenderSystem.popMatrix();
-
 
         RenderSystem.pushMatrix();
-        RenderSystem.translatef(0,0, 590);
 
         this.renderToolTip(matrixStack, mouseX, mouseY);
-
         RenderSystem.popMatrix();
-        RenderSystem.translatef(0,0,950);
 
     }
 

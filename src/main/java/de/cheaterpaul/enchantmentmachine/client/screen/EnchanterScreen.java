@@ -1,6 +1,8 @@
 package de.cheaterpaul.enchantmentmachine.client.screen;
 
+import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import de.cheaterpaul.enchantmentmachine.EnchantmentMachineMod;
 import de.cheaterpaul.enchantmentmachine.inventory.EnchanterContainer;
 import de.cheaterpaul.enchantmentmachine.network.message.EnchantingPacket;
@@ -23,20 +25,15 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @OnlyIn(Dist.CLIENT)
 public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
 
-    private static final ResourceLocation MISC = new ResourceLocation(REFERENCE.MODID, "textures/gui/misc.png");
     private static final ResourceLocation BACKGROUND = new ResourceLocation(REFERENCE.MODID, "textures/gui/container/enchanter.png");
 
-    private Object2IntMap<EnchantmentInstance> enchantments = new Object2IntArrayMap<>();
-    private List<EnchantmentInstance> selectedEnchantments = new ArrayList<>();
-
+    private Map<EnchantmentInstance,Pair<EnchantmentInstance,Integer>> enchantments = new HashMap<>();
     private ScrollableListButton<Pair<EnchantmentInstance,Integer>> list;
 
 
@@ -66,48 +63,75 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
     @Override
     protected void init() {
         super.init();
-        this.addButton(new ImageButton(this.guiLeft + 203,this.guiTop + 40, 14,12, 46,0, 13, MISC, this::apply));
-        this.addButton(list = new ScrollableListButton<>(this.guiLeft + 8,this.guiTop +  15,this.xSize - 60,this.ySize - 94 - 17, 21, EnchantmentItem::new));
-    }
-
-    private void apply(Button button) {
-        if (this.container.getSlot(0).getHasStack()) {
-            EnchantmentMachineMod.DISPATCHER.sendToServer(new EnchantingPacket(selectedEnchantments));
-        }
+        this.addButton(list = new ScrollableListButton<>(this.guiLeft + 8,this.guiTop +  15,this.xSize - 50,this.ySize - 94 - 17, 21,EnchantmentItem::new));
     }
 
     public void updateEnchantments(Object2IntMap<EnchantmentInstance> enchantments){
-        this.list.setItems(enchantments.object2IntEntrySet().stream().map(s -> Pair.of(s.getKey(), s.getIntValue())).collect(Collectors.toSet()));
-        this.enchantments = enchantments;
+        this.enchantments.clear();
+        enchantments.forEach((instance, integer) -> {
+            this.enchantments.put(instance, Pair.of(instance, integer));
+        });
+        refreshActiveEnchantments();
+    }
+
+    public void refreshActiveEnchantments() {
+        ItemStack stack = this.container.getSlot(0).getStack();
+        if (stack.isEmpty()) {
+            this.list.setItems(this.enchantments.values());
+        } else {
+            this.list.setItems(this.enchantments.values().stream().filter(pair -> stack.canApplyAtEnchantingTable(pair.getKey().getEnchantment())).collect(Collectors.toList()));
+        }
+    }
+
+    private void apply(EnchantmentInstance instance) {
+        if (this.container.getSlot(0).getHasStack()) {
+            EnchantmentMachineMod.DISPATCHER.sendToServer(new EnchantingPacket(Collections.singletonList(instance)));
+            Pair<EnchantmentInstance, Integer> value = this.enchantments.get(instance);
+            if (value.getValue() > 1) {
+                this.enchantments.put(instance, Pair.of(instance, value.getValue() -1));
+            }else {
+                this.enchantments.remove(instance);
+            }
+        }
+        refreshActiveEnchantments();
     }
 
     private class EnchantmentItem extends ScrollableListButton.ListItem<Pair<EnchantmentInstance,Integer>> {
 
         private final ItemStack bookStack;
         private final ITextComponent name;
+        private final Button button;
 
         public EnchantmentItem(Pair<EnchantmentInstance, Integer> item) {
             super(item);
-            bookStack = new ItemStack(Items.ENCHANTED_BOOK,item.getRight());
+            this.bookStack = new ItemStack(Items.ENCHANTED_BOOK,item.getRight());
             EnchantmentHelper.setEnchantments(Collections.singletonMap(item.getKey().getEnchantment(),item.getKey().getLevel()), bookStack);
-            name = ((IFormattableTextComponent) item.getKey().getEnchantment().getDisplayName(item.getKey().getLevel())).modifyStyle(style -> style.getColor().getColor() == TextFormatting.GRAY.getColor()? style.applyFormatting(TextFormatting.WHITE):style);
+            this.name = ((IFormattableTextComponent) item.getKey().getEnchantment().getDisplayName(item.getKey().getLevel())).modifyStyle(style -> style.getColor().getColor() == TextFormatting.GRAY.getColor()? style.applyFormatting(TextFormatting.WHITE):style);
+            this.button = new ImageButton(0,0,11,17,1,208,18,new ResourceLocation("textures/gui/recipe_book.png"), (button) -> EnchanterScreen.this.apply(item.getKey()));
         }
 
         @Override
         public void render(MatrixStack matrixStack, int x, int y, int listWidth, int listHeight, int itemHeight, int yOffset, int mouseX, int mouseY, float partialTicks, float zLevel) {
             super.render(matrixStack, x, y, listWidth, listHeight, itemHeight, yOffset, mouseX, mouseY, partialTicks, zLevel);
             EnchanterScreen.this.itemRenderer.renderItemAndEffectIntoGuiWithoutEntity(bookStack, x + 5,y +2 + yOffset);
-            EnchanterScreen.this.font.drawStringWithShadow(matrixStack, name.getString(), x + 25,y + yOffset + 5, name.getStyle().getColor().getColor());
 
+//            EnchanterScreen.this.font.drawString(matrixStack, name.getString(), x + 25,y + yOffset + 5, name.getStyle().getColor().getColor());
+//
+//
+//            String count = String.valueOf(bookStack.getCount());
+//
+//            EnchanterScreen.this.font.drawString(matrixStack, count, x + listWidth - 20, y + yOffset + 5, 0xffffff);
 
-            String count = String.valueOf(bookStack.getCount());
+            this.button.x = x + listWidth - 12;
+            this.button.y = y + yOffset + 2;
 
-            EnchanterScreen.this.font.drawStringWithShadow(matrixStack, count, x + listWidth - 10, y + yOffset + 5, 0xffffff);
+            this.button.visible = EnchanterScreen.this.container.getSlot(0).getHasStack();
+            this.button.render(matrixStack, mouseX, mouseY, partialTicks);
         }
 
         @Override
         public void renderToolTip(MatrixStack matrixStack, int x, int y, int listWidth, int listHeight, int itemHeight, int yOffset, int mouseX, int mouseY, float zLevel) {
-            if (mouseX > x && mouseX < x + listWidth && mouseY > y && mouseY < y + ySize) {
+            if (mouseX > x && mouseX < x + listWidth - 20 && mouseY > y && mouseY < y + itemHeight) {
                 EnchanterScreen.this.renderTooltip(matrixStack, bookStack, mouseX, mouseY);
             }
         }
