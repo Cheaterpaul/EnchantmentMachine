@@ -43,6 +43,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
         this.ySize = 241;
         this.playerInventoryTitleX = 36;
         this.playerInventoryTitleY = this.ySize - 94;
+        container.setListener(this::refreshActiveEnchantments);
     }
 
     @Override
@@ -134,6 +135,15 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
             if (mouseX > x && mouseX < x + listWidth - 20 && mouseY > y && mouseY < y + itemHeight) {
                 EnchanterScreen.this.renderTooltip(matrixStack, bookStack, mouseX, mouseY);
             }
+        }
+
+        @Override
+        public boolean onClick(double mouseX, double mouseY) {
+            if (mouseX > this.button.x && mouseX < this.button.x + this.button.getWidth() && mouseY > this.button.y && mouseY < this.button.y + this.button.getHeightRealms()) {
+                this.button.onClick(mouseX, mouseY);
+                return true;
+            }
+            return false;
         }
     }
 }

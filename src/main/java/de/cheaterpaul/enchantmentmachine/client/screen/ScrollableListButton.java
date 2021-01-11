@@ -138,18 +138,35 @@ public class ScrollableListButton<T> extends ExtendedButton {
             this.scrolled = MathHelper.clamp(this.scrolled, 0 , this.listItems.size() * this.itemHeight - this.height);
             return true;
         }
-        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        return false;
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         this.scrolledD = this.scrolled;
-        if (mouseX >= this.x && mouseX <= this.x + this.width && mouseY >= this.y && mouseY <= this.y + this.height) {
-            if (mouseX >= this.x + this.width - this.scrollerWidth) {
+        if (mouseX > this.x && mouseX < this.x + this.width && mouseY > this.y && mouseY < this.y + this.height) {
+            if (mouseX > this.x + this.width - this.scrollerWidth) {
                 this.scrollerClicked = true;
+            } else {
+                for (int i = 0; i < this.listItems.size(); i++) {
+
+                    int y = i*itemHeight - scrolled;
+
+                    if (y < -itemHeight) {
+                        continue;
+                    }
+
+
+                    ListItem<T> item = this.listItems.get(i);
+                    if (mouseX > this.x && mouseX < this.x + this.width - this.scrollerWidth && mouseY > this.y + y && mouseY < this.y + y + this.itemHeight) {
+                        if(item.onClick(mouseX, mouseY)){
+                            return true;
+                        }
+                    }
+                }
             }
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        return false;
     }
 
     @Override
@@ -234,5 +251,9 @@ public class ScrollableListButton<T> extends ExtendedButton {
         }
 
         public void renderToolTip(MatrixStack matrixStack, int x, int y, int listWidth, int listHeight, int itemHeight, int yOffset, int mouseX, int mouseY, float zLevel) { }
+
+        public boolean onClick(double mouseX, double mouseY) {
+            return false;
+        }
     }
 }
