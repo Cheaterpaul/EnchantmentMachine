@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * add this buttons first and render them last and call {@link #mouseDragged(double, double, int, double, double)}
+ * make sure that {@link net.minecraft.client.gui.INestedGuiEventHandler#mouseDragged(double, double, int, double, double)} is being called
  */
 public class ScrollableListButton<T> extends ExtendedButton {
 

@@ -1,14 +1,11 @@
 package de.cheaterpaul.enchantmentmachine.client.screen;
 
-import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
 import de.cheaterpaul.enchantmentmachine.EnchantmentMachineMod;
 import de.cheaterpaul.enchantmentmachine.inventory.EnchanterContainer;
 import de.cheaterpaul.enchantmentmachine.network.message.EnchantingPacket;
 import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstance;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
-import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.button.ImageButton;
@@ -73,6 +70,15 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
             this.enchantments.put(instance, Pair.of(instance, integer));
         });
         refreshActiveEnchantments();
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        if (!this.dragSplitting) {
+            this.list.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        }
+        return true;
     }
 
     public void refreshActiveEnchantments() {
