@@ -29,6 +29,7 @@ public class ScrollableListButton<T> extends ExtendedButton {
     private int scrolled;
     private double scrolledD;
     private boolean scrollerClicked;
+    private boolean canScroll = true;
 
 
     public ScrollableListButton(int xPos, int yPos, int width, int height, int itemHeight) {
@@ -43,6 +44,8 @@ public class ScrollableListButton<T> extends ExtendedButton {
     public void setItems(Collection<T> elements) {
         this.listItems.clear();
         elements.forEach(item -> this.listItems.add(this.itemSupplier.apply(item)));
+        this.setScrolled(0);
+        this.canScroll = this.listItems.size() * this.itemHeight > this.height;
     }
 
     public void addItem(T element) {
@@ -51,6 +54,13 @@ public class ScrollableListButton<T> extends ExtendedButton {
 
     public void removeItem(T element) {
         this.listItems.removeIf(item -> item.item == element);
+        if (this.scrolled > this.listItems.size() * this.itemHeight - this.height) {
+            this.setScrolled(this.listItems.size() * this.itemHeight - this.height);
+        }
+    }
+
+    private void setScrolled(int scrolled) {
+        this.scrolledD = this.scrolled = scrolled;
     }
 
     @Override
@@ -120,19 +130,22 @@ public class ScrollableListButton<T> extends ExtendedButton {
         float perc = (float)this.scrolled/(float)(this.listItems.size() * this.itemHeight - this.height);
         int yOffset = (int)(scrollHeight * perc);
         Minecraft.getInstance().textureManager.bindTexture(MISC);
-        blit(matrixStack, this.x + this.width - this.scrollerWidth + 1, this.y + yOffset+ 1, 9,0,7,27);
+        blit(matrixStack, this.x + this.width - this.scrollerWidth + 1, this.y + yOffset+ 1, this.canScroll?9:16,0,7,27);
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-        this.scrolled = MathHelper.clamp(this.scrolled +  4 *((int) -delta), 0, this.listItems.size() * this.itemHeight - this.height);
-        this.scrolledD = scrolled;
-        return true;
+        if (this.canScroll) {
+            this.scrolled = MathHelper.clamp(this.scrolled + 4 * ((int) -delta), 0, this.listItems.size() * this.itemHeight - this.height);
+            this.scrolledD = scrolled;
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if(scrollerClicked) {
+        if(this.canScroll && this.scrollerClicked) {
             this.scrolledD += dragY * 1.5;
             this.scrolled = ((int) this.scrolledD);
             this.scrolled = MathHelper.clamp(this.scrolled, 0 , this.listItems.size() * this.itemHeight - this.height);
@@ -166,7 +179,7 @@ public class ScrollableListButton<T> extends ExtendedButton {
                 }
             }
         }
-        return false;
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
