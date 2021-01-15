@@ -21,9 +21,10 @@ public class EnchanterContainer extends EnchantmentBaseContainer {
     public EnchanterContainer(int id, IInventory inventory, PlayerInventory playerInventory, IWorldPosCallable worldPosCallable) {
         super(ModData.enchanter_container, id, 1);
         this.addSlot(new Slot(inventory, 0, 203, 19) {
+
             @Override
-            public boolean isItemValid(ItemStack stack) {
-                return stack.isEnchantable();
+            public int getSlotStackLimit() {
+                return 1;
             }
 
             @Override

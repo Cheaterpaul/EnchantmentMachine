@@ -67,6 +67,10 @@ public class ScrollableListButton<T> extends ExtendedButton {
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 
         RenderSystem.pushMatrix();
+        this.renderBackground(matrixStack, mouseX, mouseY, partialTicks);
+        RenderSystem.popMatrix();
+
+        RenderSystem.pushMatrix();
         RenderSystem.enableDepthTest();
         RenderSystem.translatef(0.0F, 0.0F, 950.0F);
         RenderSystem.colorMask(false, false, false, false);
@@ -95,10 +99,13 @@ public class ScrollableListButton<T> extends ExtendedButton {
         RenderSystem.popMatrix();
 
         RenderSystem.pushMatrix();
-
         this.renderToolTip(matrixStack, mouseX, mouseY);
         RenderSystem.popMatrix();
 
+    }
+
+    private void renderBackground(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        GuiUtils.drawContinuousTexturedBox(matrixStack, new ResourceLocation("textures/gui/widgets.png"), x, y, 0, 46, this.width - this.scrollerWidth+1, this.height, 200, 20, 3, 3, 3, 3, this.getBlitOffset());
     }
 
     private void renderItems(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
@@ -184,7 +191,6 @@ public class ScrollableListButton<T> extends ExtendedButton {
 
     @Override
     public void renderToolTip(MatrixStack matrixStack, int mouseX, int mouseY) {
-        if (this.scrollerClicked) return;
         if (mouseX > this.x && mouseX < this.x + this.width && mouseY > this.y && mouseY < this.y + this.height) {
 
             int itemHeight = this.itemHeight - 1; // only 1 pixel between items
@@ -218,7 +224,7 @@ public class ScrollableListButton<T> extends ExtendedButton {
 
         private static final ResourceLocation WIDGETS = new ResourceLocation("textures/gui/widgets.png");
 
-        private final T item;
+        protected final T item;
 
         public ListItem(T item) {
             this.item = item;

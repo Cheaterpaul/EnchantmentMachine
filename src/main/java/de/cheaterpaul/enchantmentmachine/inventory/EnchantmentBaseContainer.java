@@ -49,21 +49,24 @@ public abstract class EnchantmentBaseContainer extends Container {
         if (slot != null && slot.getHasStack()) {
             ItemStack slotStack = slot.getStack();
             result = slotStack.copy();
-            if (index < size) {
-                if (!this.mergeItemStack(slotStack, size, 36 + size, false)) {
+            if (index < this.size) {
+                if (!this.mergeItemStack(slotStack, this.size, 36 + this.size, false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (index >= 2 && index < 27 + size) {
-                if (!this.mergeItemStack(slotStack, 0, size, false)) {
+            } else if (index >= this.size && index < 27 + this.size) {
+                if (!this.mergeItemStack(slotStack, 0, this.size, false)) {
                     if (slotStack.isEmpty()) {
                         return ItemStack.EMPTY;
                     }
                 }
-                if (!this.mergeItemStack(slotStack, 27 + size, 36 + size, false)) {
+                if (!this.mergeItemStack(slotStack, 27 + this.size, 36 + this.size, false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (index >= 27 + 2 && index < 36 + size) {
-                if (!this.mergeItemStack(slotStack, 0, 27 + size, false)) {
+            } else if (index >= 27 + this.size && index < 36 + this.size) {
+                if (this.mergeItemStack(slotStack, 0, this.size, false)) {
+                    return ItemStack.EMPTY;
+                }
+                if (!this.mergeItemStack(slotStack, this.size + 1, 27 + this.size, false)) {
                     return ItemStack.EMPTY;
                 }
             }
