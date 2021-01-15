@@ -101,12 +101,18 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
         Map<Enchantment, Integer> enchantmentMap =EnchantmentHelper.getEnchantments(stack);
         EnchantmentTileEntity te=        getConnectedEnchantmentTE().get();
 
+        boolean book = stack.getItem() == Items.BOOK;
+
+        if (book) {
+            stack = new ItemStack(Items.ENCHANTED_BOOK);
+        }
+
         for(EnchantmentInstance enchInst : enchantments){
             if(!te.hasEnchantment(enchInst)){
                 LOGGER.warn("Enchantment {} requested but not available",enchInst);
                 return false;
             }
-            if(!enchInst.getEnchantment().canApply(stack)){
+            if(!(enchInst.getEnchantment().canApply(stack) || book)){
                 LOGGER.warn("Enchantment {} cannot be applied to {}",enchInst.getEnchantment(),stack );
                 return false;
             }
@@ -118,7 +124,7 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
                     enchInst = new EnchantmentInstance(enchantment,newLevel); //Override enchInst in loop. It will be added to the map later on (and override previous entry for this enchantment)
                     continue;
                 }
-               else if(enchInst.getEnchantment().isCompatibleWith(enchantment)){
+               else if(!enchInst.getEnchantment().isCompatibleWith(enchantment)){
                    LOGGER.warn("Incompatible enchantments {} and {}", enchInst, enchantment);
                    return false;
                }
@@ -126,7 +132,13 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
             enchantmentMap.put(enchInst.getEnchantment(), enchInst.getLevel());
         }
         //Everything good
-        EnchantmentHelper.setEnchantments(enchantmentMap, stack);
+        if (book) {
+            ItemStack finalStack = stack;
+            enchantmentMap.forEach((ench, lvl) -> EnchantedBookItem.addEnchantment(finalStack, new EnchantmentData(ench,lvl)));
+            this.inventory.set(0, stack);
+        } else {
+            EnchantmentHelper.setEnchantments(enchantmentMap, stack);
+        }
         enchantments.forEach(te::consumeEnchantment);
         return true;
     }

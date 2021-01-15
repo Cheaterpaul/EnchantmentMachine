@@ -4,5 +4,7 @@
   "block.enchantmentmachine.disenchanter_block": "Disenchanter",
   "tile.enchantmentmachine.disenchanter.name": "Disenchanter",
   "block.enchantmentmachine.enchantment_block": "Enchantment Block",
-  "itemGroup.enchantmentmachine": "Enchantment Machine"
+  "itemGroup.enchantmentmachine": "Enchantment Machine",
+  "text.enchantmentmachine.enchant": "Enchant",
+  "text.enchantmentmachine.unavailable": "Incompatible"
 }
