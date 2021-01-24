@@ -82,12 +82,12 @@ public class EnchantmentScreen extends Screen {
         public void render(MatrixStack matrixStack, int x, int y, int listWidth, int listHeight, int itemHeight, int yOffset, int mouseX, int mouseY, float partialTicks, float zLevel) {
             super.render(matrixStack, x, y, listWidth, listHeight, itemHeight, yOffset, mouseX, mouseY, partialTicks, zLevel);
             EnchantmentScreen.this.itemRenderer.renderItemAndEffectIntoGuiWithoutEntity(bookStack, x + 5,y +2 + yOffset);
-//            EnchantmentScreen.this.font.drawStringWithShadow(matrixStack, name.getString(), x + 25,y + yOffset + 5, name.getStyle().getColor().getColor());
+            EnchantmentScreen.this.font.drawStringWithShadow(matrixStack, name.getString(), x + 25,y + yOffset + 5, name.getStyle().getColor().getColor());
 
 
             String count = String.valueOf(bookStack.getCount());
 
-//            EnchantmentScreen.this.font.drawStringWithShadow(matrixStack, count, x + listWidth - 10, y + yOffset + 5, 0xffffff);
+            EnchantmentScreen.this.font.drawStringWithShadow(matrixStack, count, x + listWidth - 10, y + yOffset + 5, 0xffffff);
         }
 
         @Override

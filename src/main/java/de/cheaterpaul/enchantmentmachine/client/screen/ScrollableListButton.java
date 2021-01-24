@@ -71,7 +71,6 @@ public class ScrollableListButton<T> extends ExtendedButton {
         RenderSystem.popMatrix();
 
         RenderSystem.pushMatrix();
-        RenderSystem.enableDepthTest();
         RenderSystem.translatef(0.0F, 0.0F, 950.0F);
         RenderSystem.colorMask(false, false, false, false);
         fill(matrixStack, 4680, 2260, -4680, -2260, -16777216);
