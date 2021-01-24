@@ -97,6 +97,7 @@ public class ScrollableListButton<T> extends ExtendedButton {
         RenderSystem.depthFunc(515);
         RenderSystem.popMatrix();
 
+        RenderSystem.translatef(0,0,550);
         RenderSystem.pushMatrix();
         this.renderToolTip(matrixStack, mouseX, mouseY);
         RenderSystem.popMatrix();
