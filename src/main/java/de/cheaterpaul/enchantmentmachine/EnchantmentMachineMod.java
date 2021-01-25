@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -36,10 +37,16 @@ public class EnchantmentMachineMod {
         bus.addListener(ModDataGenerator::gatherData);
         bus.addListener(this::onLoadComplete);
         bus.addListener(this::onCommonSetup);
+        bus.addListener(this::onClientSetup);
+        bus.addListener(PROXY::onTextureStitchEvent);
     }
 
     public void onLoadComplete(FMLLoadCompleteEvent event) {
         PROXY.onLoadComplete();
+    }
+
+    public void onClientSetup(FMLClientSetupEvent event) {
+        PROXY.onClientSetup();
     }
 
     public void onCommonSetup(FMLCommonSetupEvent event) {

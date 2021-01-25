@@ -60,9 +60,9 @@ public class ModData {
     }
 
     static {
-        (enchanter_block = new EnchanterBlock(AbstractBlock.Properties.create(Material.IRON, MaterialColor.IRON))).setRegistryName(REFERENCE.MODID, "enchanter_block");
-        (disenchanter_block = new DisenchanterBlock(AbstractBlock.Properties.create(Material.IRON, MaterialColor.IRON))).setRegistryName(REFERENCE.MODID, "disenchanter_block");
-        (enchantment_block = new EnchantmentBlock(AbstractBlock.Properties.create(Material.IRON, MaterialColor.IRON))).setRegistryName(REFERENCE.MODID, "enchantment_block");
+        (enchanter_block = new EnchanterBlock(AbstractBlock.Properties.create(Material.IRON, MaterialColor.IRON).setRequiresTool().hardnessAndResistance(5.0F, 1200.0F))).setRegistryName(REFERENCE.MODID, "enchanter_block");
+        (disenchanter_block = new DisenchanterBlock(AbstractBlock.Properties.create(Material.IRON, MaterialColor.IRON).setRequiresTool().hardnessAndResistance(5.0F, 1200.0F))).setRegistryName(REFERENCE.MODID, "disenchanter_block");
+        (enchantment_block = new EnchantmentBlock(AbstractBlock.Properties.create(Material.IRON, MaterialColor.IRON).setRequiresTool().hardnessAndResistance(5.0F, 1200.0F).notSolid())).setRegistryName(REFERENCE.MODID, "enchantment_block");
         (enchanter_tile = TileEntityType.Builder.create(EnchanterTileEntity::new, enchanter_block).build(null)).setRegistryName(REFERENCE.MODID, "enchanter_tile");
         (disenchanter_tile = TileEntityType.Builder.create(DisenchanterTileEntity::new, disenchanter_block).build(null)).setRegistryName(REFERENCE.MODID, "disenchanter_tile");
         (enchantment_tile = TileEntityType.Builder.create(EnchantmentTileEntity::new, enchantment_block).build(null)).setRegistryName(REFERENCE.MODID, "enchantment_tile");

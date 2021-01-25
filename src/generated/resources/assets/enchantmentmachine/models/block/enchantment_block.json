@@ -1,6 +1,9 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/enchanting_table",
   "textures": {
-    "all": "minecraft:block/stone"
+    "particle": "enchantmentmachine:block/enchanting_table_bottom",
+    "top": "enchantmentmachine:block/enchanting_table_top",
+    "side": "enchantmentmachine:block/enchanting_table_side",
+    "bottom": "enchantmentmachine:block/enchanting_table_bottom"
   }
 }

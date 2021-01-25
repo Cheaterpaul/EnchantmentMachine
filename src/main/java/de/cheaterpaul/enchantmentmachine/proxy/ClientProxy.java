@@ -9,6 +9,8 @@ import de.cheaterpaul.enchantmentmachine.tiles.EnchantmentTileEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.MinecraftForge;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientProxy extends CommonProxy {
@@ -16,6 +18,16 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void onLoadComplete() {
         ModClientData.registerScreens();
+    }
+
+    @Override
+    public void onClientSetup() {
+        ModClientData.registerTileEntityRenderer();
+    }
+
+    @Override
+    public void onTextureStitchEvent(TextureStitchEvent.Pre event) {
+        ModClientData.textureStitchEvent(event);
     }
 
     @Override
