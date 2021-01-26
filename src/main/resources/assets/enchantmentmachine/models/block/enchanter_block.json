@@ -1,0 +1,76 @@
+{
+	"__comment": "Designed by Cheaterpaul with Cubik Studio - https://cubik.studio",
+	"parent": "block/block",
+	"textures": {
+		"particle": "enchantmentmachine:block/enchanting_table_bottom",
+		"bottom": "enchantmentmachine:block/enchanting_table_bottom",
+		"top": "enchantmentmachine:block/enchanting_table_top",
+		"side": "enchantmentmachine:block/enchanting_table_side",
+		"hammer": "enchantmentmachine:block/enchanting_block_hammer"
+	},
+	"elements": [ 	 
+		{
+			"__comment": "Element",
+			"from": [ 0, 0, 0 ],
+			"to": [ 16, 12, 16 ],
+			"faces": {
+				"down": { "uv": [ 0, 0, 16, 16 ], "texture": "#bottom", "cullface": "down" },
+				"up": { "uv": [ 0, 0, 16, 16 ], "texture": "#top" },
+				"north": { "uv": [ 0, 4, 16, 16 ], "texture": "#side", "cullface": "north" },
+				"south": { "uv": [ 0, 4, 16, 16 ], "texture": "#side", "cullface": "south" },
+				"west": { "uv": [ 0, 4, 16, 16 ], "texture": "#side", "cullface": "west" },
+				"east": { "uv": [ 0, 4, 16, 16 ], "texture": "#side", "cullface": "east" }
+			}
+		},
+		{
+			"__comment": "Box2",
+			"from": [ 2, 12, 2 ],
+			"to": [ 7, 15, 5 ],
+			"faces": {
+				"up": { "uv": [ 0, 0, 5, 3 ], "texture": "#hammer" },
+				"north": { "uv": [ 0, 0, 5, 3 ], "texture": "#hammer" },
+				"south": { "uv": [ 0, 0, 5, 3 ], "texture": "#hammer" },
+				"west": { "uv": [ 4, 0, 7, 3 ], "texture": "#hammer" },
+				"east": { "uv": [ 4, 0, 7, 3 ], "texture": "#hammer" }
+			}
+		},
+		{
+			"__comment": "Box3",
+			"from": [ 4, 13, 5 ],
+			"to": [ 5, 14, 11 ],
+			"faces": {
+				"down": { "uv": [ 0, 5, 1, 11 ], "texture": "#hammer" },
+				"up": { "uv": [ 0, 5, 1, 11 ], "texture": "#hammer" },
+				"north": { "uv": [ 0, 4, 1, 5 ], "texture": "#hammer" },
+				"south": { "uv": [ 0, 4, 1, 5 ], "texture": "#hammer" },
+				"west": { "uv": [ 1, 4, 7, 5 ], "texture": "#hammer" },
+				"east": { "uv": [ 1, 4, 7, 5 ], "texture": "#hammer" }
+			}
+		},
+		{
+			"__comment": "Box2",
+			"from": [ 9, 12, 11 ],
+			"to": [ 14, 15, 14 ],
+			"faces": {
+				"up": { "uv": [ 0, 0, 5, 3 ], "texture": "#hammer" },
+				"north": { "uv": [ 0, 0, 5, 3 ], "texture": "#hammer" },
+				"south": { "uv": [ 0, 0, 5, 3 ], "texture": "#hammer" },
+				"west": { "uv": [ 4, 0, 7, 3 ], "texture": "#hammer" },
+				"east": { "uv": [ 4, 0, 7, 3 ], "texture": "#hammer" }
+			}
+		},
+		{
+			"__comment": "Box3",
+			"from": [ 11, 13, 5 ],
+			"to": [ 12, 14, 11 ],
+			"faces": {
+				"down": { "uv": [ 0, 5, 1, 11 ], "texture": "#hammer" },
+				"up": { "uv": [ 0, 5, 1, 11 ], "texture": "#hammer" },
+				"north": { "uv": [ 0, 4, 1, 5 ], "texture": "#hammer" },
+				"south": { "uv": [ 0, 4, 1, 5 ], "texture": "#hammer" },
+				"west": { "uv": [ 1, 4, 7, 5 ], "texture": "#hammer" },
+				"east": { "uv": [ 1, 4, 7, 5 ], "texture": "#hammer" }
+			}
+		}
+	]
+}

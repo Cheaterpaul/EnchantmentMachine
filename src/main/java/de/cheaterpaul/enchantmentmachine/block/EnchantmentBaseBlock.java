@@ -15,9 +15,6 @@ import net.minecraft.world.World;
 
 public abstract class EnchantmentBaseBlock extends ContainerBlock {
 
-    protected static final VoxelShape SHAPE = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 12.0D, 16.0D);
-
-
     public EnchantmentBaseBlock(Properties properties) {
         super(properties);
     }
@@ -38,8 +35,4 @@ public abstract class EnchantmentBaseBlock extends ContainerBlock {
         super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
     }
 
-    @Override
-    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
-        return SHAPE;
-    }
 }
