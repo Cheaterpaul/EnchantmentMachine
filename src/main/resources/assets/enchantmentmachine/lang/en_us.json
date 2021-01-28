@@ -6,5 +6,6 @@
   "block.enchantmentmachine.enchantment_block": "Enchantment Block",
   "itemGroup.enchantmentmachine": "Enchantment Machine",
   "text.enchantmentmachine.enchant": "Enchant",
-  "text.enchantmentmachine.unavailable": "Incompatible"
+  "text.enchantmentmachine.unavailable": "Incompatible",
+  "text.enchantment_block.contained_enchantments": "Contained Enchantments: %s"
 }

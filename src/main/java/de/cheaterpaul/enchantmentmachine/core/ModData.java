@@ -17,6 +17,7 @@ import net.minecraft.block.material.MaterialColor;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.Rarity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -43,7 +44,7 @@ public class ModData {
     public static void registerItems(RegistryEvent.Register<Item> event) {
         event.getRegistry().register(new BlockItem(enchanter_block, new Item.Properties().group(EnchantmentMachineMod.CREATIVE_TAB)).setRegistryName(REFERENCE.MODID,"enchanter_block"));
         event.getRegistry().register(new BlockItem(disenchanter_block, new Item.Properties().group(EnchantmentMachineMod.CREATIVE_TAB)).setRegistryName(REFERENCE.MODID,"disenchanter_block"));
-        event.getRegistry().register(new BlockItem(enchantment_block, new Item.Properties().group(EnchantmentMachineMod.CREATIVE_TAB)).setRegistryName(REFERENCE.MODID,"enchantment_block"));
+        event.getRegistry().register(new BlockItem(enchantment_block, new Item.Properties().group(EnchantmentMachineMod.CREATIVE_TAB).maxStackSize(1).rarity(Rarity.RARE)).setRegistryName(REFERENCE.MODID,"enchantment_block"));
     }
 
     @SubscribeEvent

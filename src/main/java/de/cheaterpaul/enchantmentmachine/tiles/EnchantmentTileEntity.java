@@ -159,6 +159,10 @@ public class EnchantmentTileEntity extends TileEntity implements IEnchantmentMac
         return Object2IntMaps.unmodifiable(enchantmentMaps);
     }
 
+    public int getEnchantmentCount(){
+        return enchantmentMaps.values().stream().mapToInt(s -> s).sum();
+    }
+
     @Override
     public void read(BlockState state, CompoundNBT nbt) {
         super.read(state, nbt);
@@ -189,6 +193,12 @@ public class EnchantmentTileEntity extends TileEntity implements IEnchantmentMac
     public CompoundNBT write(CompoundNBT compound) {
         compound = super.write(compound);
 
+        writeEnchantments(compound);
+
+        return compound;
+    }
+
+    public void writeEnchantments(CompoundNBT compound) {
         ListNBT enchantments = new ListNBT();
         enchantmentMaps.forEach((inst, count) -> {
             CompoundNBT enchantment = new CompoundNBT();
@@ -199,7 +209,6 @@ public class EnchantmentTileEntity extends TileEntity implements IEnchantmentMac
         });
 
         compound.put("enchantments",enchantments);
-        return compound;
     }
 
     @Override
