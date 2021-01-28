@@ -137,12 +137,12 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
 
             super.render(matrixStack, x, y, listWidth, listHeight, itemHeight, yOffset, mouseX, mouseY, partialTicks, zLevel);
             EnchanterScreen.this.itemRenderer.renderItemAndEffectIntoGuiWithoutEntity(bookStack, x + 5,y +2 + yOffset);
-            EnchanterScreen.this.font.drawString(matrixStack, name.getString(), x + 25,y + yOffset + 5, name.getStyle().getColor().getColor());
+            EnchanterScreen.this.font.drawStringWithShadow(matrixStack, name.getString(), x + 25,y + yOffset + 5, name.getStyle().getColor().getColor());
 
 
             String count = String.valueOf(bookStack.getCount());
 
-            EnchanterScreen.this.font.drawString(matrixStack, count, x + listWidth - 20, y + yOffset + 5, 0xffffff);
+            EnchanterScreen.this.font.drawStringWithShadow(matrixStack, count, x + listWidth - 20, y + yOffset + 5, 0xffffff);
 
             this.button.x = x + listWidth - 12;
             this.button.y = y + yOffset + 2;
