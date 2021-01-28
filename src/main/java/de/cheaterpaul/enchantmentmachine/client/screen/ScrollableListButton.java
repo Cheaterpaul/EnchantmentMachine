@@ -67,27 +67,26 @@ public class ScrollableListButton<T> extends ExtendedButton {
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 
         RenderSystem.pushMatrix();
-        this.renderBackground(matrixStack, mouseX, mouseY, partialTicks);
-        RenderSystem.popMatrix();
-
-        RenderSystem.pushMatrix();
-        RenderSystem.translatef(0.0F, 0.0F, 950.0F);
+        RenderSystem.enableDepthTest();
+        RenderSystem.translatef(0,0,950);
         RenderSystem.colorMask(false, false, false, false);
         fill(matrixStack, 4680, 2260, -4680, -2260, -16777216);
         RenderSystem.colorMask(true, true, true, true);
         RenderSystem.translatef(0.0F, 0.0F, -950.0F);
+
         RenderSystem.depthFunc(518);
-        RenderSystem.translatef(this.x, this.y,0.0f);
-        RenderSystem.colorMask(false, false, false, false);
-
-        fill(matrixStack, this.width, this.height, 0, 0, -0xffffff);
-        RenderSystem.colorMask(true, true, true, true);
-
-        RenderSystem.translatef(-this.x, -this.y,0.0f);
+        matrixStack.translate(this.x,this.y, 0);
+        fill(matrixStack, this.width, this.height, 0, 0, -0xff0000);
+        matrixStack.translate(-x,-y,0);
         RenderSystem.depthFunc(515);
+        RenderSystem.disableDepthTest();
+
+        this.renderBackground(matrixStack, mouseX,  mouseY, partialTicks);
+
 
         this.renderItems(matrixStack, mouseX, mouseY, partialTicks);
 
+        RenderSystem.enableDepthTest();
         RenderSystem.depthFunc(518);
         RenderSystem.translatef(0.0F, 0.0F, -950.0F);
         RenderSystem.colorMask(false, false, false, false);
@@ -95,13 +94,10 @@ public class ScrollableListButton<T> extends ExtendedButton {
         RenderSystem.colorMask(true, true, true, true);
         RenderSystem.translatef(0.0F, 0.0F, 950.0F);
         RenderSystem.depthFunc(515);
+        RenderSystem.disableDepthTest();
         RenderSystem.popMatrix();
 
-        RenderSystem.translatef(0,0,550);
-        RenderSystem.pushMatrix();
         this.renderToolTip(matrixStack, mouseX, mouseY);
-        RenderSystem.popMatrix();
-
     }
 
     private void renderBackground(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
@@ -114,13 +110,8 @@ public class ScrollableListButton<T> extends ExtendedButton {
 
             int y = i*itemHeight - scrolled;
 
-            if (y < -itemHeight) {
-                continue;
-            }
-
-
             ListItem<T> item = this.listItems.get(i);
-            item.render(matrixStack, this.x, this.y, this.width  - scrollerWidth, this.height, this.itemHeight, y,  mouseX, mouseY, partialTicks, this.getBlitOffset());
+            item.render(matrixStack, this.x, this.y+1, this.width  - scrollerWidth, this.height, this.itemHeight, y,  mouseX, mouseY, partialTicks, this.getBlitOffset());
 
         }
         this.renderScrollBar(matrixStack, mouseX, mouseY, partialTicks);
@@ -231,34 +222,9 @@ public class ScrollableListButton<T> extends ExtendedButton {
         }
 
         public void render(MatrixStack matrixStack, int x, int y, int listWidth, int listHeight, int itemHeight, int yOffset, int mouseX, int mouseY, float partialTicks, float zLevel) {
-            int ySize = MathHelper.clamp(listHeight - yOffset, 0, itemHeight);
-            int yTopBorder = 3;
-            int yBottomBorder = 3;
-            int v = 66;
-            int textureHeight = 20;
-            if (ySize <= 0) return;
-            if (ySize < itemHeight) {
-                if (ySize < 3) {
-                    yTopBorder = ySize;
-                }
-                yBottomBorder = 0;
-                textureHeight -= 3;
-            }
-            if (yOffset < 0) {
-                ySize += yOffset;
-                yTopBorder = Math.max(0, yTopBorder + yOffset);
-                v += 3 - yTopBorder;
-                textureHeight -= 3 - yTopBorder;
-                if (-yOffset >= itemHeight - 2) {
-                    yBottomBorder = 1;
-                }
-                yOffset = 0;
-            }
-            renderBox(matrixStack, WIDGETS, x, y + yOffset, 0, v, listWidth + 1, ySize, 200, textureHeight, yTopBorder, yBottomBorder, 3, 3, zLevel);
-        }
-
-        public void renderBox(MatrixStack matrixStack, ResourceLocation texture, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight, int topBorder, int bottomBorder, int leftBorder, int rightBorder, float partialTicks) {
-            GuiUtils.drawContinuousTexturedBox(matrixStack, texture, x, y, u, v, width, height, textureWidth, textureHeight, topBorder, bottomBorder, leftBorder, rightBorder, partialTicks);
+            RenderSystem.enableDepthTest();
+            GuiUtils.drawContinuousTexturedBox(matrixStack, WIDGETS, x, y + yOffset, 0, 66, listWidth + 1, itemHeight, 200, 20, 3, 3, 3, 3, zLevel);
+            RenderSystem.disableDepthTest();
         }
 
         public void preRenderToolTip(MatrixStack matrixStack, int x, int y, int listWidth, int listHeight, int itemHeight, int yOffset, int mouseX, int mouseY, float zLevel) {
