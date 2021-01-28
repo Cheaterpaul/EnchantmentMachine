@@ -2,6 +2,7 @@ package de.cheaterpaul.enchantmentmachine.block;
 
 import de.cheaterpaul.enchantmentmachine.core.ModData;
 import de.cheaterpaul.enchantmentmachine.tiles.EnchantmentBaseTileEntity;
+import de.cheaterpaul.enchantmentmachine.tiles.EnchantmentTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
@@ -26,10 +27,15 @@ public abstract class EnchantmentBaseBlock extends ContainerBlock {
 
     @Override
     public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
-        if (worldIn.getBlockState(fromPos).getBlock() == ModData.enchantment_block) {
+        if (worldIn.getBlockState(fromPos).getBlock() instanceof EnchantmentBaseBlock) {
+            BlockPos mainPos = fromPos;
             TileEntity te = worldIn.getTileEntity(pos);
+            if (te instanceof EnchantmentTileEntity) {
+                te = worldIn.getTileEntity(fromPos);
+                mainPos = pos;
+            }
             if(te instanceof EnchantmentBaseTileEntity){
-                ((EnchantmentBaseTileEntity) te).onNeighbourChanged(worldIn, fromPos);
+                ((EnchantmentBaseTileEntity) te).onNeighbourChanged(worldIn, mainPos);
             }
         }
         super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
