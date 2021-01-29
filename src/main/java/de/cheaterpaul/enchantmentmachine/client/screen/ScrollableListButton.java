@@ -144,8 +144,10 @@ public class ScrollableListButton<T> extends ExtendedButton {
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
         if(this.canScroll && this.scrollerClicked) {
-            this.scrolledD += dragY * 1.5;
-            this.scrolled = ((int) this.scrolledD);
+            double perc = (dragY/(this.height-27));
+            double s = (this.listItems.size() * this.itemHeight - this.height) * perc;
+            this.scrolledD += s;
+            this.scrolled = ((int) scrolledD);
             this.scrolled = MathHelper.clamp(this.scrolled, 0 , this.listItems.size() * this.itemHeight - this.height);
             return true;
         }
