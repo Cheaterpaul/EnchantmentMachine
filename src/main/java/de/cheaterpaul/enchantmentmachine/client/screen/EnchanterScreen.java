@@ -32,7 +32,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
 
     private Map<EnchantmentInstance,Pair<EnchantmentInstance,Integer>> enchantments = new HashMap<>();
     private ScrollableListButton<Pair<EnchantmentInstance,Integer>> list;
-    private Set<Enchantment> itemEnchantments = new HashSet<>();
+    private Map<Enchantment,Integer> itemEnchantments = new HashMap<>();
 
 
     public EnchanterScreen(EnchanterContainer container, PlayerInventory playerInventory, ITextComponent name) {
@@ -84,7 +84,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
 
     public void refreshActiveEnchantments() {
         ItemStack stack = this.container.getSlot(0).getStack();
-        this.itemEnchantments = EnchantmentHelper.getEnchantments(stack).keySet();
+        this.itemEnchantments = EnchantmentHelper.getEnchantments(stack);
         if (stack.isEmpty()) {
             this.list.setItems(this.enchantments.values());
         } else {
@@ -94,7 +94,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
 
     private void apply(EnchantmentInstance instance) {
         if (this.container.getSlot(0).getHasStack()) {
-            if (EnchantmentHelper.areAllCompatibleWith(itemEnchantments, instance.getEnchantment())) {
+            if (EnchantmentHelper.areAllCompatibleWith(itemEnchantments.keySet(), instance.getEnchantment()) || hasEqualEnchantments(itemEnchantments, instance)) {
                 EnchantmentMachineMod.DISPATCHER.sendToServer(new EnchantingPacket(Collections.singletonList(instance)));
                 Pair<EnchantmentInstance, Integer> value = this.enchantments.get(instance);
                 if (value.getValue() > 1) {
@@ -105,6 +105,17 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
             }
         }
         refreshActiveEnchantments();
+    }
+
+    private boolean hasEqualEnchantments(Map<Enchantment, Integer> itemEnchantments, EnchantmentInstance enchantment) {
+        for (Map.Entry<Enchantment, Integer> entry : itemEnchantments.entrySet()) {
+            if (entry.getKey() == enchantment.getEnchantment()) {
+                if (entry.getKey().getMaxLevel() != entry.getValue() && entry.getValue() <= enchantment.getLevel()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private class EnchantmentItem extends ScrollableListButton.ListItem<Pair<EnchantmentInstance,Integer>> {
@@ -134,14 +145,12 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
 
         @Override
         public void render(MatrixStack matrixStack, int x, int y, int listWidth, int listHeight, int itemHeight, int yOffset, int mouseX, int mouseY, float partialTicks, float zLevel) {
-
             super.render(matrixStack, x, y, listWidth, listHeight, itemHeight, yOffset, mouseX, mouseY, partialTicks, zLevel);
+
             EnchanterScreen.this.itemRenderer.renderItemAndEffectIntoGuiWithoutEntity(bookStack, x + 5,y +2 + yOffset);
             EnchanterScreen.this.font.drawStringWithShadow(matrixStack, name.getString(), x + 25,y + yOffset + 5, name.getStyle().getColor().getColor());
 
-
             String count = String.valueOf(bookStack.getCount());
-
             EnchanterScreen.this.font.drawStringWithShadow(matrixStack, count, x + listWidth - 20, y + yOffset + 5, 0xffffff);
 
             this.button.x = x + listWidth - 12;
@@ -162,7 +171,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
         }
 
         private boolean isCompatible() {
-            return EnchantmentHelper.areAllCompatibleWith(EnchanterScreen.this.itemEnchantments,this.item.getKey().getEnchantment());
+            return EnchantmentHelper.areAllCompatibleWith(EnchanterScreen.this.itemEnchantments.keySet(),this.item.getKey().getEnchantment()) || hasEqualEnchantments(EnchanterScreen.this.itemEnchantments,this.item.getKey());
         }
 
         @Override
