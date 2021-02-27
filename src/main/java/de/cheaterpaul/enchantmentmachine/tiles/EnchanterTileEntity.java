@@ -32,7 +32,7 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
 
     private static final ITextComponent name = Utils.genTranslation("tile", "enchanter.name");
 
-    private NonNullList<ItemStack> inventory = NonNullList.withSize(1, ItemStack.EMPTY);
+    private final NonNullList<ItemStack> inventory = NonNullList.withSize(1, ItemStack.EMPTY);
 
 
     public EnchanterTileEntity() {
@@ -109,7 +109,7 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
         if (book) {
             stack = new ItemStack(Items.ENCHANTED_BOOK);
         }
-
+        int requiredLevels = 0;
         for(EnchantmentInstance enchInst : enchantments){
             if(!te.hasEnchantment(enchInst)){
                 LOGGER.warn("Enchantment {} requested but not available",enchInst);
@@ -122,22 +122,44 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
             //TODO experience
             for (Map.Entry<Enchantment,Integer> entry : enchantmentMap.entrySet()) {
                 Enchantment enchantment = entry.getKey();
-                if(enchantment==enchInst.getEnchantment()){ //Combine enchantments if it is already present. Choose highest level or level +1 if both have the same.
-                    int newLevel = Math.min(enchantment.getMaxLevel(),enchInst.getLevel()==entry.getValue() ? enchInst.getLevel()+1 : Math.max(enchInst.getLevel(), entry.getValue()));
-                    enchInst = new EnchantmentInstance(enchantment,newLevel); //Override enchInst in loop. It will be added to the map later on (and override previous entry for this enchantment)
+                if (enchantment == enchInst.getEnchantment()) { //Combine enchantments if it is already present. Choose highest level or level +1 if both have the same.
+                    int newLevel = Math.min(enchantment.getMaxLevel(), enchInst.getLevel() == entry.getValue() ? enchInst.getLevel() + 1 : Math.max(enchInst.getLevel(), entry.getValue()));
+                    enchInst = new EnchantmentInstance(enchantment, newLevel); //Override enchInst in loop. It will be added to the map later on (and override previous entry for this enchantment)
                     continue;
+                } else if (!enchInst.getEnchantment().isCompatibleWith(enchantment)) {
+                    LOGGER.warn("Incompatible enchantments {} and {}", enchInst, enchantment);
+                    return false;
                 }
-               else if(!enchInst.getEnchantment().isCompatibleWith(enchantment)){
-                   LOGGER.warn("Incompatible enchantments {} and {}", enchInst, enchantment);
-                   return false;
-               }
             }
+            int baseCost = 0;
+            switch (enchInst.getEnchantment().getRarity()) {
+                case COMMON:
+                    baseCost = 1;
+                    break;
+                case UNCOMMON:
+                    baseCost = 2;
+                    break;
+                case RARE:
+                    baseCost = 4;
+                    break;
+                case VERY_RARE:
+                    baseCost = 8;
+            }
+
+            if (book) {
+                baseCost = Math.max(1, baseCost / 2);
+            }
+            requiredLevels += baseCost * enchInst.getLevel();
+
             enchantmentMap.put(enchInst.getEnchantment(), enchInst.getLevel());
         }
+//        if (!user.abilities.isCreativeMode) {
+//            user.addExperienceLevel(-requiredLevels);
+//        }
         //Everything good
         if (book) {
             ItemStack finalStack = stack;
-            enchantmentMap.forEach((ench, lvl) -> EnchantedBookItem.addEnchantment(finalStack, new EnchantmentData(ench,lvl)));
+            enchantmentMap.forEach((ench, lvl) -> EnchantedBookItem.addEnchantment(finalStack, new EnchantmentData(ench, lvl)));
             this.inventory.set(0, stack);
         } else {
             EnchantmentHelper.setEnchantments(enchantmentMap, stack);
