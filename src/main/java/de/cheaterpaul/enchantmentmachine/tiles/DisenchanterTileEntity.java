@@ -17,6 +17,8 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.tileentity.HopperTileEntity;
+import net.minecraft.tileentity.IHopper;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
@@ -31,12 +33,12 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Map;
 
-public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements ITickableTileEntity, ISidedInventory {
+public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements ITickableTileEntity, ISidedInventory, IHopper {
 
     private static final ITextComponent name = Utils.genTranslation("tile", "disenchanter.name");
 
-    private LazyOptional<? extends IItemHandler>[] itemHandler = SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
-    private NonNullList<ItemStack> inventory = NonNullList.withSize(2, ItemStack.EMPTY);
+    private final LazyOptional<? extends IItemHandler>[] itemHandler = SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
+    private final NonNullList<ItemStack> inventory = NonNullList.withSize(2, ItemStack.EMPTY);
 
     private final static int DURATION = 20;
     /**
@@ -44,6 +46,7 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
      * >0 if waiting
      */
     private int timer;
+    private int transferCooldown;
 
     public DisenchanterTileEntity() {
         super(ModData.disenchanter_tile);
@@ -121,29 +124,8 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
     }
 
     @Override
-    public void tick() {
-        if(this.timer>0&&this.hasConnectedTE()){
-            if(--this.timer==0){
-                getConnectedEnchantmentTE().ifPresent(te-> {
-                    ItemStack stack = this.inventory.get(0);
-                    Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(stack);
-                    map.entrySet().forEach(e->{
-                        EnchantmentInstance inst = new EnchantmentInstance(e.getKey(),e.getValue());
-                        te.addEnchantment(inst);
-                    });
-                    EnchantmentHelper.setEnchantments(Collections.emptyMap(),stack);
-                    if (stack.getItem() == Items.ENCHANTED_BOOK) {
-                        stack = new ItemStack(Items.BOOK);
-                    }
-                    ItemStack slot = getStackInSlot(1);
-                    if (!slot.isEmpty() && slot.isItemEqual(stack)) {
-                        stack.shrink(-slot.getCount());
-                    }
-                    setInventorySlotContents(1,stack);
-                    setInventorySlotContents(0,ItemStack.EMPTY);
-                });
-            }
-        }
+    public double getXPos() {
+        return this.pos.getX() + 0.5;
     }
 
     @Override
@@ -218,6 +200,51 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
         super.remove();
         for (int x = 0; x < itemHandler.length; x++) {
             itemHandler[x].invalidate();
+        }
+    }
+
+    @Override
+    public double getYPos() {
+        return this.pos.getY() + 0.5;
+    }
+
+    @Override
+    public double getZPos() {
+        return this.pos.getZ() + 0.5;
+    }
+
+    @Override
+    public void tick() {
+        if (this.timer > 0 && this.hasConnectedTE()) {
+            if (--this.timer == 0) {
+                getConnectedEnchantmentTE().ifPresent(te -> {
+                    ItemStack stack = this.inventory.get(0);
+                    Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(stack);
+                    map.entrySet().forEach(e -> {
+                        EnchantmentInstance inst = new EnchantmentInstance(e.getKey(), e.getValue());
+                        te.addEnchantment(inst);
+                    });
+                    EnchantmentHelper.setEnchantments(Collections.emptyMap(), stack);
+                    if (stack.getItem() == Items.ENCHANTED_BOOK) {
+                        stack = new ItemStack(Items.BOOK);
+                    }
+                    ItemStack slot = getStackInSlot(1);
+                    if (!slot.isEmpty() && slot.isItemEqual(stack)) {
+                        stack.shrink(-slot.getCount());
+                    }
+                    setInventorySlotContents(1, stack);
+                    setInventorySlotContents(0, ItemStack.EMPTY);
+                });
+            }
+        }
+        if (this.world != null && !this.world.isRemote) {
+            --this.transferCooldown;
+            if (transferCooldown <= 0) {
+                this.transferCooldown = 0;
+                if (HopperTileEntity.pullItems(this)) {
+                    this.transferCooldown = 0;
+                }
+            }
         }
     }
 }
