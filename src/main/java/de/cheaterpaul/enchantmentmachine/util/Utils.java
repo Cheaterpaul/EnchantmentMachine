@@ -24,11 +24,11 @@ public class Utils {
      *
      * @param enchInst             toApply
      * @param existingEnchantments exiting
-     * @param isBook               if targeting a book (for XP cost)
+     * @param reducedPrice         use reduced price (vanilla does this when enchantment comes from a book and not when combining items)
      * @return Null if incompatible
      */
     @Nullable
-    public static Pair<EnchantmentInstance, Integer> tryApplyEnchantment(EnchantmentInstance enchInst, Map<Enchantment, Integer> existingEnchantments, boolean isBook) {
+    public static Pair<EnchantmentInstance, Integer> tryApplyEnchantment(EnchantmentInstance enchInst, Map<Enchantment, Integer> existingEnchantments, boolean reducedPrice) {
         for (Map.Entry<Enchantment, Integer> entry : existingEnchantments.entrySet()) {
             Enchantment enchantment = entry.getKey();
             if (enchantment == enchInst.getEnchantment()) { //Combine enchantments if it is already present. Choose highest level or level +1 if both have the same.
@@ -54,7 +54,7 @@ public class Utils {
                 baseCost = 8;
         }
 
-        if (isBook) {
+        if (reducedPrice) {
             baseCost = Math.max(1, baseCost / 2);
         }
         return Pair.of(enchInst, baseCost * enchInst.getLevel());

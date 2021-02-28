@@ -105,8 +105,7 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
         Map<Enchantment, Integer> enchantmentMap = EnchantmentHelper.getEnchantments(stack);
         EnchantmentTileEntity te = getConnectedEnchantmentTE().get();
 
-        boolean book = stack.getItem() == Items.BOOK;
-
+        boolean book = stack.getItem() == Items.BOOK || stack.getItem() == Items.ENCHANTED_BOOK;
         if (book) {
             stack = new ItemStack(Items.ENCHANTED_BOOK);
         }
@@ -120,7 +119,7 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
                 LOGGER.warn("Enchantment {} cannot be applied to {}", enchInst.getEnchantment(), stack);
                 return false;
             }
-            Pair<EnchantmentInstance, Integer> result = Utils.tryApplyEnchantment(enchInst, enchantmentMap, book);
+            Pair<EnchantmentInstance, Integer> result = Utils.tryApplyEnchantment(enchInst, enchantmentMap, true);
             if (result == null) {
                 return false;
             }

@@ -89,11 +89,11 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
     public void refreshActiveEnchantments() {
         ItemStack stack = this.container.getSlot(0).getStack();
         this.itemEnchantments = EnchantmentHelper.getEnchantments(stack);
-        this.isBook = stack.getItem() == Items.BOOK;
+        this.isBook = stack.getItem() == Items.BOOK || stack.getItem() == Items.ENCHANTED_BOOK;
         if (stack.isEmpty()) {
             this.list.setItems(this.enchantments.values());
         } else {
-            this.list.setItems(this.enchantments.values().stream().filter(pair -> stack.getItem() == Items.BOOK || stack.canApplyAtEnchantingTable(pair.getKey().getEnchantment())).collect(Collectors.toList()));
+            this.list.setItems(this.enchantments.values().stream().filter(pair -> stack.getItem() == Items.BOOK || stack.getItem() == Items.ENCHANTED_BOOK || stack.canApplyAtEnchantingTable(pair.getKey().getEnchantment())).collect(Collectors.toList()));
         }
     }
 
@@ -216,7 +216,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
         }
 
         private int calculateRequiredLevels() {
-            Pair<EnchantmentInstance, Integer> result = Utils.tryApplyEnchantment(this.item.getKey(), EnchanterScreen.this.itemEnchantments, EnchanterScreen.this.isBook);
+            Pair<EnchantmentInstance, Integer> result = Utils.tryApplyEnchantment(this.item.getKey(), EnchanterScreen.this.itemEnchantments, true);
             return result == null ? -1 : result.getRight();
         }
 
