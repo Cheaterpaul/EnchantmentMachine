@@ -20,6 +20,7 @@ import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -101,8 +102,8 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
         if(!getConnectedEnchantmentTE().isPresent())return false;
         ItemStack stack = inventory.get(0);
         if(stack.isEmpty())return false;
-        Map<Enchantment, Integer> enchantmentMap =EnchantmentHelper.getEnchantments(stack);
-        EnchantmentTileEntity te=        getConnectedEnchantmentTE().get();
+        Map<Enchantment, Integer> enchantmentMap = EnchantmentHelper.getEnchantments(stack);
+        EnchantmentTileEntity te = getConnectedEnchantmentTE().get();
 
         boolean book = stack.getItem() == Items.BOOK;
 
@@ -110,52 +111,29 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
             stack = new ItemStack(Items.ENCHANTED_BOOK);
         }
         int requiredLevels = 0;
-        for(EnchantmentInstance enchInst : enchantments){
-            if(!te.hasEnchantment(enchInst)){
-                LOGGER.warn("Enchantment {} requested but not available",enchInst);
+        for(EnchantmentInstance enchInst : enchantments) {
+            if (!te.hasEnchantment(enchInst)) {
+                LOGGER.warn("Enchantment {} requested but not available", enchInst);
                 return false;
             }
-            if(!(enchInst.getEnchantment().canApply(stack) || book)){
-                LOGGER.warn("Enchantment {} cannot be applied to {}",enchInst.getEnchantment(),stack );
+            if (!(enchInst.getEnchantment().canApply(stack) || book)) {
+                LOGGER.warn("Enchantment {} cannot be applied to {}", enchInst.getEnchantment(), stack);
                 return false;
             }
-            //TODO experience
-            for (Map.Entry<Enchantment,Integer> entry : enchantmentMap.entrySet()) {
-                Enchantment enchantment = entry.getKey();
-                if (enchantment == enchInst.getEnchantment()) { //Combine enchantments if it is already present. Choose highest level or level +1 if both have the same.
-                    int newLevel = Math.min(enchantment.getMaxLevel(), enchInst.getLevel() == entry.getValue() ? enchInst.getLevel() + 1 : Math.max(enchInst.getLevel(), entry.getValue()));
-                    enchInst = new EnchantmentInstance(enchantment, newLevel); //Override enchInst in loop. It will be added to the map later on (and override previous entry for this enchantment)
-                    continue;
-                } else if (!enchInst.getEnchantment().isCompatibleWith(enchantment)) {
-                    LOGGER.warn("Incompatible enchantments {} and {}", enchInst, enchantment);
-                    return false;
-                }
+            Pair<EnchantmentInstance, Integer> result = Utils.tryApplyEnchantment(enchInst, enchantmentMap, book);
+            if (result == null) {
+                return false;
             }
-            int baseCost = 0;
-            switch (enchInst.getEnchantment().getRarity()) {
-                case COMMON:
-                    baseCost = 1;
-                    break;
-                case UNCOMMON:
-                    baseCost = 2;
-                    break;
-                case RARE:
-                    baseCost = 4;
-                    break;
-                case VERY_RARE:
-                    baseCost = 8;
-            }
-
-            if (book) {
-                baseCost = Math.max(1, baseCost / 2);
-            }
-            requiredLevels += baseCost * enchInst.getLevel();
-
-            enchantmentMap.put(enchInst.getEnchantment(), enchInst.getLevel());
+            requiredLevels += result.getRight();
+            enchantmentMap.put(result.getLeft().getEnchantment(), result.getLeft().getLevel()); //Override previous entry for this enchantment
         }
-//        if (!user.abilities.isCreativeMode) {
-//            user.addExperienceLevel(-requiredLevels);
-//        }
+        if (!user.abilities.isCreativeMode) {
+            if (user.experienceLevel < requiredLevels) {
+                LOGGER.warn("Not enough levels to enchant {} {}", requiredLevels, user.experienceLevel);
+                return false;
+            }
+            user.addExperienceLevel(-requiredLevels);
+        }
         //Everything good
         if (book) {
             ItemStack finalStack = stack;
