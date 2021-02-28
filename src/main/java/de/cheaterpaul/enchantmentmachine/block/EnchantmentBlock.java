@@ -65,7 +65,7 @@ public class EnchantmentBlock extends EnchantmentBaseBlock {
     public ActionResultType onBlockActivated(BlockState blockState, World world, BlockPos blockPos, PlayerEntity playerEntity, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
         TileEntity tile = world.getTileEntity(blockPos);
         if (tile instanceof EnchantmentTileEntity && playerEntity instanceof ServerPlayerEntity) {
-            EnchantmentMachineMod.DISPATCHER.sendTo(new EnchantmentPacket(blockPos, ((EnchantmentTileEntity) tile).getEnchantments(), true), ((ServerPlayerEntity) playerEntity));
+            EnchantmentMachineMod.DISPATCHER.sendTo(new EnchantmentPacket(((EnchantmentTileEntity) tile).getEnchantments(), true), ((ServerPlayerEntity) playerEntity));
             return ActionResultType.CONSUME;
         }
         return ActionResultType.SUCCESS;

@@ -7,7 +7,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -15,9 +14,7 @@ import java.util.function.Supplier;
 
 public class EnchantmentPacket implements IMessage {
 
-    private final BlockPos pos;
     public static void encode(EnchantmentPacket msg, PacketBuffer buf) {
-        buf.writeBlockPos(msg.pos);
         buf.writeBoolean(msg.shouldOpenEnchantmentListScreen);
         buf.writeVarInt(msg.enchantments.size());
         msg.enchantments.forEach((inst, count) -> {
@@ -30,7 +27,6 @@ public class EnchantmentPacket implements IMessage {
     private final Object2IntMap<EnchantmentInstance> enchantments;
 
     public static EnchantmentPacket decode(PacketBuffer buf) {
-        BlockPos pos = buf.readBlockPos();
         boolean open = buf.readBoolean();
         Object2IntMap<EnchantmentInstance> enchantments = new Object2IntArrayMap<>();
 
@@ -45,7 +41,7 @@ public class EnchantmentPacket implements IMessage {
             }
         }
 
-        return new EnchantmentPacket(pos, enchantments, open);
+        return new EnchantmentPacket(enchantments, open);
     }
 
     public static void handle(final EnchantmentPacket msg, Supplier<NetworkEvent.Context> contextSupplier) {
@@ -56,8 +52,7 @@ public class EnchantmentPacket implements IMessage {
 
     private final boolean shouldOpenEnchantmentListScreen;
 
-    public EnchantmentPacket(BlockPos pos, Object2IntMap<EnchantmentInstance> enchantments, boolean shouldOpenEnchantmentListScreen) {
-        this.pos = pos;
+    public EnchantmentPacket(Object2IntMap<EnchantmentInstance> enchantments, boolean shouldOpenEnchantmentListScreen) {
         this.enchantments = enchantments;
         this.shouldOpenEnchantmentListScreen = shouldOpenEnchantmentListScreen;
     }

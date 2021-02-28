@@ -23,13 +23,22 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
 import java.util.Random;
+import java.util.WeakHashMap;
 
 public class EnchantmentTileEntity extends TileEntity implements IEnchantmentMachine, ITickableTileEntity {
-    
+
     private static final Logger LOGGER = LogManager.getLogger();
     private static final ITextComponent name = Utils.genTranslation("tile", "enchantment.name");
+    /**
+     * Used as list, just using map because it implements all the required weak reference stuff
+     */
+    private final WeakHashMap<IEnchantmentListener, IEnchantmentListener> listeners = new WeakHashMap<>();
 
-
+    public void addEnchantment(EnchantmentInstance enchInst, int count) {
+        int c = enchantmentMaps.getOrDefault(enchInst, 0);
+        enchantmentMaps.put(enchInst, c + count);
+        notifyListeners();
+    }
 
     private final Object2IntArrayMap<EnchantmentInstance> enchantmentMaps = new Object2IntArrayMap<>();
 
@@ -110,19 +119,6 @@ public class EnchantmentTileEntity extends TileEntity implements IEnchantmentMac
         return ticks;
     }
 
-    public void addEnchantment(EnchantmentInstance enchInst, int count){
-        int c = enchantmentMaps.getOrDefault(enchInst,0);
-        enchantmentMaps.put(enchInst, c+count);
-    }
-
-    /**
-     * Add one enchantment instance
-     * @param enchInst
-     */
-    public void addEnchantment(EnchantmentInstance enchInst) {
-        this.addEnchantment(enchInst,1);
-    }
-
     /**
      * Consume 1 enchantment instance
      * @param enchInst The enchantment to consume
@@ -132,23 +128,34 @@ public class EnchantmentTileEntity extends TileEntity implements IEnchantmentMac
         int count = enchantmentMaps.getOrDefault(enchInst,0);
         if(count<=0){
             return false;
-        }
-        else if(count==1){
+        } else if (count == 1) {
             enchantmentMaps.removeInt(enchInst);
+        } else {
+            enchantmentMaps.put(enchInst, count - 1);
         }
-        else{
-            enchantmentMaps.put(enchInst, count-1);
-        }
+        notifyListeners();
         return true;
     }
 
     /**
+     * Add one enchantment instance
      *
+     * @param enchInst
+     */
+    public void addEnchantment(EnchantmentInstance enchInst) {
+        this.addEnchantment(enchInst, 1);
+    }
+
+    public void registerListener(IEnchantmentListener listener) {
+        this.listeners.put(listener, listener);
+    }
+
+    /**
      * @param enchInst
      * @return Whether the given enchantment is present
      */
-    public boolean hasEnchantment(EnchantmentInstance enchInst){
-        return enchantmentMaps.getOrDefault(enchInst, 0)>0;
+    public boolean hasEnchantment(EnchantmentInstance enchInst) {
+        return enchantmentMaps.getOrDefault(enchInst, 0) > 0;
     }
 
     /**
@@ -219,5 +226,18 @@ public class EnchantmentTileEntity extends TileEntity implements IEnchantmentMac
     @Override
     public boolean hasConnectedTE() {
         return true;
+    }
+
+    public void removeListener(IEnchantmentListener listener) {
+        this.listeners.remove(listener);
+    }
+
+    private void notifyListeners() {
+        Object2IntMap<EnchantmentInstance> list = getEnchantments();
+        listeners.forEach((k, v) -> v.onEnchantmentsChanged(list));
+    }
+
+    public interface IEnchantmentListener {
+        void onEnchantmentsChanged(Object2IntMap<EnchantmentInstance> updatedList);
     }
 }
