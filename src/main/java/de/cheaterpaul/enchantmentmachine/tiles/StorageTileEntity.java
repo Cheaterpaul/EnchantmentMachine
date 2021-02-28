@@ -25,7 +25,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.WeakHashMap;
 
-public class EnchantmentTileEntity extends TileEntity implements IEnchantmentMachine, ITickableTileEntity {
+public class StorageTileEntity extends TileEntity implements IEnchantmentMachine, ITickableTileEntity {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final ITextComponent name = Utils.genTranslation("tile", "enchantment.name");
@@ -54,18 +54,18 @@ public class EnchantmentTileEntity extends TileEntity implements IEnchantmentMac
     public float field_195531_n;
     private static final Random random = new Random();
 
-    public EnchantmentTileEntity() {
-        super(ModData.enchantment_tile);
+    public StorageTileEntity() {
+        super(ModData.storage_tile);
     }
 
     @Override
     public void tick() {
         this.pageTurningSpeed = this.nextPageTurningSpeed;
         this.pageAngle = this.nextPageAngle;
-        PlayerEntity playerentity = this.world.getClosestPlayer((double)this.pos.getX() + 0.5D, (double)this.pos.getY() + 0.5D, (double)this.pos.getZ() + 0.5D, 3.0D, false);
+        PlayerEntity playerentity = this.world.getClosestPlayer((double) this.pos.getX() + 0.5D, (double) this.pos.getY() + 0.5D, (double) this.pos.getZ() + 0.5D, 3.0D, false);
         if (playerentity != null) {
-            double d0 = playerentity.getPosX() - ((double)this.pos.getX() + 0.5D);
-            double d1 = playerentity.getPosZ() - ((double)this.pos.getZ() + 0.5D);
+            double d0 = playerentity.getPosX() - ((double) this.pos.getX() + 0.5D);
+            double d1 = playerentity.getPosZ() - ((double) this.pos.getZ() + 0.5D);
             this.field_195531_n = (float) MathHelper.atan2(d1, d0);
             this.nextPageTurningSpeed += 0.1F;
             if (this.nextPageTurningSpeed < 0.5F || random.nextInt(40) == 0) {
@@ -219,7 +219,7 @@ public class EnchantmentTileEntity extends TileEntity implements IEnchantmentMac
     }
 
     @Override
-    public Optional<EnchantmentTileEntity> getConnectedEnchantmentTE() {
+    public Optional<StorageTileEntity> getConnectedEnchantmentTE() {
         return Optional.of(this);
     }
 

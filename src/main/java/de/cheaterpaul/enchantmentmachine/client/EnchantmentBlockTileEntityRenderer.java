@@ -2,7 +2,7 @@ package de.cheaterpaul.enchantmentmachine.client;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import de.cheaterpaul.enchantmentmachine.tiles.EnchantmentTileEntity;
+import de.cheaterpaul.enchantmentmachine.tiles.StorageTileEntity;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
@@ -18,9 +18,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class EnchantmentBlockTileEntityRenderer extends TileEntityRenderer<EnchantmentTileEntity> {
+public class EnchantmentBlockTileEntityRenderer extends TileEntityRenderer<StorageTileEntity> {
 
-    public static final RenderMaterial TEXTURE_BOOK = new RenderMaterial(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(REFERENCE.MODID,"entity/enchanting_table_book"));
+    public static final RenderMaterial TEXTURE_BOOK = new RenderMaterial(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(REFERENCE.MODID, "entity/enchanting_table_book"));
     private final BookModel modelBook = new BookModel();
 
     public EnchantmentBlockTileEntityRenderer(TileEntityRendererDispatcher rendererDispatcherIn) {
@@ -28,7 +28,7 @@ public class EnchantmentBlockTileEntityRenderer extends TileEntityRenderer<Encha
     }
 
     @Override
-    public void render(EnchantmentTileEntity tileEntityIn, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
+    public void render(StorageTileEntity tileEntityIn, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
         matrixStackIn.push();
         matrixStackIn.translate(0.5D, 0.75D, 0.5D);
         float f = (float) tileEntityIn.getTicks() + partialTicks;

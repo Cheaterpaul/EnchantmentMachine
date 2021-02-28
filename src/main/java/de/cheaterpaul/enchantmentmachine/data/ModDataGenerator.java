@@ -37,7 +37,7 @@ public class ModDataGenerator {
         protected void registerModels() {
             getBuilder(ModData.enchanter_block.getRegistryName().getPath()).parent(new ModelFile.UncheckedModelFile(REFERENCE.MODID + ":block/" + ModData.enchanter_block.getRegistryName().getPath()));
             getBuilder(ModData.disenchanter_block.getRegistryName().getPath()).parent(new ModelFile.UncheckedModelFile(REFERENCE.MODID + ":block/" + ModData.disenchanter_block.getRegistryName().getPath()));
-            getBuilder(ModData.enchantment_block.getRegistryName().getPath()).parent(new ModelFile.UncheckedModelFile(REFERENCE.MODID + ":block/" + ModData.enchantment_block.getRegistryName().getPath()));
+            getBuilder(ModData.storage_block.getRegistryName().getPath()).parent(new ModelFile.UncheckedModelFile(REFERENCE.MODID + ":block/" + ModData.storage_block.getRegistryName().getPath()));
         }
     }
 
@@ -50,17 +50,17 @@ public class ModDataGenerator {
         protected void registerStatesAndModels() {
             ModelFile enchanter = new ModelFile.ExistingModelFile(blockTexture(ModData.enchanter_block), models().existingFileHelper);
 
-            ModelFile enchantment_block = models().withExistingParent(ModData.enchantment_block.getRegistryName().toString(), "block/enchanting_table")
-                    .texture("particle",new ResourceLocation(REFERENCE.MODID, "block/enchanting_table_bottom"))
-                    .texture("top",new ResourceLocation(REFERENCE.MODID, "block/enchanting_table_top"))
-                    .texture("side",new ResourceLocation(REFERENCE.MODID, "block/enchanting_table_side"))
-                    .texture("bottom",new ResourceLocation(REFERENCE.MODID, "block/enchanting_table_bottom"));
+            ModelFile enchantment_block = models().withExistingParent(ModData.storage_block.getRegistryName().toString(), "block/enchanting_table")
+                    .texture("particle", new ResourceLocation(REFERENCE.MODID, "block/enchanting_table_bottom"))
+                    .texture("top", new ResourceLocation(REFERENCE.MODID, "block/enchanting_table_top"))
+                    .texture("side", new ResourceLocation(REFERENCE.MODID, "block/enchanting_table_side"))
+                    .texture("bottom", new ResourceLocation(REFERENCE.MODID, "block/enchanting_table_bottom"));
 
             ModelFile disenchanter = new ModelFile.ExistingModelFile(blockTexture(ModData.disenchanter_block), models().existingFileHelper);
 
             simpleBlock(ModData.enchanter_block, enchanter);
             simpleBlock(ModData.disenchanter_block, disenchanter);
-            simpleBlock(ModData.enchantment_block, enchantment_block);
+            simpleBlock(ModData.storage_block, enchantment_block);
         }
     }
 
@@ -71,7 +71,7 @@ public class ModDataGenerator {
 
         @Override
         protected void registerRecipes(Consumer<IFinishedRecipe> consumer) {
-            ShapedRecipeBuilder.shapedRecipe(ModData.enchantment_block).key('B', Items.BOOK).key('#', Blocks.CRYING_OBSIDIAN).key('D', Items.DIAMOND).patternLine("BBB").patternLine("D#D").patternLine("###").addCriterion("has_obsidian", hasItem(Blocks.CRYING_OBSIDIAN)).build(consumer);
+            ShapedRecipeBuilder.shapedRecipe(ModData.storage_block).key('B', Items.BOOK).key('#', Blocks.CRYING_OBSIDIAN).key('D', Items.DIAMOND).patternLine("BBB").patternLine("D#D").patternLine("###").addCriterion("has_obsidian", hasItem(Blocks.CRYING_OBSIDIAN)).build(consumer);
             ShapedRecipeBuilder.shapedRecipe(ModData.disenchanter_block).key('B', Items.BOOK).key('#', Blocks.CRYING_OBSIDIAN).key('D', Items.DIAMOND_AXE).patternLine(" B ").patternLine("D#D").patternLine("###").addCriterion("has_obsidian", hasItem(Blocks.CRYING_OBSIDIAN)).build(consumer);
             ShapedRecipeBuilder.shapedRecipe(ModData.enchanter_block).key('B', Items.BOOK).key('#', Blocks.CRYING_OBSIDIAN).key('D', Items.DIAMOND).patternLine(" B ").patternLine("D#D").patternLine("###").addCriterion("has_obsidian", hasItem(Blocks.CRYING_OBSIDIAN)).build(consumer);
         }
@@ -109,13 +109,13 @@ public class ModDataGenerator {
             protected void addTables() {
                 this.registerDropSelfLootTable(ModData.disenchanter_block);
                 this.registerDropSelfLootTable(ModData.enchanter_block);
-                this.registerDropSelfLootTable(ModData.enchantment_block);
+                this.registerDropSelfLootTable(ModData.storage_block);
             }
 
             @Nonnull
             @Override
             protected Iterable<Block> getKnownBlocks() {
-                return Lists.newArrayList(ModData.disenchanter_block, ModData.enchanter_block, ModData.enchantment_block);
+                return Lists.newArrayList(ModData.disenchanter_block, ModData.enchanter_block, ModData.storage_block);
             }
         }
     }

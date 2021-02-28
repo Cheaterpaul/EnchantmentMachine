@@ -4,7 +4,7 @@ import de.cheaterpaul.enchantmentmachine.EnchantmentMachineMod;
 import de.cheaterpaul.enchantmentmachine.core.ModData;
 import de.cheaterpaul.enchantmentmachine.network.message.EnchantmentPacket;
 import de.cheaterpaul.enchantmentmachine.tiles.EnchanterTileEntity;
-import de.cheaterpaul.enchantmentmachine.tiles.EnchantmentTileEntity;
+import de.cheaterpaul.enchantmentmachine.tiles.StorageTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -42,7 +42,7 @@ public class EnchanterBlock extends EnchantmentBaseBlock {
         if (tile instanceof EnchanterTileEntity) {
             playerEntity.openContainer(((EnchanterTileEntity) tile));
             if (!world.isRemote() && playerEntity instanceof ServerPlayerEntity) {
-                Optional<EnchantmentTileEntity> s = ((EnchanterTileEntity) tile).getConnectedEnchantmentTE();
+                Optional<StorageTileEntity> s = ((EnchanterTileEntity) tile).getConnectedEnchantmentTE();
                 s.ifPresent(enchantmentTileEntity -> EnchantmentMachineMod.DISPATCHER.sendTo(new EnchantmentPacket(enchantmentTileEntity.getEnchantments(), false), ((ServerPlayerEntity) playerEntity)));
             }
             return ActionResultType.CONSUME;

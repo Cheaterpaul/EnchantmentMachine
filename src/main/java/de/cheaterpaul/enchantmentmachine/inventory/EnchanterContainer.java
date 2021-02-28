@@ -4,7 +4,7 @@ import de.cheaterpaul.enchantmentmachine.EnchantmentMachineMod;
 import de.cheaterpaul.enchantmentmachine.core.ModData;
 import de.cheaterpaul.enchantmentmachine.network.message.EnchantmentPacket;
 import de.cheaterpaul.enchantmentmachine.tiles.EnchanterTileEntity;
-import de.cheaterpaul.enchantmentmachine.tiles.EnchantmentTileEntity;
+import de.cheaterpaul.enchantmentmachine.tiles.StorageTileEntity;
 import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstance;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.entity.player.PlayerEntity;
@@ -19,7 +19,7 @@ import net.minecraft.util.IWorldPosCallable;
 
 import java.util.function.Consumer;
 
-public class EnchanterContainer extends EnchantmentBaseContainer implements EnchantmentTileEntity.IEnchantmentListener {
+public class EnchanterContainer extends EnchantmentBaseContainer implements StorageTileEntity.IEnchantmentListener {
 
     private final IWorldPosCallable worldPosCallable;
     private final PlayerEntity player;
@@ -79,7 +79,7 @@ public class EnchanterContainer extends EnchantmentBaseContainer implements Ench
         return super.transferStackInSlot(playerEntity, index);
     }
 
-    private void contactEnchantmentTileEntity(Consumer<EnchantmentTileEntity> consumer) {
+    private void contactEnchantmentTileEntity(Consumer<StorageTileEntity> consumer) {
         this.worldPosCallable.consume((w, p) -> {
             TileEntity t = w.getTileEntity(p);
             if (t instanceof EnchanterTileEntity) {

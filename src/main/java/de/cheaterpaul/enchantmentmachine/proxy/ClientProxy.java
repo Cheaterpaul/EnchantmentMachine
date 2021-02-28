@@ -2,7 +2,7 @@ package de.cheaterpaul.enchantmentmachine.proxy;
 
 import de.cheaterpaul.enchantmentmachine.client.ModClientData;
 import de.cheaterpaul.enchantmentmachine.client.screen.EnchanterScreen;
-import de.cheaterpaul.enchantmentmachine.client.screen.EnchantmentScreen;
+import de.cheaterpaul.enchantmentmachine.client.screen.StorageScreen;
 import de.cheaterpaul.enchantmentmachine.network.message.EnchantmentPacket;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
 import net.minecraft.client.Minecraft;
@@ -33,12 +33,12 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void handleEnchantmentPacket(EnchantmentPacket packet) {
-        if (Minecraft.getInstance().currentScreen instanceof EnchantmentScreen) {
-            ((EnchantmentScreen) Minecraft.getInstance().currentScreen).updateEnchantments(packet.getEnchantments());
+        if (Minecraft.getInstance().currentScreen instanceof StorageScreen) {
+            ((StorageScreen) Minecraft.getInstance().currentScreen).updateEnchantments(packet.getEnchantments());
         } else if (Minecraft.getInstance().currentScreen instanceof EnchanterScreen) {
             ((EnchanterScreen) Minecraft.getInstance().currentScreen).updateEnchantments(packet.getEnchantments());
         } else if (packet.shouldOpenEnchantmentScreen()) {
-            EnchantmentScreen screen = new EnchantmentScreen();
+            StorageScreen screen = new StorageScreen();
             Minecraft.getInstance().displayGuiScreen(screen);
             screen.updateEnchantments(packet.getEnchantments());
 

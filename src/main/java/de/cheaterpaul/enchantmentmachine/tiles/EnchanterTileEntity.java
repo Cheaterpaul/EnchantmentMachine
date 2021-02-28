@@ -103,7 +103,7 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
         ItemStack stack = inventory.get(0);
         if(stack.isEmpty())return false;
         Map<Enchantment, Integer> enchantmentMap = EnchantmentHelper.getEnchantments(stack);
-        EnchantmentTileEntity te = getConnectedEnchantmentTE().get();
+        StorageTileEntity te = getConnectedEnchantmentTE().get();
 
         boolean book = stack.getItem() == Items.BOOK || stack.getItem() == Items.ENCHANTED_BOOK;
         if (book) {

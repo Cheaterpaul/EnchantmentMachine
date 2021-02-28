@@ -27,7 +27,7 @@ public class EnchantmentMachineMod {
     public static final ItemGroup CREATIVE_TAB = new ItemGroup(REFERENCE.MODID) {
         @Override
         public ItemStack createIcon() {
-            return new ItemStack(ModData.enchantment_block);
+            return new ItemStack(ModData.storage_block);
         }
     };
 

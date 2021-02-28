@@ -1,7 +1,6 @@
 package de.cheaterpaul.enchantmentmachine.client.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
 import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstance;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
@@ -11,22 +10,24 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
-import org.lwjgl.opengl.GL20;
 
 import java.util.Collections;
 import java.util.stream.Collectors;
 
 @OnlyIn(Dist.CLIENT)
-public class EnchantmentScreen extends Screen {
+public class StorageScreen extends Screen {
 
     private static final ResourceLocation BACKGROUND = new ResourceLocation(REFERENCE.MODID, "textures/gui/container/enchantment.png");
 
     private Object2IntMap<EnchantmentInstance> enchantments = new Object2IntArrayMap<>();
-    private ScrollableListButton<Pair<EnchantmentInstance,Integer>> list;
+    private ScrollableListButton<Pair<EnchantmentInstance, Integer>> list;
 
     private final int xSize = 197;
     private final int ySize = 222;
@@ -34,7 +35,7 @@ public class EnchantmentScreen extends Screen {
     private int guiLeft;
     private int guiTop;
 
-    public EnchantmentScreen() {
+    public StorageScreen() {
         super(new StringTextComponent("Enchantments"));
     }
 
@@ -81,19 +82,19 @@ public class EnchantmentScreen extends Screen {
         @Override
         public void render(MatrixStack matrixStack, int x, int y, int listWidth, int listHeight, int itemHeight, int yOffset, int mouseX, int mouseY, float partialTicks, float zLevel) {
             super.render(matrixStack, x, y, listWidth, listHeight, itemHeight, yOffset, mouseX, mouseY, partialTicks, zLevel);
-            EnchantmentScreen.this.itemRenderer.renderItemAndEffectIntoGuiWithoutEntity(bookStack, x + 5,y +2 + yOffset);
-            EnchantmentScreen.this.font.drawStringWithShadow(matrixStack, name.getString(), x + 25,y + yOffset + 5, name.getStyle().getColor().getColor());
+            StorageScreen.this.itemRenderer.renderItemAndEffectIntoGuiWithoutEntity(bookStack, x + 5, y + 2 + yOffset);
+            StorageScreen.this.font.drawStringWithShadow(matrixStack, name.getString(), x + 25, y + yOffset + 5, name.getStyle().getColor().getColor());
 
 
             String count = String.valueOf(bookStack.getCount());
 
-            EnchantmentScreen.this.font.drawStringWithShadow(matrixStack, count, x + listWidth - 10, y + yOffset + 5, 0xffffff);
+            StorageScreen.this.font.drawStringWithShadow(matrixStack, count, x + listWidth - 10, y + yOffset + 5, 0xffffff);
         }
 
         @Override
         public void renderToolTip(MatrixStack matrixStack, int x, int y, int listWidth, int listHeight, int itemHeight, int yOffset, int mouseX, int mouseY, float zLevel) {
             if (mouseX > x && mouseX < x + listWidth && mouseY > y && mouseY < y + ySize) {
-                EnchantmentScreen.this.renderTooltip(matrixStack, bookStack, mouseX, mouseY);
+                StorageScreen.this.renderTooltip(matrixStack, bookStack, mouseX, mouseY);
             }
         }
     }

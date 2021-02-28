@@ -18,7 +18,7 @@ public class ModClientData {
     }
 
     public static void registerTileEntityRenderer(){
-        ClientRegistry.bindTileEntityRenderer(ModData.enchantment_tile, EnchantmentBlockTileEntityRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(ModData.storage_tile, EnchantmentBlockTileEntityRenderer::new);
     }
 
     public static void textureStitchEvent(TextureStitchEvent.Pre event) {
