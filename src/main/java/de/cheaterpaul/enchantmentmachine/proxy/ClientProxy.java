@@ -32,7 +32,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public void handleEnchantmentpacket(EnchantmentPacket packet) {
+    public void handleEnchantmentPacket(EnchantmentPacket packet) {
         if (Minecraft.getInstance().currentScreen instanceof EnchantmentScreen) {
             ((EnchantmentScreen) Minecraft.getInstance().currentScreen).updateEnchantments(packet.getEnchantments());
         } else if (Minecraft.getInstance().currentScreen instanceof EnchanterScreen) {

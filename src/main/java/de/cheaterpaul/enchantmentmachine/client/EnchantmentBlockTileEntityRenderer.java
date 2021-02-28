@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.model.BookModel;
 import net.minecraft.client.renderer.model.RenderMaterial;
 import net.minecraft.client.renderer.texture.AtlasTexture;
-import net.minecraft.client.renderer.tileentity.EnchantmentTableTileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.ResourceLocation;
@@ -32,15 +31,17 @@ public class EnchantmentBlockTileEntityRenderer extends TileEntityRenderer<Encha
     public void render(EnchantmentTileEntity tileEntityIn, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
         matrixStackIn.push();
         matrixStackIn.translate(0.5D, 0.75D, 0.5D);
-        float f = (float)tileEntityIn.getTicks() + partialTicks;
-        matrixStackIn.translate(0.0D, (double)(0.1F + MathHelper.sin(f * 0.1F) * 0.01F), 0.0D);
+        float f = (float) tileEntityIn.getTicks() + partialTicks;
+        matrixStackIn.translate(0.0D, 0.1F + MathHelper.sin(f * 0.1F) * 0.01F, 0.0D);
 
         float f1;
-        for(f1 = tileEntityIn.nextPageAngle - tileEntityIn.pageAngle; f1 >= (float)Math.PI; f1 -= ((float)Math.PI * 2F)) {
+        f1 = tileEntityIn.nextPageAngle - tileEntityIn.pageAngle;
+        while (f1 >= (float) Math.PI) {
+            f1 -= ((float) Math.PI * 2F);
         }
 
-        while(f1 < -(float)Math.PI) {
-            f1 += ((float)Math.PI * 2F);
+        while (f1 < -(float) Math.PI) {
+            f1 += ((float) Math.PI * 2F);
         }
 
         float f2 = tileEntityIn.pageAngle + f1 * partialTicks;

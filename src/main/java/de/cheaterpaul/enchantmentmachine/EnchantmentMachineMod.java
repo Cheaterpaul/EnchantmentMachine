@@ -40,15 +40,15 @@ public class EnchantmentMachineMod {
         bus.addListener(this::onClientSetup);
     }
 
-    public void onLoadComplete(FMLLoadCompleteEvent event) {
-        PROXY.onLoadComplete();
-    }
-
-    public void onClientSetup(FMLClientSetupEvent event) {
+    private void onClientSetup(FMLClientSetupEvent event) {
         PROXY.onClientSetup();
     }
 
-    public void onCommonSetup(FMLCommonSetupEvent event) {
+    private void onCommonSetup(FMLCommonSetupEvent event) {
         DISPATCHER.registerPackets();
+    }
+
+    private void onLoadComplete(FMLLoadCompleteEvent event) {
+        PROXY.onLoadComplete();
     }
 }

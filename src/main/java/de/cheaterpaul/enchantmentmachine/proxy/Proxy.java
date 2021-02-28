@@ -12,7 +12,7 @@ public interface Proxy {
     default void onClientSetup() {
     }
 
-    default void handleEnchantmentpacket(EnchantmentPacket packet) {
+    default void handleEnchantmentPacket(EnchantmentPacket packet) {
     }
 
     default void handleEnchantingPacket(EnchantingPacket packet, PlayerEntity playerEntity){

@@ -9,8 +9,8 @@ They are all collected in the enchantment machine and visible in a nice GUI.
 To put them onto new items you can use the enchanter.
 
 ## Links
-[Curseforge](https://www.curseforge.com/minecraft/mc-mods/enchantment-machine)
-
+[Curseforge](https://www.curseforge.com/minecraft/mc-mods/enchantment-machine) Download  
+[Crowdin](https://crowdin.com/project/enchantmentmachine) Translate the mod
 
 ## People
 - [Cheaterpaul](https://github.com/Cheaterpaul) _Most things_
