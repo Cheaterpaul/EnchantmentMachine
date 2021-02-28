@@ -41,9 +41,9 @@ public class EnchanterBlock extends EnchantmentBaseBlock {
         TileEntity tile = world.getTileEntity(blockPos);
         if (tile instanceof EnchanterTileEntity) {
             playerEntity.openContainer(((EnchanterTileEntity) tile));
-            if (!world.isRemote()) {
+            if (!world.isRemote() && playerEntity instanceof ServerPlayerEntity) {
                 Optional<EnchantmentTileEntity> s = ((EnchanterTileEntity) tile).getConnectedEnchantmentTE();
-                s.ifPresent(enchantmentTileEntity -> EnchantmentMachineMod.DISPATCHER.sendTo(new EnchantmentPacket(blockPos, enchantmentTileEntity.getEnchantments()), ((ServerPlayerEntity) playerEntity)));
+                s.ifPresent(enchantmentTileEntity -> EnchantmentMachineMod.DISPATCHER.sendTo(new EnchantmentPacket(blockPos, enchantmentTileEntity.getEnchantments(), false), ((ServerPlayerEntity) playerEntity)));
             }
             return ActionResultType.CONSUME;
         }

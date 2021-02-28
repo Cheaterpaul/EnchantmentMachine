@@ -4,14 +4,15 @@ import de.cheaterpaul.enchantmentmachine.client.ModClientData;
 import de.cheaterpaul.enchantmentmachine.client.screen.EnchanterScreen;
 import de.cheaterpaul.enchantmentmachine.client.screen.EnchantmentScreen;
 import de.cheaterpaul.enchantmentmachine.network.message.EnchantmentPacket;
-import de.cheaterpaul.enchantmentmachine.tiles.EnchanterTileEntity;
-import de.cheaterpaul.enchantmentmachine.tiles.EnchantmentTileEntity;
+import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
+@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = REFERENCE.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 @OnlyIn(Dist.CLIENT)
 public class ClientProxy extends CommonProxy {
 
@@ -25,8 +26,8 @@ public class ClientProxy extends CommonProxy {
         ModClientData.registerTileEntityRenderer();
     }
 
-    @Override
-    public void onTextureStitchEvent(TextureStitchEvent.Pre event) {
+    @SubscribeEvent
+    public static void onTextureStitchEvent(TextureStitchEvent.Pre event) {
         ModClientData.textureStitchEvent(event);
     }
 
@@ -34,8 +35,13 @@ public class ClientProxy extends CommonProxy {
     public void handleEnchantmentpacket(EnchantmentPacket packet) {
         if (Minecraft.getInstance().currentScreen instanceof EnchantmentScreen) {
             ((EnchantmentScreen) Minecraft.getInstance().currentScreen).updateEnchantments(packet.getEnchantments());
-        } else if (Minecraft.getInstance().currentScreen instanceof EnchanterScreen){
+        } else if (Minecraft.getInstance().currentScreen instanceof EnchanterScreen) {
             ((EnchanterScreen) Minecraft.getInstance().currentScreen).updateEnchantments(packet.getEnchantments());
+        } else if (packet.shouldOpenEnchantmentScreen()) {
+            EnchantmentScreen screen = new EnchantmentScreen();
+            Minecraft.getInstance().displayGuiScreen(screen);
+            screen.updateEnchantments(packet.getEnchantments());
+
         }
     }
 }

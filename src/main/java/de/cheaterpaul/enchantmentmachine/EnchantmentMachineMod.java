@@ -38,7 +38,6 @@ public class EnchantmentMachineMod {
         bus.addListener(this::onLoadComplete);
         bus.addListener(this::onCommonSetup);
         bus.addListener(this::onClientSetup);
-        bus.addListener(PROXY::onTextureStitchEvent);
     }
 
     public void onLoadComplete(FMLLoadCompleteEvent event) {

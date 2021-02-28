@@ -57,4 +57,16 @@ public class EnchanterContainer extends EnchantmentBaseContainer {
     public interface IListener {
         void slotChanged();
     }
+//
+//    public static class Factory implements IContainerFactory<EnchanterContainer> {
+//
+//        @Nullable
+//        @Override
+//        public EnchanterContainer create(int windowId, PlayerInventory inv, PacketBuffer data) {
+//            if (data == null)
+//                return new EnchanterContainer(windowId, inv);
+//            boolean extraSlots = data.readBoolean(); //Anything read here has to be written to buffer in open method (in EnchantmentBlock)
+//            EnchanterContainer c =  new EnchanterContainer(windowId, inv, IWorldPosCallable.DUMMY, new Inventory(extraSlots ? 8 : 6), extraSlots, null);
+//        }
+//    }
 }
