@@ -1,5 +1,6 @@
 package de.cheaterpaul.enchantmentmachine.inventory;
 
+import de.cheaterpaul.enchantmentmachine.core.ModConfig;
 import de.cheaterpaul.enchantmentmachine.core.ModData;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerInventory;
@@ -7,6 +8,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 
 public class DisenchanterContainer extends EnchantmentBaseContainer {
 
@@ -19,7 +21,7 @@ public class DisenchanterContainer extends EnchantmentBaseContainer {
         this.addSlot(new Slot(inventory, 0, 80,17) {
             @Override
             public boolean isItemValid(ItemStack itemStack) {
-                return !EnchantmentHelper.getEnchantments(itemStack).isEmpty();
+                return !EnchantmentHelper.getEnchantments(itemStack).isEmpty() && (ModConfig.SERVER.allowDisenchantingItems.get() || itemStack.getItem() == Items.ENCHANTED_BOOK);
             }
         });
         this.addSlot(new Slot(inventory, 1, 80, 53){

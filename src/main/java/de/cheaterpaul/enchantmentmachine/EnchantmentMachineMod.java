@@ -1,5 +1,6 @@
 package de.cheaterpaul.enchantmentmachine;
 
+import de.cheaterpaul.enchantmentmachine.core.ModConfig;
 import de.cheaterpaul.enchantmentmachine.core.ModData;
 import de.cheaterpaul.enchantmentmachine.data.ModDataGenerator;
 import de.cheaterpaul.enchantmentmachine.network.AbstractPacketDispatcher;
@@ -32,7 +33,7 @@ public class EnchantmentMachineMod {
 
     public EnchantmentMachineMod() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-
+        ModConfig.init();
         bus.register(ModData.class);
         bus.addListener(ModDataGenerator::gatherData);
         bus.addListener(this::onLoadComplete);

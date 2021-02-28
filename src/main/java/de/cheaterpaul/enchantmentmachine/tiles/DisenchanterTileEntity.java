@@ -1,5 +1,6 @@
 package de.cheaterpaul.enchantmentmachine.tiles;
 
+import de.cheaterpaul.enchantmentmachine.core.ModConfig;
 import de.cheaterpaul.enchantmentmachine.core.ModData;
 import de.cheaterpaul.enchantmentmachine.inventory.DisenchanterContainer;
 import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstance;
@@ -140,7 +141,10 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
 
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        if(index==0){
+        if(index==0) {
+            if (!ModConfig.SERVER.allowDisenchantingItems.get()) {
+                if (stack.getItem() != Items.ENCHANTED_BOOK) return false;
+            }
             return !EnchantmentHelper.getEnchantments(stack).isEmpty();
         } else{
             return false;
@@ -219,21 +223,23 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
             if (--this.timer == 0) {
                 getConnectedEnchantmentTE().ifPresent(te -> {
                     ItemStack stack = this.inventory.get(0);
-                    Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(stack);
-                    map.entrySet().forEach(e -> {
-                        EnchantmentInstance inst = new EnchantmentInstance(e.getKey(), e.getValue());
-                        te.addEnchantment(inst);
-                    });
-                    EnchantmentHelper.setEnchantments(Collections.emptyMap(), stack);
-                    if (stack.getItem() == Items.ENCHANTED_BOOK) {
-                        stack = new ItemStack(Items.BOOK);
+                    if (ModConfig.SERVER.allowDisenchantingItems.get() || stack.getItem() == Items.ENCHANTED_BOOK) {
+                        Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(stack);
+                        map.entrySet().forEach(e -> {
+                            EnchantmentInstance inst = new EnchantmentInstance(e.getKey(), e.getValue());
+                            te.addEnchantment(inst);
+                        });
+                        EnchantmentHelper.setEnchantments(Collections.emptyMap(), stack);
+                        if (stack.getItem() == Items.ENCHANTED_BOOK) {
+                            stack = new ItemStack(Items.BOOK);
+                        }
+                        ItemStack slot = getStackInSlot(1);
+                        if (!slot.isEmpty() && slot.isItemEqual(stack)) {
+                            stack.shrink(-slot.getCount());
+                        }
+                        setInventorySlotContents(1, stack);
+                        setInventorySlotContents(0, ItemStack.EMPTY);
                     }
-                    ItemStack slot = getStackInSlot(1);
-                    if (!slot.isEmpty() && slot.isItemEqual(stack)) {
-                        stack.shrink(-slot.getCount());
-                    }
-                    setInventorySlotContents(1, stack);
-                    setInventorySlotContents(0, ItemStack.EMPTY);
                 });
             }
         }
