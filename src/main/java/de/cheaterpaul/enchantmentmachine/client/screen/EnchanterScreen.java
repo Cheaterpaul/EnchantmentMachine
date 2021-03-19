@@ -221,7 +221,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
         }
 
         private boolean hasSufficientLevels() {
-            return EnchanterScreen.this.playerInventory.player.experienceLevel > this.requiredLevels || EnchanterScreen.this.playerInventory.player.abilities.isCreativeMode;
+            return EnchanterScreen.this.playerInventory.player.experienceLevel >= this.requiredLevels || EnchanterScreen.this.playerInventory.player.abilities.isCreativeMode;
         }
     }
 }
