@@ -1,5 +1,6 @@
 package de.cheaterpaul.enchantmentmachine.util;
 
+import de.cheaterpaul.enchantmentmachine.core.ModConfig;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -32,7 +33,7 @@ public class Utils {
         for (Map.Entry<Enchantment, Integer> entry : existingEnchantments.entrySet()) {
             Enchantment enchantment = entry.getKey();
             if (enchantment == enchInst.getEnchantment()) { //Combine enchantments if it is already present. Choose highest level or level +1 if both have the same.
-                int newLevel = Math.min(enchantment.getMaxLevel(), enchInst.getLevel() == entry.getValue() ? enchInst.getLevel() + 1 : Math.max(enchInst.getLevel(), entry.getValue()));
+                int newLevel = Math.min(getMaxLevel(enchantment), enchInst.getLevel() == entry.getValue() ? enchInst.getLevel() + 1 : Math.max(enchInst.getLevel(), entry.getValue()));
                 enchInst = new EnchantmentInstance(enchantment, newLevel); //Override enchInst in loop.
                 continue;
             } else if (!enchInst.getEnchantment().isCompatibleWith(enchantment)) {
@@ -58,5 +59,16 @@ public class Utils {
             baseCost = Math.max(1, baseCost / 2);
         }
         return Pair.of(enchInst, baseCost * enchInst.getLevel());
+    }
+
+    public static int getMaxLevel(Enchantment ench) {
+        String enchList = ModConfig.SERVER.enchList.get();
+        int beginIndex = enchList.indexOf(ench.getRegistryName().toString());
+        int splitIndex = enchList.indexOf('|', beginIndex) + 1;
+        int endIndex = enchList.indexOf(',', beginIndex);
+        if (beginIndex==-1){
+            return ench.getMaxLevel();
+        }
+        return Integer.parseInt(enchList.substring(splitIndex, endIndex));
     }
 }

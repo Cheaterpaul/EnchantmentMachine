@@ -3,6 +3,7 @@ package de.cheaterpaul.enchantmentmachine.client.screen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.cheaterpaul.enchantmentmachine.EnchantmentMachineMod;
+import de.cheaterpaul.enchantmentmachine.core.ModConfig;
 import de.cheaterpaul.enchantmentmachine.inventory.EnchanterContainer;
 import de.cheaterpaul.enchantmentmachine.network.message.EnchantingPacket;
 import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstance;
@@ -27,6 +28,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static de.cheaterpaul.enchantmentmachine.util.Utils.getMaxLevel;
 
 @OnlyIn(Dist.CLIENT)
 public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
@@ -66,10 +69,10 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
     @Override
     protected void init() {
         super.init();
-        this.addButton(list = new ScrollableListButton<>(this.guiLeft + 8,this.guiTop +  15,this.xSize - 50,this.ySize - 94 - 17, 21,EnchantmentItem::new));
+        this.addButton(list = new ScrollableListButton<>(this.guiLeft + 8, this.guiTop + 15, this.xSize - 50, this.ySize - 94 - 17, 21, EnchantmentItem::new));
     }
 
-    public void updateEnchantments(Object2IntMap<EnchantmentInstance> enchantments){
+    public void updateEnchantments(Object2IntMap<EnchantmentInstance> enchantments) {
         this.enchantments.clear();
         enchantments.forEach((instance, integer) -> {
             this.enchantments.put(instance, Pair.of(instance, integer));
@@ -89,11 +92,11 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
     public void refreshActiveEnchantments() {
         ItemStack stack = this.container.getSlot(0).getStack();
         this.itemEnchantments = EnchantmentHelper.getEnchantments(stack);
-        this.isBook = stack.getItem() == Items.BOOK || stack.getItem() == Items.ENCHANTED_BOOK;
+        this.isBook = stack.getItem() == Items.BOOK || stack.getItem() == Items.ENCHANTED_BOOK || ModConfig.SERVER.allowMixtureEnchantment.get();
         if (stack.isEmpty()) {
             this.list.setItems(this.enchantments.values());
         } else {
-            this.list.setItems(this.enchantments.values().stream().filter(pair -> stack.getItem() == Items.BOOK || stack.getItem() == Items.ENCHANTED_BOOK || stack.canApplyAtEnchantingTable(pair.getKey().getEnchantment())).collect(Collectors.toList()));
+            this.list.setItems(this.enchantments.values().stream().filter(pair -> stack.getItem() == Items.BOOK || stack.getItem() == Items.ENCHANTED_BOOK || stack.canApplyAtEnchantingTable(pair.getKey().getEnchantment()) || ModConfig.SERVER.allowMixtureEnchantment.get()).collect(Collectors.toList()));
         }
     }
 
@@ -115,7 +118,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
     private boolean hasEqualEnchantments(Map<Enchantment, Integer> itemEnchantments, EnchantmentInstance enchantment) {
         for (Map.Entry<Enchantment, Integer> entry : itemEnchantments.entrySet()) {
             if (entry.getKey() == enchantment.getEnchantment()) {
-                if (entry.getKey().getMaxLevel() != entry.getValue() && entry.getValue() <= enchantment.getLevel()) {
+                if (getMaxLevel(entry.getKey()) != entry.getValue() && entry.getValue() <= enchantment.getLevel()) {
                     return true;
                 }
             }
@@ -171,7 +174,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
         }
 
         private boolean isCompatible() {
-            return EnchantmentHelper.areAllCompatibleWith(EnchanterScreen.this.itemEnchantments.keySet(), this.item.getKey().getEnchantment()) || hasEqualEnchantments(EnchanterScreen.this.itemEnchantments, this.item.getKey());
+            return EnchantmentHelper.areAllCompatibleWith(EnchanterScreen.this.itemEnchantments.keySet(), this.item.getKey().getEnchantment()) || hasEqualEnchantments(EnchanterScreen.this.itemEnchantments, this.item.getKey()) || ModConfig.SERVER.allowMixtureEnchantment.get();
         }
 
         @Override

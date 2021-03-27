@@ -1,5 +1,6 @@
 package de.cheaterpaul.enchantmentmachine.tiles;
 
+import de.cheaterpaul.enchantmentmachine.core.ModConfig;
 import de.cheaterpaul.enchantmentmachine.core.ModData;
 import de.cheaterpaul.enchantmentmachine.inventory.EnchanterContainer;
 import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstance;
@@ -28,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
-    
+
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final ITextComponent name = Utils.genTranslation("tile", "enchanter.name");
@@ -94,14 +95,15 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
     /**
      * Apply the given list of enchantments to the item in the inventory.
      * It is expected that only available and valid (for the itemstack) enchantments are requested. Otherwise this will log a warning and return false.
+     *
      * @param enchantments List of enchantments to apply
-     * @param user The player entity that provides the experience points
+     * @param user         The player entity that provides the experience points
      * @return If all enchantments and sufficient skill points were available
      */
-    public boolean executeEnchantments(PlayerEntity user, List<EnchantmentInstance> enchantments){
-        if(!getConnectedEnchantmentTE().isPresent())return false;
+    public boolean executeEnchantments(PlayerEntity user, List<EnchantmentInstance> enchantments) {
+        if (!getConnectedEnchantmentTE().isPresent()) return false;
         ItemStack stack = inventory.get(0);
-        if(stack.isEmpty())return false;
+        if (stack.isEmpty()) return false;
         Map<Enchantment, Integer> enchantmentMap = EnchantmentHelper.getEnchantments(stack);
         StorageTileEntity te = getConnectedEnchantmentTE().get();
 
@@ -110,12 +112,12 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
             stack = new ItemStack(Items.ENCHANTED_BOOK);
         }
         int requiredLevels = 0;
-        for(EnchantmentInstance enchInst : enchantments) {
+        for (EnchantmentInstance enchInst : enchantments) {
             if (!te.hasEnchantment(enchInst)) {
                 LOGGER.warn("Enchantment {} requested but not available", enchInst);
                 return false;
             }
-            if (!(enchInst.getEnchantment().canApply(stack) || book)) {
+            if (!(enchInst.getEnchantment().canApply(stack) || book || ModConfig.SERVER.allowMixtureEnchantment.get())) {
                 LOGGER.warn("Enchantment {} cannot be applied to {}", enchInst.getEnchantment(), stack);
                 return false;
             }

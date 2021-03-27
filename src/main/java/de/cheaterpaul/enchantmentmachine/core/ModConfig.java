@@ -1,8 +1,10 @@
 package de.cheaterpaul.enchantmentmachine.core;
 
 
+import net.minecraft.enchantment.Enchantment;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class ModConfig {
@@ -34,12 +36,20 @@ public class ModConfig {
     public static class Server {
 
         public final ForgeConfigSpec.BooleanValue allowDisenchantingItems;
+        public final ForgeConfigSpec.BooleanValue allowMixtureEnchantment;
+        public final ForgeConfigSpec.ConfigValue<String> enchList;
 
         Server(ForgeConfigSpec.Builder builder) {
             builder.comment("Server configuration settings")
                     .push("server");
             allowDisenchantingItems = builder.comment("Whether items can be disenchanted. More vanilla like would be false").define("allowDisenchantingItems", true);
-            builder.pop();
+            allowMixtureEnchantment = builder.comment("Whether items can apply all enchantments. More vanilla like would be false").define("allowMixtureEnchantment", true);
+            String newEnchList = "";
+            for (Enchantment ench : ForgeRegistries.ENCHANTMENTS) {
+                newEnchList += ench.getRegistryName().toString() + "|";
+                newEnchList += ench.getMaxLevel() + ",";
+            }
+            enchList = builder.comment("All enchantments max level setting").define("enchantmentsList", newEnchList);
         }
     }
 }
