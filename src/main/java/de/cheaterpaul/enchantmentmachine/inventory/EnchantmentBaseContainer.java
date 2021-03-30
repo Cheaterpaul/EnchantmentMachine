@@ -1,6 +1,5 @@
 package de.cheaterpaul.enchantmentmachine.inventory;
 
-import de.cheaterpaul.enchantmentmachine.core.ModData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -13,7 +12,6 @@ public abstract class EnchantmentBaseContainer extends Container {
     private final int size;
 
     /**
-     *
      * @param sizeInventory inventory size of the container except the player slots
      */
     public EnchantmentBaseContainer(ContainerType<?> containerType, int id, int sizeInventory) {

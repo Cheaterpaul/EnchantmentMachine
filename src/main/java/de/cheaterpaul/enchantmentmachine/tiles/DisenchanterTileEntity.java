@@ -37,11 +37,9 @@ import java.util.Map;
 public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements ITickableTileEntity, ISidedInventory, IHopper {
 
     private static final ITextComponent name = Utils.genTranslation("tile", "disenchanter.name");
-
+    private static final int DURATION = 20;
     private final LazyOptional<? extends IItemHandler>[] itemHandler = SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
     private final NonNullList<ItemStack> inventory = NonNullList.withSize(2, ItemStack.EMPTY);
-
-    private final static int DURATION = 20;
     /**
      * Countdown to disenchantment
      * >0 if waiting
@@ -102,11 +100,10 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
     }
 
 
-
     private void setTimer() {
         if (!getStackInSlot(0).isEmpty() && (getStackInSlot(1).isEmpty() || (resultItem(getStackInSlot(0)).isItemEqual(getStackInSlot(1)) && getStackInSlot(1).getCount() + 1 <= getStackInSlot(1).getMaxStackSize()))) {
             this.timer = DURATION;
-        } else{
+        } else {
             this.timer = 0;
         }
     }
@@ -131,7 +128,7 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
 
     @Override
     public int[] getSlotsForFace(Direction side) {
-        switch (side){
+        switch (side) {
             case DOWN:
                 return new int[]{1};
             default:
@@ -141,12 +138,12 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
 
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        if(index==0) {
+        if (index == 0) {
             if (!ModConfig.SERVER.allowDisenchantingItems.get()) {
                 if (stack.getItem() != Items.ENCHANTED_BOOK) return false;
             }
             return !EnchantmentHelper.getEnchantments(stack).isEmpty();
-        } else{
+        } else {
             return false;
         }
     }

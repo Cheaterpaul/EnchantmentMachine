@@ -17,14 +17,14 @@ public class DisenchanterContainer extends EnchantmentBaseContainer {
     }
 
     public DisenchanterContainer(int id, IInventory inventory, PlayerInventory playerInventory) {
-        super(ModData.disenchanter_container, id,2);
-        this.addSlot(new Slot(inventory, 0, 80,17) {
+        super(ModData.disenchanter_container, id, 2);
+        this.addSlot(new Slot(inventory, 0, 80, 17) {
             @Override
             public boolean isItemValid(ItemStack itemStack) {
                 return !EnchantmentHelper.getEnchantments(itemStack).isEmpty() && (ModConfig.SERVER.allowDisenchantingItems.get() || itemStack.getItem() == Items.ENCHANTED_BOOK);
             }
         });
-        this.addSlot(new Slot(inventory, 1, 80, 53){
+        this.addSlot(new Slot(inventory, 1, 80, 53) {
             @Override
             public boolean isItemValid(ItemStack itemStack) {
                 return false;

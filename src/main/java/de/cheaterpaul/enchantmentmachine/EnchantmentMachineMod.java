@@ -22,7 +22,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 @Mod(REFERENCE.MODID)
 public class EnchantmentMachineMod {
 
-    public static final Proxy PROXY = DistExecutor.safeRunForDist(() -> ClientProxy::new, ()-> ServerProxy::new);
+    public static final Proxy PROXY = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
     public static final AbstractPacketDispatcher DISPATCHER = new ModPacketDispatcher();
     public static final ItemGroup CREATIVE_TAB = new ItemGroup(REFERENCE.MODID) {
         @Override

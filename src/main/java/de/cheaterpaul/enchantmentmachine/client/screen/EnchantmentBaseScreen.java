@@ -1,6 +1,5 @@
 package de.cheaterpaul.enchantmentmachine.client.screen;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import de.cheaterpaul.enchantmentmachine.inventory.EnchantmentBaseContainer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;

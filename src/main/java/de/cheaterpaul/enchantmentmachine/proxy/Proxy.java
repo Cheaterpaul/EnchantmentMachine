@@ -15,7 +15,7 @@ public interface Proxy {
     default void handleEnchantmentPacket(EnchantmentPacket packet) {
     }
 
-    default void handleEnchantingPacket(EnchantingPacket packet, PlayerEntity playerEntity){
+    default void handleEnchantingPacket(EnchantingPacket packet, PlayerEntity playerEntity) {
 
     }
 }

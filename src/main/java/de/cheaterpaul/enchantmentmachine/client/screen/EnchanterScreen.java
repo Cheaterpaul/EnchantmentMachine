@@ -66,10 +66,10 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
     @Override
     protected void init() {
         super.init();
-        this.addButton(list = new ScrollableListButton<>(this.guiLeft + 8,this.guiTop +  15,this.xSize - 50,this.ySize - 94 - 17, 21,EnchantmentItem::new));
+        this.addButton(list = new ScrollableListButton<>(this.guiLeft + 8, this.guiTop + 15, this.xSize - 50, this.ySize - 94 - 17, 21, EnchantmentItem::new));
     }
 
-    public void updateEnchantments(Object2IntMap<EnchantmentInstance> enchantments){
+    public void updateEnchantments(Object2IntMap<EnchantmentInstance> enchantments) {
         this.enchantments.clear();
         enchantments.forEach((instance, integer) -> {
             this.enchantments.put(instance, Pair.of(instance, integer));

@@ -27,6 +27,16 @@ import java.util.function.Supplier;
 
 public class ModDataGenerator {
 
+    public static void gatherData(final GatherDataEvent event) {
+        DataGenerator generator = event.getGenerator();
+        if (event.includeClient()) {
+            generator.addProvider(new BlockStateGenerator(generator, event.getExistingFileHelper()));
+            generator.addProvider(new ItemModelGenerator(generator, event.getExistingFileHelper()));
+        }
+        generator.addProvider(new ModLootTableProvider(generator));
+        generator.addProvider(new RecipeGenerator(generator));
+    }
+
     public static class ItemModelGenerator extends ItemModelProvider {
 
         public ItemModelGenerator(DataGenerator generator, ExistingFileHelper existingFileHelper) {
@@ -75,17 +85,6 @@ public class ModDataGenerator {
             ShapedRecipeBuilder.shapedRecipe(ModData.disenchanter_block).key('B', Items.BOOK).key('#', Blocks.CRYING_OBSIDIAN).key('D', Items.DIAMOND_AXE).patternLine(" B ").patternLine("D#D").patternLine("###").addCriterion("has_obsidian", hasItem(Blocks.CRYING_OBSIDIAN)).build(consumer);
             ShapedRecipeBuilder.shapedRecipe(ModData.enchanter_block).key('B', Items.BOOK).key('#', Blocks.CRYING_OBSIDIAN).key('D', Items.DIAMOND).patternLine(" B ").patternLine("D#D").patternLine("###").addCriterion("has_obsidian", hasItem(Blocks.CRYING_OBSIDIAN)).build(consumer);
         }
-    }
-
-
-    public static void gatherData(final GatherDataEvent event) {
-        DataGenerator generator = event.getGenerator();
-        if (event.includeClient()) {
-            generator.addProvider(new BlockStateGenerator(generator, event.getExistingFileHelper()));
-            generator.addProvider(new ItemModelGenerator(generator, event.getExistingFileHelper()));
-        }
-        generator.addProvider(new ModLootTableProvider(generator));
-        generator.addProvider(new RecipeGenerator(generator));
     }
 
     private static class ModLootTableProvider extends LootTableProvider {

@@ -25,13 +25,10 @@ import java.util.stream.Collectors;
 public class StorageScreen extends Screen {
 
     private static final ResourceLocation BACKGROUND = new ResourceLocation(REFERENCE.MODID, "textures/gui/container/enchantment.png");
-
-    private Object2IntMap<EnchantmentInstance> enchantments = new Object2IntArrayMap<>();
-    private ScrollableListButton<Pair<EnchantmentInstance, Integer>> list;
-
     private final int xSize = 197;
     private final int ySize = 222;
-
+    private Object2IntMap<EnchantmentInstance> enchantments = new Object2IntArrayMap<>();
+    private ScrollableListButton<Pair<EnchantmentInstance, Integer>> list;
     private int guiLeft;
     private int guiTop;
 
@@ -44,7 +41,7 @@ public class StorageScreen extends Screen {
         super.init();
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
-        this.addButton(list = new ScrollableListButton<>(this.guiLeft + 10,this.guiTop + 10,this.xSize - 20,this.ySize - 20, 21, EnchantmentItem::new));
+        this.addButton(list = new ScrollableListButton<>(this.guiLeft + 10, this.guiTop + 10, this.xSize - 20, this.ySize - 20, 21, EnchantmentItem::new));
     }
 
     @Override
@@ -62,21 +59,21 @@ public class StorageScreen extends Screen {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
     }
 
-    public void updateEnchantments(Object2IntMap<EnchantmentInstance> enchantments){
+    public void updateEnchantments(Object2IntMap<EnchantmentInstance> enchantments) {
         this.enchantments = enchantments;
         this.list.setItems(enchantments.object2IntEntrySet().stream().map(s -> Pair.of(s.getKey(), s.getIntValue())).collect(Collectors.toSet()));
     }
 
-    private class EnchantmentItem extends ScrollableListButton.ListItem<Pair<EnchantmentInstance,Integer>> {
+    private class EnchantmentItem extends ScrollableListButton.ListItem<Pair<EnchantmentInstance, Integer>> {
 
         private final ItemStack bookStack;
         private final ITextComponent name;
 
         public EnchantmentItem(Pair<EnchantmentInstance, Integer> item) {
             super(item);
-            bookStack = new ItemStack(Items.ENCHANTED_BOOK,item.getRight());
-            EnchantmentHelper.setEnchantments(Collections.singletonMap(item.getKey().getEnchantment(),item.getKey().getLevel()), bookStack);
-            name = ((IFormattableTextComponent) item.getKey().getEnchantment().getDisplayName(item.getKey().getLevel())).modifyStyle(style -> style.getColor().getColor() == TextFormatting.GRAY.getColor()? style.applyFormatting(TextFormatting.WHITE):style);
+            bookStack = new ItemStack(Items.ENCHANTED_BOOK, item.getRight());
+            EnchantmentHelper.setEnchantments(Collections.singletonMap(item.getKey().getEnchantment(), item.getKey().getLevel()), bookStack);
+            name = ((IFormattableTextComponent) item.getKey().getEnchantment().getDisplayName(item.getKey().getLevel())).modifyStyle(style -> style.getColor().getColor() == TextFormatting.GRAY.getColor() ? style.applyFormatting(TextFormatting.WHITE) : style);
         }
 
         @Override

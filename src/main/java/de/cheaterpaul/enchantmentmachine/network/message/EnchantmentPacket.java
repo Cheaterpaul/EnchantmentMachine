@@ -14,6 +14,22 @@ import java.util.function.Supplier;
 
 public class EnchantmentPacket implements IMessage {
 
+    private final Object2IntMap<EnchantmentInstance> enchantments;
+    private final boolean shouldOpenEnchantmentListScreen;
+
+    public EnchantmentPacket(Object2IntMap<EnchantmentInstance> enchantments, boolean shouldOpenEnchantmentListScreen) {
+        this.enchantments = enchantments;
+        this.shouldOpenEnchantmentListScreen = shouldOpenEnchantmentListScreen;
+    }
+
+    public Object2IntMap<EnchantmentInstance> getEnchantments() {
+        return enchantments;
+    }
+
+    public boolean shouldOpenEnchantmentScreen() {
+        return shouldOpenEnchantmentListScreen;
+    }
+
     public static void encode(EnchantmentPacket msg, PacketBuffer buf) {
         buf.writeBoolean(msg.shouldOpenEnchantmentListScreen);
         buf.writeVarInt(msg.enchantments.size());
@@ -23,8 +39,6 @@ public class EnchantmentPacket implements IMessage {
             buf.writeVarInt(count);
         });
     }
-
-    private final Object2IntMap<EnchantmentInstance> enchantments;
 
     public static EnchantmentPacket decode(PacketBuffer buf) {
         boolean open = buf.readBoolean();
@@ -48,21 +62,6 @@ public class EnchantmentPacket implements IMessage {
         final NetworkEvent.Context ctx = contextSupplier.get();
         ctx.enqueueWork(() -> EnchantmentMachineMod.PROXY.handleEnchantmentPacket(msg));
         ctx.setPacketHandled(true);
-    }
-
-    private final boolean shouldOpenEnchantmentListScreen;
-
-    public EnchantmentPacket(Object2IntMap<EnchantmentInstance> enchantments, boolean shouldOpenEnchantmentListScreen) {
-        this.enchantments = enchantments;
-        this.shouldOpenEnchantmentListScreen = shouldOpenEnchantmentListScreen;
-    }
-
-    public Object2IntMap<EnchantmentInstance> getEnchantments() {
-        return enchantments;
-    }
-
-    public boolean shouldOpenEnchantmentScreen() {
-        return shouldOpenEnchantmentListScreen;
     }
 
 }

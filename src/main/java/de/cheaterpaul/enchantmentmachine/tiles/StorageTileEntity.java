@@ -29,17 +29,11 @@ public class StorageTileEntity extends TileEntity implements IEnchantmentMachine
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final ITextComponent name = Utils.genTranslation("tile", "enchantment.name");
+    private static final Random random = new Random();
     /**
      * Used as list, just using map because it implements all the required weak reference stuff
      */
     private final WeakHashMap<IEnchantmentListener, IEnchantmentListener> listeners = new WeakHashMap<>();
-
-    public void addEnchantment(EnchantmentInstance enchInst, int count) {
-        int c = enchantmentMaps.getOrDefault(enchInst, 0);
-        enchantmentMaps.put(enchInst, c + count);
-        notifyListeners();
-    }
-
     private final Object2IntArrayMap<EnchantmentInstance> enchantmentMaps = new Object2IntArrayMap<>();
 
     public int ticks;
@@ -52,10 +46,15 @@ public class StorageTileEntity extends TileEntity implements IEnchantmentMachine
     public float nextPageAngle;
     public float pageAngle;
     public float field_195531_n;
-    private static final Random random = new Random();
 
     public StorageTileEntity() {
         super(ModData.storage_tile);
+    }
+
+    public void addEnchantment(EnchantmentInstance enchInst, int count) {
+        int c = enchantmentMaps.getOrDefault(enchInst, 0);
+        enchantmentMaps.put(enchInst, c + count);
+        notifyListeners();
     }
 
     @Override
@@ -72,36 +71,36 @@ public class StorageTileEntity extends TileEntity implements IEnchantmentMachine
                 float f1 = this.field_195525_h;
 
                 do {
-                    this.field_195525_h += (float)(random.nextInt(4) - random.nextInt(4));
-                } while(f1 == this.field_195525_h);
+                    this.field_195525_h += (float) (random.nextInt(4) - random.nextInt(4));
+                } while (f1 == this.field_195525_h);
             }
         } else {
             this.field_195531_n += 0.02F;
             this.nextPageTurningSpeed -= 0.1F;
         }
 
-        while(this.nextPageAngle >= (float)Math.PI) {
-            this.nextPageAngle -= ((float)Math.PI * 2F);
+        while (this.nextPageAngle >= (float) Math.PI) {
+            this.nextPageAngle -= ((float) Math.PI * 2F);
         }
 
-        while(this.nextPageAngle < -(float)Math.PI) {
-            this.nextPageAngle += ((float)Math.PI * 2F);
+        while (this.nextPageAngle < -(float) Math.PI) {
+            this.nextPageAngle += ((float) Math.PI * 2F);
         }
 
-        while(this.field_195531_n >= (float)Math.PI) {
-            this.field_195531_n -= ((float)Math.PI * 2F);
+        while (this.field_195531_n >= (float) Math.PI) {
+            this.field_195531_n -= ((float) Math.PI * 2F);
         }
 
-        while(this.field_195531_n < -(float)Math.PI) {
-            this.field_195531_n += ((float)Math.PI * 2F);
+        while (this.field_195531_n < -(float) Math.PI) {
+            this.field_195531_n += ((float) Math.PI * 2F);
         }
 
         float f2;
-        for(f2 = this.field_195531_n - this.nextPageAngle; f2 >= (float)Math.PI; f2 -= ((float)Math.PI * 2F)) {
+        for (f2 = this.field_195531_n - this.nextPageAngle; f2 >= (float) Math.PI; f2 -= ((float) Math.PI * 2F)) {
         }
 
-        while(f2 < -(float)Math.PI) {
-            f2 += ((float)Math.PI * 2F);
+        while (f2 < -(float) Math.PI) {
+            f2 += ((float) Math.PI * 2F);
         }
 
         this.nextPageAngle += f2 * 0.4F;
@@ -121,12 +120,13 @@ public class StorageTileEntity extends TileEntity implements IEnchantmentMachine
 
     /**
      * Consume 1 enchantment instance
+     *
      * @param enchInst The enchantment to consume
      * @return Whether the given enchantment existed and was consumed
      */
-    public boolean consumeEnchantment(EnchantmentInstance enchInst){
-        int count = enchantmentMaps.getOrDefault(enchInst,0);
-        if(count<=0){
+    public boolean consumeEnchantment(EnchantmentInstance enchInst) {
+        int count = enchantmentMaps.getOrDefault(enchInst, 0);
+        if (count <= 0) {
             return false;
         } else if (count == 1) {
             enchantmentMaps.removeInt(enchInst);
@@ -159,14 +159,13 @@ public class StorageTileEntity extends TileEntity implements IEnchantmentMachine
     }
 
     /**
-     *
      * @return Unmofifiable map of all enchantment instances and their count (>0)
      */
-    public Object2IntMap<EnchantmentInstance> getEnchantments(){
+    public Object2IntMap<EnchantmentInstance> getEnchantments() {
         return Object2IntMaps.unmodifiable(enchantmentMaps);
     }
 
-    public int getEnchantmentCount(){
+    public int getEnchantmentCount() {
         return enchantmentMaps.values().stream().mapToInt(s -> s).sum();
     }
 
@@ -209,13 +208,13 @@ public class StorageTileEntity extends TileEntity implements IEnchantmentMachine
         ListNBT enchantments = new ListNBT();
         enchantmentMaps.forEach((inst, count) -> {
             CompoundNBT enchantment = new CompoundNBT();
-            enchantment.putString("id",inst.getEnchantment().getRegistryName().toString());
-            enchantment.putInt("level",inst.getLevel());
+            enchantment.putString("id", inst.getEnchantment().getRegistryName().toString());
+            enchantment.putInt("level", inst.getLevel());
             enchantment.putInt("count", count);
             enchantments.add(enchantment);
         });
 
-        compound.put("enchantments",enchantments);
+        compound.put("enchantments", enchantments);
     }
 
     @Override

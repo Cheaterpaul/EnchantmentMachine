@@ -13,7 +13,7 @@ import net.minecraft.world.IWorldReader;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-public abstract class EnchantmentBaseTileEntity extends LockableTileEntity implements IEnchantmentMachine{
+public abstract class EnchantmentBaseTileEntity extends LockableTileEntity implements IEnchantmentMachine {
 
     /**
      * Stores the last known location of an adjacent enchantment storage block.
@@ -57,12 +57,12 @@ public abstract class EnchantmentBaseTileEntity extends LockableTileEntity imple
             if (iWorld.getBlockState(neighborPos).getBlock() != ModData.storage_block) {
                 this.storageBlockPos = null;
             }
-            }
+        }
     }
 
     @Override
     public boolean hasConnectedTE() {
-        return storageBlockPos!=null;
+        return storageBlockPos != null;
     }
 
     @Override

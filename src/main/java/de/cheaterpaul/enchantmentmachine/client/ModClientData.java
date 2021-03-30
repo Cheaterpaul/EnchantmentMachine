@@ -17,7 +17,7 @@ public class ModClientData {
         ScreenManager.registerFactory(ModData.disenchanter_container, DisenchanterScreen::new);
     }
 
-    public static void registerTileEntityRenderer(){
+    public static void registerTileEntityRenderer() {
         ClientRegistry.bindTileEntityRenderer(ModData.storage_tile, EnchantmentBlockTileEntityRenderer::new);
     }
 
