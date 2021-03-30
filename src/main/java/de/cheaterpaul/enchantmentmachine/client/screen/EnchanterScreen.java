@@ -3,6 +3,7 @@ package de.cheaterpaul.enchantmentmachine.client.screen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.cheaterpaul.enchantmentmachine.EnchantmentMachineMod;
+import de.cheaterpaul.enchantmentmachine.core.ModConfig;
 import de.cheaterpaul.enchantmentmachine.inventory.EnchanterContainer;
 import de.cheaterpaul.enchantmentmachine.network.message.EnchantingPacket;
 import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstance;
@@ -36,7 +37,6 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
     private final Map<EnchantmentInstance, Pair<EnchantmentInstance, Integer>> enchantments = new HashMap<>();
     private ScrollableListButton<Pair<EnchantmentInstance, Integer>> list;
     private Map<Enchantment, Integer> itemEnchantments = new HashMap<>();
-    private boolean isBook = false;
 
 
     public EnchanterScreen(EnchanterContainer container, PlayerInventory playerInventory, ITextComponent name) {
@@ -89,7 +89,6 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
     public void refreshActiveEnchantments() {
         ItemStack stack = this.container.getSlot(0).getStack();
         this.itemEnchantments = EnchantmentHelper.getEnchantments(stack);
-        this.isBook = stack.getItem() == Items.BOOK || stack.getItem() == Items.ENCHANTED_BOOK;
         if (stack.isEmpty()) {
             this.list.setItems(this.enchantments.values());
         } else {
@@ -99,7 +98,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
 
     private void apply(EnchantmentInstance instance) {
         if (this.container.getSlot(0).getHasStack()) {
-            if (EnchantmentHelper.areAllCompatibleWith(itemEnchantments.keySet(), instance.getEnchantment()) || hasEqualEnchantments(itemEnchantments, instance)) {
+            if (ModConfig.SERVER.allowMixtureEnchantments.get() || EnchantmentHelper.areAllCompatibleWith(itemEnchantments.keySet(), instance.getEnchantment()) || hasEqualEnchantments(itemEnchantments, instance)) {
                 EnchantmentMachineMod.DISPATCHER.sendToServer(new EnchantingPacket(Collections.singletonList(instance)));
                 Pair<EnchantmentInstance, Integer> value = this.enchantments.get(instance);
                 if (value.getValue() > 1) {
@@ -171,7 +170,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
         }
 
         private boolean isCompatible() {
-            return EnchantmentHelper.areAllCompatibleWith(EnchanterScreen.this.itemEnchantments.keySet(), this.item.getKey().getEnchantment()) || hasEqualEnchantments(EnchanterScreen.this.itemEnchantments, this.item.getKey());
+            return (ModConfig.SERVER.allowMixtureEnchantments.get() || EnchantmentHelper.areAllCompatibleWith(EnchanterScreen.this.itemEnchantments.keySet(), this.item.getKey().getEnchantment())) || hasEqualEnchantments(EnchanterScreen.this.itemEnchantments, this.item.getKey());
         }
 
         @Override

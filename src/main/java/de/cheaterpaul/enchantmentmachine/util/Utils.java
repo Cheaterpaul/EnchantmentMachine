@@ -1,5 +1,6 @@
 package de.cheaterpaul.enchantmentmachine.util;
 
+import de.cheaterpaul.enchantmentmachine.core.ModConfig;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -35,7 +36,7 @@ public class Utils {
                 int newLevel = Math.min(enchantment.getMaxLevel(), enchInst.getLevel() == entry.getValue() ? enchInst.getLevel() + 1 : Math.max(enchInst.getLevel(), entry.getValue()));
                 enchInst = new EnchantmentInstance(enchantment, newLevel); //Override enchInst in loop.
                 continue;
-            } else if (!enchInst.getEnchantment().isCompatibleWith(enchantment)) {
+            } else if (!(enchInst.getEnchantment().isCompatibleWith(enchantment) || ModConfig.SERVER.allowMixtureEnchantments.get())) {
                 return null;
             }
         }

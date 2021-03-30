@@ -34,11 +34,13 @@ public class ModConfig {
     public static class Server {
 
         public final ForgeConfigSpec.BooleanValue allowDisenchantingItems;
+        public final ForgeConfigSpec.BooleanValue allowMixtureEnchantments;
 
         Server(ForgeConfigSpec.Builder builder) {
             builder.comment("Server configuration settings")
                     .push("server");
             allowDisenchantingItems = builder.comment("Whether items can be disenchanted. More vanilla like would be false").define("allowDisenchantingItems", true);
+            allowMixtureEnchantments = builder.comment("Whether incompatible enchantments can be allied together").define("allowMixtureEnchantments", false);
             builder.pop();
         }
     }
