@@ -1,6 +1,9 @@
 package de.cheaterpaul.enchantmentmachine.util;
 
+import de.cheaterpaul.enchantmentmachine.core.ModConfig;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.util.ResourceLocation;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -44,5 +47,12 @@ public class EnchantmentInstance {
                 "enchantment=" + enchantment +
                 ", level=" + level +
                 '}';
+    }
+
+    public boolean canEnchant() {
+        return ModConfig.SERVER.maxEnchantmentLevels.get().stream().map(s -> {
+            String[] maxlvels = s.split("\\|");
+            return Pair.of(new ResourceLocation(maxlvels[0]), Integer.parseInt(maxlvels[1]));
+        }).filter(e -> e.getKey().equals(this.enchantment.getRegistryName())).noneMatch(a -> a.getValue() < this.level);
     }
 }

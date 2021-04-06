@@ -40,6 +40,8 @@ public class Utils {
                 return null;
             }
         }
+        if (!enchInst.canEnchant()) return null;
+
         int baseCost = 0;
         switch (enchInst.getEnchantment().getRarity()) {
             case COMMON:
