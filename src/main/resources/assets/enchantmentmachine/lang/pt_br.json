@@ -1,0 +1,13 @@
+{
+  "block.enchantmentmachine.enchanter_block": "Encantadorr",
+  "tile.enchantmentmachine.enchanter.name": "Encantadorr",
+  "block.enchantmentmachine.disenchanter_block": "Desencantador",
+  "tile.enchantmentmachine.disenchanter.name": "Desencantador",
+  "block.enchantmentmachine.enchantment_block": "Bloco de Encantamento",
+  "itemGroup.enchantmentmachine": "Máquina de Encantamento",
+  "text.enchantmentmachine.enchant": "Encantar",
+  "text.enchantmentmachine.enchant_for_level": "Encantar usando %d níveis",
+  "text.enchantmentmachine.require_level": "Requer %d níveis",
+  "text.enchantmentmachine.unavailable": "Incompatível",
+  "text.enchantment_block.contained_enchantments": "Encantamentos Contidos: %s"
+}
