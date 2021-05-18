@@ -128,7 +128,6 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
         private final ITextComponent name;
         private final Button button;
         private final int requiredLevels;
-        private final boolean isCompatible;
 
         public EnchantmentItem(Pair<EnchantmentInstance, Integer> item) {
             super(item);
@@ -140,7 +139,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
                 public void onTooltip(Button button, MatrixStack matrixStack, int mouseX, int mouseY) {
                     if (mouseX > button.x && mouseX < button.x + button.getWidth() && mouseY > button.y && mouseY < button.y + button.getHeightRealms()) {
                         IFormattableTextComponent text;
-                        if (isCompatible) {
+                        if (isCompatible()) {
                             if (hasSufficientLevels()) {
                                 text = new TranslationTextComponent("text.enchantmentmachine.enchant_for_level", EnchantmentItem.this.requiredLevels).mergeStyle(TextFormatting.GREEN);
                             } else {
@@ -154,12 +153,11 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
                 }
             }, StringTextComponent.EMPTY);
             requiredLevels = calculateRequiredLevels();
-            isCompatible = isCompatible();
-
         }
 
         @Override
         public boolean onClick(double mouseX, double mouseY) {
+            if (!this.button.visible) return false;
             if (mouseX > this.button.x && mouseX < this.button.x + this.button.getWidth() && mouseY > this.button.y && mouseY < this.button.y + this.button.getHeightRealms()) {
                 if (isCompatible() && hasSufficientLevels()) {
                     this.button.onClick(mouseX, mouseY);
@@ -196,7 +194,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
 
             this.button.visible = EnchanterScreen.this.container.getSlot(0).getHasStack();
 
-            if (isCompatible) {
+            if (isCompatible()) {
                 if (hasSufficientLevels()) {
                     RenderSystem.color4f(0.2f, 1f, 0.4f, 1);
                 } else {

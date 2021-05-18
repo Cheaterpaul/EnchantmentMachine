@@ -46,7 +46,7 @@ public class ScrollableListButton<T> extends ExtendedButton {
     public void setItems(Collection<T> elements) {
         this.listItems.clear();
         elements.forEach(item -> this.listItems.add(this.itemSupplier.apply(item)));
-        this.setScrolled(0);
+        this.setScrolled(MathHelper.clamp(this.scrolled, 0, this.listItems.size() * this.itemHeight - this.height));
         this.canScroll = this.listItems.size() * this.itemHeight > this.height;
     }
 
@@ -163,6 +163,7 @@ public class ScrollableListButton<T> extends ExtendedButton {
             if (mouseX > this.x + this.width - this.scrollerWidth) {
                 this.scrollerClicked = true;
             } else {
+                int itemHeight = this.itemHeight - 1; // only 1 pixel between items
                 for (int i = 0; i < this.listItems.size(); i++) {
 
                     int y = i * itemHeight - scrolled;
