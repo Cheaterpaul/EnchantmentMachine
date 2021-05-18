@@ -24,6 +24,7 @@ public class EnchanterContainer extends EnchantmentBaseContainer implements Stor
     private final IWorldPosCallable worldPosCallable;
     private final PlayerEntity player;
     private ISlotListener listener;
+    private IInventory inventory;
 
     public EnchanterContainer(int id, PlayerInventory playerInventory) {
         this(id, new Inventory(1), playerInventory, IWorldPosCallable.DUMMY);
@@ -31,6 +32,7 @@ public class EnchanterContainer extends EnchantmentBaseContainer implements Stor
 
     public EnchanterContainer(int id, IInventory inventory, PlayerInventory playerInventory, IWorldPosCallable worldPosCallable) {
         super(ModData.enchanter_container, id, 1);
+        this.inventory = inventory;
         this.addSlot(new Slot(inventory, 0, 203, 19) {
 
             @Override
@@ -56,6 +58,9 @@ public class EnchanterContainer extends EnchantmentBaseContainer implements Stor
     public void onContainerClosed(PlayerEntity playerIn) {
         super.onContainerClosed(playerIn);
         contactEnchantmentTileEntity(t -> t.removeListener(this));
+        this.worldPosCallable.consume((world, pos) -> {
+            this.clearContainer(playerIn, world, this.inventory);
+        });
     }
 
     @Override
