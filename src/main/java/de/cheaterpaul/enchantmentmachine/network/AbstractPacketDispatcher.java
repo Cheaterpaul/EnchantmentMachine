@@ -27,24 +27,22 @@ public abstract class AbstractPacketDispatcher {
 
     /**
      * Template for packets:
-     * <p>
-     * <p>
-     * public static void encode(PACKET msg, PacketBuffer buf){
-     * <p>
+     * <pre>
+     * {@code
+     * public static void encode(PACKET msg, PacketBuffer buf) {
+     *
      * }
-     * <p>
-     * public static PACKET decode(PacketBuffer buf){
-     * return new
+     *
+     * public static PACKET decode(PacketBuffer buf) {
+     *      return new
      * }
-     * <p>
-     * <p>
-     * public static void handle(final PACKET pkt, Supplier<NetworkEvent.Context> contextSupplier){
-     * final NetworkEvent.Context ctx = contextSupplier.get();
-     * ctx.enqueueWork( () -> { //Execute on main thread
-     * <p>
-     * });
-     * ctx.setPacketHandled(true);
+     * public static void handle(final PACKET pkt, Supplier<NetworkEvent.Context> contextSupplier) {
+     *      final NetworkEvent.Context ctx = contextSupplier.get();
+     *      ctx.enqueueWork( () -> { //Execute on main thread });
+     *      ctx.setPacketHandled(true);
      * }
+     * }
+     * </pre>
      */
     public abstract void registerPackets();
 

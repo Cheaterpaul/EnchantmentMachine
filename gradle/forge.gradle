@@ -1,11 +1,6 @@
 repositories {
     maven {
-        url "http://dvs1.progwml6.com/files/maven"
-    }
-    maven {
-        // location of a maven mirror for JEI files, as a fallback
-        name = "ModMaven"
-        url = "https://modmaven.k-4u.nl"
+        url "https://dvs1.progwml6.com/files/maven"
     }
     maven {
         //Local repo for custom forge builds.
@@ -28,8 +23,8 @@ dependencies {
     minecraft "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
     compileOnly fg.deobf("mezz.jei:jei-${project.jei_version}:api") //API for compile (not POM)
     runtimeOnly fg.deobf("mezz.jei:jei-${project.jei_version}") //Full for runtime (not POM)
-    implementation fg.deobf("curse.maven:enchantment-description-250419:3112901")
-    implementation fg.deobf("curse.maven:bookshelf-228525:3133712")
+    runtimeOnly fg.deobf("curse.maven:enchantment-description-250419:3112901")
+    runtimeOnly fg.deobf("curse.maven:bookshelf-228525:3133712")
 }
 
 minecraft {
@@ -136,20 +131,9 @@ task crowdin(type: Copy){
 }
 
 processResources {
-
-    from(sourceSets.main.resources.srcDirs) {
-        include 'META-INF/mods.toml'
-
+    filesMatching("**/mods.toml"){
         expand 'version': project.mod_version, 'mcversion': minecraft_version, 'forge_version': forge_version, 'jei_version': jei_version
     }
-
-    outputs.upToDateWhen { false }
-
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'META-INF/mods.toml'
-    }
-
-    exclude '**/Thumbs.db'
 }
 
 jar {

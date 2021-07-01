@@ -159,7 +159,7 @@ public class StorageTileEntity extends TileEntity implements IEnchantmentMachine
     }
 
     /**
-     * @return Unmofifiable map of all enchantment instances and their count (>0)
+     * @return Unmofifiable map of all enchantment instances and their count ({@code >0})
      */
     public Object2IntMap<EnchantmentInstance> getEnchantments() {
         return Object2IntMaps.unmodifiable(enchantmentMaps);
