@@ -34,12 +34,12 @@ public class ModData {
     public static final ContainerType<DisenchanterContainer> disenchanter_container;
 
     static {
-        (enchanter_block = new EnchanterBlock(AbstractBlock.Properties.create(Material.IRON, MaterialColor.IRON).setRequiresTool().hardnessAndResistance(5.0F, 1200.0F))).setRegistryName(REFERENCE.MODID, "enchanter_block");
-        (disenchanter_block = new DisenchanterBlock(AbstractBlock.Properties.create(Material.IRON, MaterialColor.IRON).setRequiresTool().hardnessAndResistance(5.0F, 1200.0F))).setRegistryName(REFERENCE.MODID, "disenchanter_block");
-        (storage_block = new StorageBlock(AbstractBlock.Properties.create(Material.IRON, MaterialColor.IRON).setRequiresTool().hardnessAndResistance(5.0F, 1200.0F).notSolid())).setRegistryName(REFERENCE.MODID, "enchantment_block");
-        (enchanter_tile = TileEntityType.Builder.create(EnchanterTileEntity::new, enchanter_block).build(null)).setRegistryName(REFERENCE.MODID, "enchanter_tile");
-        (disenchanter_tile = TileEntityType.Builder.create(DisenchanterTileEntity::new, disenchanter_block).build(null)).setRegistryName(REFERENCE.MODID, "disenchanter_tile");
-        (storage_tile = TileEntityType.Builder.create(StorageTileEntity::new, storage_block).build(null)).setRegistryName(REFERENCE.MODID, "enchantment_tile");
+        (enchanter_block = new EnchanterBlock(AbstractBlock.Properties.of(Material.METAL, MaterialColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 1200.0F))).setRegistryName(REFERENCE.MODID, "enchanter_block");
+        (disenchanter_block = new DisenchanterBlock(AbstractBlock.Properties.of(Material.METAL, MaterialColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 1200.0F))).setRegistryName(REFERENCE.MODID, "disenchanter_block");
+        (storage_block = new StorageBlock(AbstractBlock.Properties.of(Material.METAL, MaterialColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 1200.0F).noOcclusion())).setRegistryName(REFERENCE.MODID, "enchantment_block");
+        (enchanter_tile = TileEntityType.Builder.of(EnchanterTileEntity::new, enchanter_block).build(null)).setRegistryName(REFERENCE.MODID, "enchanter_tile");
+        (disenchanter_tile = TileEntityType.Builder.of(DisenchanterTileEntity::new, disenchanter_block).build(null)).setRegistryName(REFERENCE.MODID, "disenchanter_tile");
+        (storage_tile = TileEntityType.Builder.of(StorageTileEntity::new, storage_block).build(null)).setRegistryName(REFERENCE.MODID, "enchantment_tile");
         (enchanter_container = new ContainerType<>(EnchanterContainer::new)).setRegistryName(REFERENCE.MODID, "enchanter_container");
         (disenchanter_container = new ContainerType<>(DisenchanterContainer::new)).setRegistryName(REFERENCE.MODID, "disenchanter_container");
     }
@@ -53,9 +53,9 @@ public class ModData {
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
-        event.getRegistry().register(new BlockItem(enchanter_block, new Item.Properties().group(EnchantmentMachineMod.CREATIVE_TAB)).setRegistryName(REFERENCE.MODID, "enchanter_block"));
-        event.getRegistry().register(new BlockItem(disenchanter_block, new Item.Properties().group(EnchantmentMachineMod.CREATIVE_TAB)).setRegistryName(REFERENCE.MODID, "disenchanter_block"));
-        event.getRegistry().register(new BlockItem(storage_block, new Item.Properties().group(EnchantmentMachineMod.CREATIVE_TAB).maxStackSize(1).rarity(Rarity.RARE)).setRegistryName(REFERENCE.MODID, "enchantment_block"));
+        event.getRegistry().register(new BlockItem(enchanter_block, new Item.Properties().tab(EnchantmentMachineMod.CREATIVE_TAB)).setRegistryName(REFERENCE.MODID, "enchanter_block"));
+        event.getRegistry().register(new BlockItem(disenchanter_block, new Item.Properties().tab(EnchantmentMachineMod.CREATIVE_TAB)).setRegistryName(REFERENCE.MODID, "disenchanter_block"));
+        event.getRegistry().register(new BlockItem(storage_block, new Item.Properties().tab(EnchantmentMachineMod.CREATIVE_TAB).stacksTo(1).rarity(Rarity.RARE)).setRegistryName(REFERENCE.MODID, "enchantment_block"));
     }
 
     @SubscribeEvent

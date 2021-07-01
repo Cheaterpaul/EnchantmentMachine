@@ -129,7 +129,7 @@ public class ScrollableListButton<T> extends ExtendedButton {
         int scrollHeight = this.height - 2 - scrollerHeight;
         float perc = (float) this.scrolled / (float) (this.listItems.size() * this.itemHeight - this.height);
         int yOffset = (int) (scrollHeight * perc);
-        Minecraft.getInstance().textureManager.bindTexture(MISC);
+        Minecraft.getInstance().textureManager.bind(MISC);
         blit(matrixStack, this.x + this.width - this.scrollerWidth + 1, this.y + yOffset + 1, this.canScroll ? 9 : 16, 0, 7, 27);
     }
 

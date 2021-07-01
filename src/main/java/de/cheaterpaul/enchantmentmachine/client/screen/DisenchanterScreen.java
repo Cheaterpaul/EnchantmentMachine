@@ -21,17 +21,17 @@ public class DisenchanterScreen extends EnchantmentBaseScreen<DisenchanterContai
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(@Nonnull MatrixStack matrixStack, float partialTicks, int x, int y) {
+    protected void renderBg(@Nonnull MatrixStack matrixStack, float partialTicks, int x, int y) {
         this.renderBackground(matrixStack);
-        this.minecraft.getTextureManager().bindTexture(BACKGROUND);
-        int i = this.guiLeft;
-        int j = this.guiTop;
-        this.blit(matrixStack, i, j, 0, 0, this.xSize, this.ySize);
+        this.minecraft.getTextureManager().bind(BACKGROUND);
+        int i = this.leftPos;
+        int j = this.topPos;
+        this.blit(matrixStack, i, j, 0, 0, this.imageWidth, this.imageHeight);
     }
 
     @Override
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
-        this.renderHoveredTooltip(matrixStack, mouseX, mouseY);
+        this.renderTooltip(matrixStack, mouseX, mouseY);
     }
 }

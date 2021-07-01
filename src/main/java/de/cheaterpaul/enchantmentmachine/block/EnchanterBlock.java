@@ -32,16 +32,16 @@ public class EnchanterBlock extends EnchantmentBaseBlock {
     }
 
     @Override
-    public TileEntity createNewTileEntity(IBlockReader iBlockReader) {
+    public TileEntity newBlockEntity(IBlockReader iBlockReader) {
         return ModData.enchanter_tile.create();
     }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState blockState, World world, BlockPos blockPos, PlayerEntity playerEntity, Hand hand, BlockRayTraceResult rayTraceResult) {
-        TileEntity tile = world.getTileEntity(blockPos);
+    public ActionResultType use(BlockState blockState, World world, BlockPos blockPos, PlayerEntity playerEntity, Hand hand, BlockRayTraceResult rayTraceResult) {
+        TileEntity tile = world.getBlockEntity(blockPos);
         if (tile instanceof EnchanterTileEntity) {
-            playerEntity.openContainer(((EnchanterTileEntity) tile));
-            if (!world.isRemote() && playerEntity instanceof ServerPlayerEntity) {
+            playerEntity.openMenu(((EnchanterTileEntity) tile));
+            if (!world.isClientSide() && playerEntity instanceof ServerPlayerEntity) {
                 Optional<StorageTileEntity> s = ((EnchanterTileEntity) tile).getConnectedEnchantmentTE();
                 s.ifPresent(enchantmentTileEntity -> EnchantmentMachineMod.DISPATCHER.sendTo(new EnchantmentPacket(enchantmentTileEntity.getEnchantments(), false), ((ServerPlayerEntity) playerEntity)));
             }
@@ -56,15 +56,15 @@ public class EnchanterBlock extends EnchantmentBaseBlock {
     }
 
     public static VoxelShape makeShape() {
-        VoxelShape a = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 12.0D, 16.0D);
+        VoxelShape a = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 12.0D, 16.0D);
 
-        VoxelShape b = Block.makeCuboidShape(2,12, 2, 7,15,5);
+        VoxelShape b = Block.box(2, 12, 2, 7, 15, 5);
 
-        VoxelShape c = Block.makeCuboidShape(14,12,14,9,15,11);
+        VoxelShape c = Block.box(14, 12, 14, 9, 15, 11);
 
-        VoxelShape d = Block.makeCuboidShape(4,13,5,5,14,11);
+        VoxelShape d = Block.box(4, 13, 5, 5, 14, 11);
 
-        VoxelShape e = Block.makeCuboidShape(12,13,11,11,14,5);
+        VoxelShape e = Block.box(12, 13, 11, 11, 14, 5);
 
         return VoxelShapes.or(a,b,c,d,e);
     }

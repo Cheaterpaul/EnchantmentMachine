@@ -26,7 +26,7 @@ public class EnchantmentMachineMod {
     public static final AbstractPacketDispatcher DISPATCHER = new ModPacketDispatcher();
     public static final ItemGroup CREATIVE_TAB = new ItemGroup(REFERENCE.MODID) {
         @Override
-        public ItemStack createIcon() {
+        public ItemStack makeIcon() {
             return new ItemStack(ModData.storage_block);
         }
     };

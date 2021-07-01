@@ -12,9 +12,9 @@ public abstract class CommonProxy implements Proxy {
 
     @Override
     public void handleEnchantingPacket(EnchantingPacket packet, PlayerEntity playerEntity) {
-        if (playerEntity.openContainer instanceof EnchanterContainer) {
-            Optional<EnchanterTileEntity> tile = ((EnchanterContainer) playerEntity.openContainer).getWorldPosCallable().apply((world, pos) -> {
-                TileEntity tile2 = world.getTileEntity(pos);
+        if (playerEntity.containerMenu instanceof EnchanterContainer) {
+            Optional<EnchanterTileEntity> tile = ((EnchanterContainer) playerEntity.containerMenu).getWorldPosCallable().evaluate((world, pos) -> {
+                TileEntity tile2 = world.getBlockEntity(pos);
                 if (tile2 instanceof EnchanterTileEntity) {
                     return ((EnchanterTileEntity) tile2);
                 }

@@ -62,7 +62,7 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
     }
 
     @Override
-    public int getSizeInventory() {
+    public int getContainerSize() {
         return this.inventory.size();
     }
 
@@ -72,36 +72,36 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
     }
 
     @Override
-    public ItemStack getStackInSlot(int i) {
+    public ItemStack getItem(int i) {
         return this.inventory.get(i);
     }
 
     @Override
-    public ItemStack decrStackSize(int i, int i1) {
-        ItemStack result = ItemStackHelper.getAndSplit(this.inventory, i, i1);
+    public ItemStack removeItem(int i, int i1) {
+        ItemStack result = ItemStackHelper.removeItem(this.inventory, i, i1);
         this.setTimer();
         return result;
     }
 
     @Override
-    public ItemStack removeStackFromSlot(int i) {
-        ItemStack stack = ItemStackHelper.getAndRemove(this.inventory, i);
+    public ItemStack removeItemNoUpdate(int i) {
+        ItemStack stack = ItemStackHelper.takeItem(this.inventory, i);
         this.setTimer();
         return stack;
     }
 
     @Override
-    public void setInventorySlotContents(int i, ItemStack itemStack) {
+    public void setItem(int i, ItemStack itemStack) {
         this.inventory.set(i, itemStack);
-        if (itemStack.getCount() > this.getInventoryStackLimit()) {
-            itemStack.setCount(this.getInventoryStackLimit());
+        if (itemStack.getCount() > this.getMaxStackSize()) {
+            itemStack.setCount(this.getMaxStackSize());
         }
         setTimer();
     }
 
 
     private void setTimer() {
-        if (!getStackInSlot(0).isEmpty() && (getStackInSlot(1).isEmpty() || (resultItem(getStackInSlot(0)).isItemEqual(getStackInSlot(1)) && getStackInSlot(1).getCount() + 1 <= getStackInSlot(1).getMaxStackSize()))) {
+        if (!getItem(0).isEmpty() && (getItem(1).isEmpty() || (resultItem(getItem(0)).sameItem(getItem(1)) && getItem(1).getCount() + 1 <= getItem(1).getMaxStackSize()))) {
             this.timer = DURATION;
         } else {
             this.timer = 0;
@@ -117,13 +117,13 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
     }
 
     @Override
-    public void clear() {
+    public void clearContent() {
         this.inventory.clear();
     }
 
     @Override
-    public double getXPos() {
-        return this.pos.getX() + 0.5;
+    public double getLevelX() {
+        return this.worldPosition.getX() + 0.5;
     }
 
     @Override
@@ -137,7 +137,7 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
     }
 
     @Override
-    public boolean isItemValidForSlot(int index, ItemStack stack) {
+    public boolean canPlaceItem(int index, ItemStack stack) {
         if (index == 0) {
             if (!ModConfig.SERVER.allowDisenchantingItems.get()) {
                 if (stack.getItem() != Items.ENCHANTED_BOOK) return false;
@@ -149,43 +149,43 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
     }
 
     @Override
-    public boolean canInsertItem(int index, ItemStack itemStackIn, @Nullable Direction direction) {
-        return index == 0 && isItemValidForSlot(index, itemStackIn);
+    public boolean canPlaceItemThroughFace(int index, ItemStack itemStackIn, @Nullable Direction direction) {
+        return index == 0 && canPlaceItem(index, itemStackIn);
     }
 
     @Override
-    public boolean canExtractItem(int index, ItemStack stack, Direction direction) {
+    public boolean canTakeItemThroughFace(int index, ItemStack stack, Direction direction) {
         return index == 1;
     }
 
     @Override
-    public void read(BlockState state, CompoundNBT nbt) {
-        super.read(state, nbt);
+    public void load(BlockState state, CompoundNBT nbt) {
+        super.load(state, nbt);
         this.inventory.clear();
         ItemStackHelper.loadAllItems(nbt, this.inventory);
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT compound) {
-        super.write(compound);
+    public CompoundNBT save(CompoundNBT compound) {
+        super.save(compound);
         ItemStackHelper.saveAllItems(compound, this.inventory);
         return compound;
     }
 
     @Override
     public CompoundNBT getUpdateTag() {
-        return write(new CompoundNBT());
+        return save(new CompoundNBT());
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        this.read(this.world.getBlockState(pkt.getPos()), pkt.getNbtCompound());
+        this.load(this.level.getBlockState(pkt.getPos()), pkt.getTag());
     }
 
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction facing) {
-        if (!this.removed && facing != null && cap == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (!this.remove && facing != null && cap == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             if (facing == Direction.UP)
                 return itemHandler[0].cast();
             else if (facing == Direction.DOWN)
@@ -197,21 +197,21 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
     }
 
     @Override
-    public void remove() {
-        super.remove();
+    public void setRemoved() {
+        super.setRemoved();
         for (int x = 0; x < itemHandler.length; x++) {
             itemHandler[x].invalidate();
         }
     }
 
     @Override
-    public double getYPos() {
-        return this.pos.getY() + 0.5;
+    public double getLevelY() {
+        return this.worldPosition.getY() + 0.5;
     }
 
     @Override
-    public double getZPos() {
-        return this.pos.getZ() + 0.5;
+    public double getLevelZ() {
+        return this.worldPosition.getZ() + 0.5;
     }
 
     @Override
@@ -230,21 +230,21 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
                         if (stack.getItem() == Items.ENCHANTED_BOOK) {
                             stack = new ItemStack(Items.BOOK);
                         }
-                        ItemStack slot = getStackInSlot(1);
-                        if (!slot.isEmpty() && slot.isItemEqual(stack)) {
+                        ItemStack slot = getItem(1);
+                        if (!slot.isEmpty() && slot.sameItem(stack)) {
                             stack.shrink(-slot.getCount());
                         }
-                        setInventorySlotContents(1, stack);
-                        setInventorySlotContents(0, ItemStack.EMPTY);
+                        setItem(1, stack);
+                        setItem(0, ItemStack.EMPTY);
                     }
                 });
             }
         }
-        if (this.world != null && !this.world.isRemote) {
+        if (this.level != null && !this.level.isClientSide) {
             --this.transferCooldown;
             if (transferCooldown <= 0) {
                 this.transferCooldown = 0;
-                if (HopperTileEntity.pullItems(this)) {
+                if (HopperTileEntity.suckInItems(this)) {
                     this.transferCooldown = 0;
                 }
             }

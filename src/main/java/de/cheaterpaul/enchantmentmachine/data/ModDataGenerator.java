@@ -80,10 +80,10 @@ public class ModDataGenerator {
         }
 
         @Override
-        protected void registerRecipes(Consumer<IFinishedRecipe> consumer) {
-            ShapedRecipeBuilder.shapedRecipe(ModData.storage_block).key('B', Items.BOOK).key('#', Blocks.CRYING_OBSIDIAN).key('D', Items.DIAMOND).patternLine("BBB").patternLine("D#D").patternLine("###").addCriterion("has_obsidian", hasItem(Blocks.CRYING_OBSIDIAN)).build(consumer);
-            ShapedRecipeBuilder.shapedRecipe(ModData.disenchanter_block).key('B', Items.BOOK).key('#', Blocks.CRYING_OBSIDIAN).key('D', Items.DIAMOND_AXE).patternLine(" B ").patternLine("D#D").patternLine("###").addCriterion("has_obsidian", hasItem(Blocks.CRYING_OBSIDIAN)).build(consumer);
-            ShapedRecipeBuilder.shapedRecipe(ModData.enchanter_block).key('B', Items.BOOK).key('#', Blocks.CRYING_OBSIDIAN).key('D', Items.DIAMOND).patternLine(" B ").patternLine("D#D").patternLine("###").addCriterion("has_obsidian", hasItem(Blocks.CRYING_OBSIDIAN)).build(consumer);
+        protected void buildShapelessRecipes(Consumer<IFinishedRecipe> consumer) {
+            ShapedRecipeBuilder.shaped(ModData.storage_block).define('B', Items.BOOK).define('#', Blocks.CRYING_OBSIDIAN).define('D', Items.DIAMOND).pattern("BBB").pattern("D#D").pattern("###").unlockedBy("has_obsidian", has(Blocks.CRYING_OBSIDIAN)).save(consumer);
+            ShapedRecipeBuilder.shaped(ModData.disenchanter_block).define('B', Items.BOOK).define('#', Blocks.CRYING_OBSIDIAN).define('D', Items.DIAMOND_AXE).pattern(" B ").pattern("D#D").pattern("###").unlockedBy("has_obsidian", has(Blocks.CRYING_OBSIDIAN)).save(consumer);
+            ShapedRecipeBuilder.shaped(ModData.enchanter_block).define('B', Items.BOOK).define('#', Blocks.CRYING_OBSIDIAN).define('D', Items.DIAMOND).pattern(" B ").pattern("D#D").pattern("###").unlockedBy("has_obsidian", has(Blocks.CRYING_OBSIDIAN)).save(consumer);
         }
     }
 
@@ -100,15 +100,15 @@ public class ModDataGenerator {
 
         @Override
         protected void validate(Map<ResourceLocation, LootTable> map, ValidationTracker validationtracker) {
-            map.forEach((resourceLocation, lootTable) -> LootTableManager.validateLootTable(validationtracker, resourceLocation, lootTable));
+            map.forEach((resourceLocation, lootTable) -> LootTableManager.validate(validationtracker, resourceLocation, lootTable));
         }
 
         private static class Tables extends BlockLootTables {
             @Override
             protected void addTables() {
-                this.registerDropSelfLootTable(ModData.disenchanter_block);
-                this.registerDropSelfLootTable(ModData.enchanter_block);
-                this.registerDropSelfLootTable(ModData.storage_block);
+                this.dropSelf(ModData.disenchanter_block);
+                this.dropSelf(ModData.enchanter_block);
+                this.dropSelf(ModData.storage_block);
             }
 
             @Nonnull

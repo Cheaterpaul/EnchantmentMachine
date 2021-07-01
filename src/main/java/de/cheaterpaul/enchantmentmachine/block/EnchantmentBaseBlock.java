@@ -17,7 +17,7 @@ public abstract class EnchantmentBaseBlock extends ContainerBlock {
     }
 
     @Override
-    public BlockRenderType getRenderType(BlockState p_149645_1_) {
+    public BlockRenderType getRenderShape(BlockState p_149645_1_) {
         return BlockRenderType.MODEL;
     }
 
@@ -25,9 +25,9 @@ public abstract class EnchantmentBaseBlock extends ContainerBlock {
     public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
         if (worldIn.getBlockState(fromPos).getBlock() instanceof EnchantmentBaseBlock) {
             BlockPos mainPos = fromPos;
-            TileEntity te = worldIn.getTileEntity(pos);
+            TileEntity te = worldIn.getBlockEntity(pos);
             if (te instanceof StorageTileEntity) {
-                te = worldIn.getTileEntity(fromPos);
+                te = worldIn.getBlockEntity(fromPos);
                 mainPos = pos;
             }
             if (te instanceof EnchantmentBaseTileEntity) {

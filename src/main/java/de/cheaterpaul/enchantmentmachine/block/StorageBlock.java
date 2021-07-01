@@ -38,32 +38,32 @@ public class StorageBlock extends EnchantmentBaseBlock {
 
     @Nullable
     @Override
-    public TileEntity createNewTileEntity(IBlockReader worldIn) {
+    public TileEntity newBlockEntity(IBlockReader worldIn) {
         return ModData.storage_tile.create();
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-        super.addInformation(stack, worldIn, tooltip, flagIn);
+    public void appendHoverText(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+        super.appendHoverText(stack, worldIn, tooltip, flagIn);
         CompoundNBT nbt = stack.getTag();
         int count = nbt != null ? nbt.getInt("enchantmentcount") : 0;
         tooltip.add(new TranslationTextComponent("text.enchantment_block.contained_enchantments", count));
     }
 
     @Override
-    public void harvestBlock(World worldIn, PlayerEntity player, BlockPos pos, BlockState state, @Nullable TileEntity te, ItemStack heldStack) {
+    public void playerDestroy(World worldIn, PlayerEntity player, BlockPos pos, BlockState state, @Nullable TileEntity te, ItemStack heldStack) {
         ItemStack stack = new ItemStack(ModData.storage_block, 1);
         if (te instanceof StorageTileEntity) {
-            ((StorageTileEntity) te).writeEnchantments(stack.getOrCreateChildTag("BlockEntityTag"));
+            ((StorageTileEntity) te).writeEnchantments(stack.getOrCreateTagElement("BlockEntityTag"));
             stack.getOrCreateTag().putInt("enchantmentcount", ((StorageTileEntity) te).getEnchantmentCount());
         }
-        spawnAsEntity(worldIn, pos, stack);
+        popResource(worldIn, pos, stack);
     }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState blockState, World world, BlockPos blockPos, PlayerEntity playerEntity, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
-        TileEntity tile = world.getTileEntity(blockPos);
+    public ActionResultType use(BlockState blockState, World world, BlockPos blockPos, PlayerEntity playerEntity, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
+        TileEntity tile = world.getBlockEntity(blockPos);
         if (tile instanceof StorageTileEntity && playerEntity instanceof ServerPlayerEntity) {
             EnchantmentMachineMod.DISPATCHER.sendTo(new EnchantmentPacket(((StorageTileEntity) tile).getEnchantments(), true), ((ServerPlayerEntity) playerEntity));
             return ActionResultType.CONSUME;
@@ -77,6 +77,6 @@ public class StorageBlock extends EnchantmentBaseBlock {
     }
 
     public static VoxelShape makeShape(){
-        return Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 12.0D, 16.0D);
+        return Block.box(0.0D, 0.0D, 0.0D, 16.0D, 12.0D, 16.0D);
     }
 }

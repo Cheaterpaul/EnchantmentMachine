@@ -27,7 +27,7 @@ public class EnchanterContainer extends EnchantmentBaseContainer implements Stor
     private IInventory inventory;
 
     public EnchanterContainer(int id, PlayerInventory playerInventory) {
-        this(id, new Inventory(1), playerInventory, IWorldPosCallable.DUMMY);
+        this(id, new Inventory(1), playerInventory, IWorldPosCallable.NULL);
     }
 
     public EnchanterContainer(int id, IInventory inventory, PlayerInventory playerInventory, IWorldPosCallable worldPosCallable) {
@@ -36,13 +36,13 @@ public class EnchanterContainer extends EnchantmentBaseContainer implements Stor
         this.addSlot(new Slot(inventory, 0, 203, 19) {
 
             @Override
-            public int getSlotStackLimit() {
+            public int getMaxStackSize() {
                 return 1;
             }
 
             @Override
-            public void onSlotChanged() {
-                super.onSlotChanged();
+            public void setChanged() {
+                super.setChanged();
                 if (EnchanterContainer.this.listener != null) {
                     EnchanterContainer.this.listener.slotChanged();
                 }
@@ -55,10 +55,10 @@ public class EnchanterContainer extends EnchantmentBaseContainer implements Stor
     }
 
     @Override
-    public void onContainerClosed(PlayerEntity playerIn) {
-        super.onContainerClosed(playerIn);
+    public void removed(PlayerEntity playerIn) {
+        super.removed(playerIn);
         contactEnchantmentTileEntity(t -> t.removeListener(this));
-        this.worldPosCallable.consume((world, pos) -> {
+        this.worldPosCallable.execute((world, pos) -> {
             this.clearContainer(playerIn, world, this.inventory);
         });
     }
@@ -80,13 +80,13 @@ public class EnchanterContainer extends EnchantmentBaseContainer implements Stor
     }
 
     @Override
-    public ItemStack transferStackInSlot(PlayerEntity playerEntity, int index) {
-        return super.transferStackInSlot(playerEntity, index);
+    public ItemStack quickMoveStack(PlayerEntity playerEntity, int index) {
+        return super.quickMoveStack(playerEntity, index);
     }
 
     private void contactEnchantmentTileEntity(Consumer<StorageTileEntity> consumer) {
-        this.worldPosCallable.consume((w, p) -> {
-            TileEntity t = w.getTileEntity(p);
+        this.worldPosCallable.execute((w, p) -> {
+            TileEntity t = w.getBlockEntity(p);
             if (t instanceof EnchanterTileEntity) {
                 ((EnchanterTileEntity) t).getConnectedEnchantmentTE().ifPresent(consumer);
             }

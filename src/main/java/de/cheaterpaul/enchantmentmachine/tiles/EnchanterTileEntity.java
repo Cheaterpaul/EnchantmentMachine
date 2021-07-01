@@ -47,11 +47,11 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
 
     @Override
     protected Container createMenu(int i, PlayerInventory playerInventory) {
-        return new EnchanterContainer(i, this, playerInventory, IWorldPosCallable.of(this.world, this.pos));
+        return new EnchanterContainer(i, this, playerInventory, IWorldPosCallable.create(this.level, this.worldPosition));
     }
 
     @Override
-    public int getSizeInventory() {
+    public int getContainerSize() {
         return this.inventory.size();
     }
 
@@ -64,30 +64,30 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
     }
 
     @Override
-    public ItemStack getStackInSlot(int i) {
+    public ItemStack getItem(int i) {
         return this.inventory.get(i);
     }
 
     @Override
-    public ItemStack decrStackSize(int i, int i1) {
-        return ItemStackHelper.getAndSplit(this.inventory, i, i1);
+    public ItemStack removeItem(int i, int i1) {
+        return ItemStackHelper.removeItem(this.inventory, i, i1);
     }
 
     @Override
-    public ItemStack removeStackFromSlot(int i) {
-        return ItemStackHelper.getAndRemove(this.inventory, i);
+    public ItemStack removeItemNoUpdate(int i) {
+        return ItemStackHelper.takeItem(this.inventory, i);
     }
 
     @Override
-    public void setInventorySlotContents(int i, ItemStack itemStack) {
+    public void setItem(int i, ItemStack itemStack) {
         this.inventory.set(i, itemStack);
-        if (itemStack.getCount() > this.getInventoryStackLimit()) {
-            itemStack.setCount(this.getInventoryStackLimit());
+        if (itemStack.getCount() > this.getMaxStackSize()) {
+            itemStack.setCount(this.getMaxStackSize());
         }
     }
 
     @Override
-    public void clear() {
+    public void clearContent() {
         this.inventory.clear();
     }
 
@@ -116,7 +116,7 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
                 LOGGER.warn("Enchantment {} requested but not available", enchInst);
                 return false;
             }
-            if (!(enchInst.getEnchantment().canApply(stack) || book)) {
+            if (!(enchInst.getEnchantment().canEnchant(stack) || book)) {
                 LOGGER.warn("Enchantment {} cannot be applied to {}", enchInst.getEnchantment(), stack);
                 return false;
             }
@@ -127,12 +127,12 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
             requiredLevels += result.getRight();
             enchantmentMap.put(result.getLeft().getEnchantment(), result.getLeft().getLevel()); //Override previous entry for this enchantment
         }
-        if (!user.abilities.isCreativeMode) {
+        if (!user.abilities.instabuild) {
             if (user.experienceLevel < requiredLevels) {
                 LOGGER.warn("Not enough levels to enchant {} {}", requiredLevels, user.experienceLevel);
                 return false;
             }
-            user.addExperienceLevel(-requiredLevels);
+            user.giveExperienceLevels(-requiredLevels);
         }
         //Everything good
         if (book) {
@@ -148,11 +148,11 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
 
     @Override
     public CompoundNBT getUpdateTag() {
-        return write(new CompoundNBT());
+        return save(new CompoundNBT());
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        this.read(this.world.getBlockState(pkt.getPos()), pkt.getNbtCompound());
+        this.load(this.level.getBlockState(pkt.getPos()), pkt.getTag());
     }
 }

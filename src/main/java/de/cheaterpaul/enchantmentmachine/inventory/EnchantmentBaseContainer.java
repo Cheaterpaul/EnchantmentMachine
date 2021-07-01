@@ -20,7 +20,7 @@ public abstract class EnchantmentBaseContainer extends Container {
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity playerIn) {
+    public boolean stillValid(PlayerEntity playerIn) {
         return true;
     }
 
@@ -41,38 +41,38 @@ public abstract class EnchantmentBaseContainer extends Container {
     }
 
     @Override
-    public ItemStack transferStackInSlot(PlayerEntity playerEntity, int index) {
+    public ItemStack quickMoveStack(PlayerEntity playerEntity, int index) {
         ItemStack result = ItemStack.EMPTY;
-        Slot slot = this.inventorySlots.get(index);
-        if (slot != null && slot.getHasStack()) {
-            ItemStack slotStack = slot.getStack();
+        Slot slot = this.slots.get(index);
+        if (slot != null && slot.hasItem()) {
+            ItemStack slotStack = slot.getItem();
             result = slotStack.copy();
             if (index < this.size) {
-                if (!this.mergeItemStack(slotStack, this.size, 36 + this.size, false)) {
+                if (!this.moveItemStackTo(slotStack, this.size, 36 + this.size, false)) {
                     return ItemStack.EMPTY;
                 }
             } else if (index >= this.size && index < 27 + this.size) {
-                if (!this.mergeItemStack(slotStack, 0, this.size, false)) {
+                if (!this.moveItemStackTo(slotStack, 0, this.size, false)) {
                     if (slotStack.isEmpty()) {
                         return ItemStack.EMPTY;
                     }
                 }
-                if (!this.mergeItemStack(slotStack, 27 + this.size, 36 + this.size, false)) {
+                if (!this.moveItemStackTo(slotStack, 27 + this.size, 36 + this.size, false)) {
                     return ItemStack.EMPTY;
                 }
             } else if (index >= 27 + this.size && index < 36 + this.size) {
-                if (this.mergeItemStack(slotStack, 0, this.size, false)) {
+                if (this.moveItemStackTo(slotStack, 0, this.size, false)) {
                     return ItemStack.EMPTY;
                 }
-                if (!this.mergeItemStack(slotStack, this.size + 1, 27 + this.size, false)) {
+                if (!this.moveItemStackTo(slotStack, this.size + 1, 27 + this.size, false)) {
                     return ItemStack.EMPTY;
                 }
             }
 
             if (slotStack.isEmpty()) {
-                slot.putStack(ItemStack.EMPTY);
+                slot.set(ItemStack.EMPTY);
             } else {
-                slot.onSlotChanged();
+                slot.setChanged();
             }
 
             if (slotStack.getCount() == result.getCount()) {
@@ -80,7 +80,7 @@ public abstract class EnchantmentBaseContainer extends Container {
             }
 
             slot.onTake(playerEntity, slotStack);
-            detectAndSendChanges();
+            broadcastChanges();
         }
 
         return result;

@@ -29,11 +29,11 @@ public abstract class EnchantmentBaseTileEntity extends LockableTileEntity imple
     }
 
     @Override
-    public boolean isUsableByPlayer(PlayerEntity playerEntity) {
-        if (this.world.getTileEntity(this.pos) != this) {
+    public boolean stillValid(PlayerEntity playerEntity) {
+        if (this.level.getBlockEntity(this.worldPosition) != this) {
             return false;
         } else {
-            return playerEntity.getDistanceSq((double) this.pos.getX() + 0.5D, (double) this.pos.getY() + 0.5D, (double) this.pos.getZ() + 0.5D) <= 64.0D;
+            return playerEntity.distanceToSqr((double) this.worldPosition.getX() + 0.5D, (double) this.worldPosition.getY() + 0.5D, (double) this.worldPosition.getZ() + 0.5D) <= 64.0D;
         }
     }
 
@@ -41,7 +41,7 @@ public abstract class EnchantmentBaseTileEntity extends LockableTileEntity imple
     @Override
     public Optional<StorageTileEntity> getConnectedEnchantmentTE() {
         if (storageBlockPos == null) return Optional.empty();
-        TileEntity te = this.world.getTileEntity(storageBlockPos);
+        TileEntity te = this.level.getBlockEntity(storageBlockPos);
         if (te instanceof StorageTileEntity) {
             return Optional.of((StorageTileEntity) te);
         }
@@ -66,8 +66,8 @@ public abstract class EnchantmentBaseTileEntity extends LockableTileEntity imple
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT compound) {
-        super.write(compound);
+    public CompoundNBT save(CompoundNBT compound) {
+        super.save(compound);
         if (this.storageBlockPos != null) {
             compound.putIntArray("storageblock", new int[]{this.storageBlockPos.getX(), this.storageBlockPos.getY(), this.storageBlockPos.getZ()});
         }
@@ -75,8 +75,8 @@ public abstract class EnchantmentBaseTileEntity extends LockableTileEntity imple
     }
 
     @Override
-    public void read(BlockState state, CompoundNBT nbt) {
-        super.read(state, nbt);
+    public void load(BlockState state, CompoundNBT nbt) {
+        super.load(state, nbt);
         if (nbt.contains("storageblock")) {
             int[] pos = nbt.getIntArray("storageblock");
             this.storageBlockPos = new BlockPos(pos[0], pos[1], pos[2]);

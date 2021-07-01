@@ -13,8 +13,8 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 public class ModClientData {
 
     public static void registerScreens() {
-        ScreenManager.registerFactory(ModData.enchanter_container, EnchanterScreen::new);
-        ScreenManager.registerFactory(ModData.disenchanter_container, DisenchanterScreen::new);
+        ScreenManager.register(ModData.enchanter_container, EnchanterScreen::new);
+        ScreenManager.register(ModData.disenchanter_container, DisenchanterScreen::new);
     }
 
     public static void registerTileEntityRenderer() {
@@ -22,6 +22,6 @@ public class ModClientData {
     }
 
     public static void textureStitchEvent(TextureStitchEvent.Pre event) {
-        event.addSprite(EnchantmentBlockTileEntityRenderer.TEXTURE_BOOK.getTextureLocation());
+        event.addSprite(EnchantmentBlockTileEntityRenderer.TEXTURE_BOOK.texture());
     }
 }
