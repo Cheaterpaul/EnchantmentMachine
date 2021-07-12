@@ -46,7 +46,7 @@ public class ScrollableListButton<T> extends ExtendedButton {
     public void setItems(Collection<T> elements) {
         this.listItems.clear();
         elements.forEach(item -> this.listItems.add(this.itemSupplier.apply(item)));
-        this.setScrolled(MathHelper.clamp(this.scrolled, 0, this.listItems.size() * this.itemHeight - this.height));
+        this.setScrolled(MathHelper.clamp(this.scrolled, 0, Math.max(0, this.listItems.size() * this.itemHeight - this.height)));
         this.canScroll = this.listItems.size() * this.itemHeight > this.height;
     }
 
@@ -61,8 +61,12 @@ public class ScrollableListButton<T> extends ExtendedButton {
         }
     }
 
-    private void setScrolled(int scrolled) {
+    public void setScrolled(int scrolled) {
         this.scrolledD = this.scrolled = scrolled;
+    }
+
+    public int getScrolled() {
+        return scrolled;
     }
 
     @Override

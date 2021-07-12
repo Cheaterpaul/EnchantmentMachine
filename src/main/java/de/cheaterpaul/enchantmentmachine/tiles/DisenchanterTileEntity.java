@@ -112,8 +112,16 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
         if (stack.getItem() instanceof EnchantedBookItem) {
             return new ItemStack(Items.BOOK);
         }
-        EnchantmentHelper.setEnchantments(Collections.emptyMap(), stack.copy());
-        return stack;
+        ItemStack stack1 = stack.copy();
+        stack1.getOrCreateTag().remove("StoredEnchantments");
+        EnchantmentHelper.setEnchantments(Collections.emptyMap(), stack1);
+        return stack1;
+    }
+
+    private Map<Enchantment, Integer> getEnchantments(ItemStack stack) {
+        Map<Enchantment, Integer> map = EnchantmentHelper.deserializeEnchantments(stack.getEnchantmentTags());
+        map.putAll(EnchantmentHelper.deserializeEnchantments(EnchantedBookItem.getEnchantments(stack)));
+        return map;
     }
 
     @Override
@@ -140,7 +148,7 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
     public boolean canPlaceItem(int index, ItemStack stack) {
         if (index == 0) {
             if (!ModConfig.SERVER.allowDisenchantingItems.get()) {
-                if (stack.getItem() != Items.ENCHANTED_BOOK) return false;
+                if (EnchantedBookItem.getEnchantments(stack).isEmpty()) return false;
             }
             return !EnchantmentHelper.getEnchantments(stack).isEmpty();
         } else {
@@ -220,16 +228,13 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
             if (--this.timer == 0) {
                 getConnectedEnchantmentTE().ifPresent(te -> {
                     ItemStack stack = this.inventory.get(0);
-                    if (ModConfig.SERVER.allowDisenchantingItems.get() || stack.getItem() == Items.ENCHANTED_BOOK) {
-                        Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(stack);
-                        map.entrySet().forEach(e -> {
-                            EnchantmentInstance inst = new EnchantmentInstance(e.getKey(), e.getValue());
+                    if (canDisenchant(stack)) {
+                        Map<Enchantment, Integer> map = getEnchantments(stack);
+                        map.forEach((key, value) -> {
+                            EnchantmentInstance inst = new EnchantmentInstance(key, value);
                             te.addEnchantment(inst);
                         });
-                        EnchantmentHelper.setEnchantments(Collections.emptyMap(), stack);
-                        if (stack.getItem() == Items.ENCHANTED_BOOK) {
-                            stack = new ItemStack(Items.BOOK);
-                        }
+                        stack = resultItem(stack);
                         ItemStack slot = getItem(1);
                         if (!slot.isEmpty() && slot.sameItem(stack)) {
                             stack.shrink(-slot.getCount());
@@ -249,5 +254,9 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
                 }
             }
         }
+    }
+
+    private boolean canDisenchant(ItemStack stack) {
+        return ModConfig.SERVER.allowDisenchantingItems.get() || !EnchantedBookItem.getEnchantments(stack).isEmpty();
     }
 }

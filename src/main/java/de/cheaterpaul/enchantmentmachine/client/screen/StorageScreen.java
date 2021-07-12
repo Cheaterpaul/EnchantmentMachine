@@ -5,6 +5,7 @@ import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstance;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
@@ -18,6 +19,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
@@ -37,6 +39,14 @@ public class StorageScreen extends Screen {
     }
 
     @Override
+    public void resize(@Nonnull Minecraft minecraft, int p_231152_2_, int p_231152_3_) {
+        int scrolled = this.list.getScrolled();
+        super.resize(minecraft, p_231152_2_, p_231152_3_);
+        this.updateEnchantments(enchantments);
+        this.list.setScrolled(scrolled);
+    }
+
+    @Override
     protected void init() {
         super.init();
         this.guiLeft = (this.width - this.xSize) / 2;
@@ -50,7 +60,7 @@ public class StorageScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(matrixStack);
         this.minecraft.getTextureManager().bind(BACKGROUND);
         int i = this.guiLeft;
