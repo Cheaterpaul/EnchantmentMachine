@@ -19,12 +19,15 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
+import javax.annotation.Nonnull;
+
 @Mod(REFERENCE.MODID)
 public class EnchantmentMachineMod {
 
     public static final Proxy PROXY = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
     public static final AbstractPacketDispatcher DISPATCHER = new ModPacketDispatcher();
     public static final ItemGroup CREATIVE_TAB = new ItemGroup(REFERENCE.MODID) {
+        @Nonnull
         @Override
         public ItemStack makeIcon() {
             return new ItemStack(ModData.storage_block);

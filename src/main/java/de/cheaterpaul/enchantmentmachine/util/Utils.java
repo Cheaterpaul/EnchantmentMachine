@@ -35,7 +35,6 @@ public class Utils {
             if (enchantment == enchInst.getEnchantment()) { //Combine enchantments if it is already present. Choose highest level or level +1 if both have the same.
                 int newLevel = Math.min(enchantment.getMaxLevel(), enchInst.getLevel() == entry.getValue() ? enchInst.getLevel() + 1 : Math.max(enchInst.getLevel(), entry.getValue()));
                 enchInst = new EnchantmentInstance(enchantment, newLevel); //Override enchInst in loop.
-                continue;
             } else if (!(enchInst.getEnchantment().isCompatibleWith(enchantment) || ModConfig.SERVER.allowMixtureEnchantments.get())) {
                 return null;
             }

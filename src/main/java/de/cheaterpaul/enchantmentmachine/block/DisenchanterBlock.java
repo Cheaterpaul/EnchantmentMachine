@@ -16,6 +16,8 @@ import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
+
 public class DisenchanterBlock extends EnchantmentBaseBlock {
 
     protected static final VoxelShape SHAPE = makeShape();
@@ -26,12 +28,13 @@ public class DisenchanterBlock extends EnchantmentBaseBlock {
     }
 
     @Override
-    public TileEntity newBlockEntity(IBlockReader iBlockReader) {
+    public TileEntity newBlockEntity(@Nonnull IBlockReader iBlockReader) {
         return ModData.disenchanter_tile.create();
     }
 
+    @Nonnull
     @Override
-    public ActionResultType use(BlockState p_225533_1_, World p_225533_2_, BlockPos p_225533_3_, PlayerEntity p_225533_4_, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
+    public ActionResultType use(@Nonnull BlockState p_225533_1_, World p_225533_2_, @Nonnull BlockPos p_225533_3_, @Nonnull PlayerEntity p_225533_4_, @Nonnull Hand p_225533_5_, @Nonnull BlockRayTraceResult p_225533_6_) {
         TileEntity tile = p_225533_2_.getBlockEntity(p_225533_3_);
         if (tile instanceof DisenchanterTileEntity) {
             p_225533_4_.openMenu(((DisenchanterTileEntity) tile));
@@ -40,8 +43,9 @@ public class DisenchanterBlock extends EnchantmentBaseBlock {
         return ActionResultType.SUCCESS;
     }
 
+    @Nonnull
     @Override
-    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+    public VoxelShape getShape(@Nonnull BlockState state, @Nonnull IBlockReader worldIn, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
         return SHAPE;
     }
 

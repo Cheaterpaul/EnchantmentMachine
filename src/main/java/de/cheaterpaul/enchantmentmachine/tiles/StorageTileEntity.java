@@ -21,6 +21,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
 import java.util.Random;
 import java.util.WeakHashMap;
@@ -170,7 +171,7 @@ public class StorageTileEntity extends TileEntity implements IEnchantmentMachine
     }
 
     @Override
-    public void load(BlockState state, CompoundNBT nbt) {
+    public void load(@Nonnull BlockState state, @Nonnull CompoundNBT nbt) {
         super.load(state, nbt);
         enchantmentMaps.clear();
         nbt.getList("enchantments", 10).forEach(i -> {
@@ -195,8 +196,9 @@ public class StorageTileEntity extends TileEntity implements IEnchantmentMachine
         });
     }
 
+    @Nonnull
     @Override
-    public CompoundNBT save(CompoundNBT compound) {
+    public CompoundNBT save(@Nonnull CompoundNBT compound) {
         compound = super.save(compound);
 
         writeEnchantments(compound);

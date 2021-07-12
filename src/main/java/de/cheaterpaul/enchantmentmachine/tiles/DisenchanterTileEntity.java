@@ -51,13 +51,15 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
         super(ModData.disenchanter_tile);
     }
 
+    @Nonnull
     @Override
     protected ITextComponent getDefaultName() {
         return name;
     }
 
+    @Nonnull
     @Override
-    protected Container createMenu(int i, PlayerInventory playerInventory) {
+    protected Container createMenu(int i, @Nonnull PlayerInventory playerInventory) {
         return new DisenchanterContainer(i, this, playerInventory);
     }
 
@@ -71,11 +73,13 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
         return this.inventory.isEmpty();
     }
 
+    @Nonnull
     @Override
     public ItemStack getItem(int i) {
         return this.inventory.get(i);
     }
 
+    @Nonnull
     @Override
     public ItemStack removeItem(int i, int i1) {
         ItemStack result = ItemStackHelper.removeItem(this.inventory, i, i1);
@@ -83,6 +87,7 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
         return result;
     }
 
+    @Nonnull
     @Override
     public ItemStack removeItemNoUpdate(int i) {
         ItemStack stack = ItemStackHelper.takeItem(this.inventory, i);
@@ -91,7 +96,7 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
     }
 
     @Override
-    public void setItem(int i, ItemStack itemStack) {
+    public void setItem(int i, @Nonnull ItemStack itemStack) {
         this.inventory.set(i, itemStack);
         if (itemStack.getCount() > this.getMaxStackSize()) {
             itemStack.setCount(this.getMaxStackSize());
@@ -134,18 +139,17 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
         return this.worldPosition.getX() + 0.5;
     }
 
+    @Nonnull
     @Override
-    public int[] getSlotsForFace(Direction side) {
-        switch (side) {
-            case DOWN:
-                return new int[]{1};
-            default:
-                return new int[]{0};
+    public int[] getSlotsForFace(@Nonnull Direction side) {
+        if (side == Direction.DOWN) {
+            return new int[]{1};
         }
+        return new int[]{0};
     }
 
     @Override
-    public boolean canPlaceItem(int index, ItemStack stack) {
+    public boolean canPlaceItem(int index, @Nonnull ItemStack stack) {
         if (index == 0) {
             if (!ModConfig.SERVER.allowDisenchantingItems.get()) {
                 if (EnchantedBookItem.getEnchantments(stack).isEmpty()) return false;
@@ -157,12 +161,12 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
     }
 
     @Override
-    public boolean canPlaceItemThroughFace(int index, ItemStack itemStackIn, @Nullable Direction direction) {
+    public boolean canPlaceItemThroughFace(int index, @Nonnull ItemStack itemStackIn, @Nullable Direction direction) {
         return index == 0 && canPlaceItem(index, itemStackIn);
     }
 
     @Override
-    public boolean canTakeItemThroughFace(int index, ItemStack stack, Direction direction) {
+    public boolean canTakeItemThroughFace(int index, @Nonnull ItemStack stack, @Nonnull Direction direction) {
         return index == 1;
     }
 
@@ -180,6 +184,7 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
         return compound;
     }
 
+    @Nonnull
     @Override
     public CompoundNBT getUpdateTag() {
         return save(new CompoundNBT());
@@ -187,12 +192,13 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+        //noinspection ConstantConditions
         this.load(this.level.getBlockState(pkt.getPos()), pkt.getTag());
     }
 
-    @Nonnull
+    @Nullable
     @Override
-    public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction facing) {
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction facing) {
         if (!this.remove && facing != null && cap == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             if (facing == Direction.UP)
                 return itemHandler[0].cast();
@@ -207,8 +213,8 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
     @Override
     public void setRemoved() {
         super.setRemoved();
-        for (int x = 0; x < itemHandler.length; x++) {
-            itemHandler[x].invalidate();
+        for (LazyOptional<? extends IItemHandler> opt : itemHandler) {
+            opt.invalidate();
         }
     }
 

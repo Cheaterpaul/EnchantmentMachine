@@ -7,8 +7,10 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+
+import javax.annotation.Nonnull;
 
 public class DisenchanterContainer extends EnchantmentBaseContainer {
 
@@ -26,7 +28,7 @@ public class DisenchanterContainer extends EnchantmentBaseContainer {
         });
         this.addSlot(new Slot(inventory, 1, 80, 53) {
             @Override
-            public boolean mayPlace(ItemStack itemStack) {
+            public boolean mayPlace(@Nonnull ItemStack itemStack) {
                 return false;
             }
         });

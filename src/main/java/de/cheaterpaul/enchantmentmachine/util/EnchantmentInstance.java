@@ -23,6 +23,7 @@ public class EnchantmentInstance {
         return level;
     }
 
+    @Nonnull
     public Enchantment getEnchantment() {
         return enchantment;
     }

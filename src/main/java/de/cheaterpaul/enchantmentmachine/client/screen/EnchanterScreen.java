@@ -58,7 +58,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
         this.renderTooltip(matrixStack, mouseX, mouseY);
     }
@@ -136,7 +136,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
             this.name = ((IFormattableTextComponent) item.getKey().getEnchantment().getFullname(item.getKey().getLevel())).withStyle(style -> style.getColor().getValue() == TextFormatting.GRAY.getColor() ? style.applyFormat(TextFormatting.WHITE) : style);
             this.button = new ImageButton(0, 0, 11, 17, 1, 208, 18, new ResourceLocation("textures/gui/recipe_book.png"), 256, 256, (button) -> EnchanterScreen.this.apply(item.getKey()), new Button.ITooltip() {
                 @Override
-                public void onTooltip(Button button, MatrixStack matrixStack, int mouseX, int mouseY) {
+                public void onTooltip(@Nonnull Button button, @Nonnull MatrixStack matrixStack, int mouseX, int mouseY) {
                     if (mouseX > button.x && mouseX < button.x + button.getWidth() && mouseY > button.y && mouseY < button.y + button.getHeight()) {
                         IFormattableTextComponent text;
                         if (isCompatible()) {

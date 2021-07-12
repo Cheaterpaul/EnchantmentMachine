@@ -23,6 +23,7 @@ public class DisenchanterScreen extends EnchantmentBaseScreen<DisenchanterContai
     @Override
     protected void renderBg(@Nonnull MatrixStack matrixStack, float partialTicks, int x, int y) {
         this.renderBackground(matrixStack);
+        //noinspection ConstantConditions
         this.minecraft.getTextureManager().bind(BACKGROUND);
         int i = this.leftPos;
         int j = this.topPos;
@@ -30,7 +31,7 @@ public class DisenchanterScreen extends EnchantmentBaseScreen<DisenchanterContai
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
         this.renderTooltip(matrixStack, mouseX, mouseY);
     }

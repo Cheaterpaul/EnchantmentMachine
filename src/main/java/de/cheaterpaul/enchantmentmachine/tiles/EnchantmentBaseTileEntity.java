@@ -10,6 +10,7 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
@@ -29,7 +30,7 @@ public abstract class EnchantmentBaseTileEntity extends LockableTileEntity imple
     }
 
     @Override
-    public boolean stillValid(PlayerEntity playerEntity) {
+    public boolean stillValid(@Nonnull PlayerEntity playerEntity) {
         if (this.level.getBlockEntity(this.worldPosition) != this) {
             return false;
         } else {
@@ -65,8 +66,9 @@ public abstract class EnchantmentBaseTileEntity extends LockableTileEntity imple
         return storageBlockPos != null;
     }
 
+    @Nonnull
     @Override
-    public CompoundNBT save(CompoundNBT compound) {
+    public CompoundNBT save(@Nonnull CompoundNBT compound) {
         super.save(compound);
         if (this.storageBlockPos != null) {
             compound.putIntArray("storageblock", new int[]{this.storageBlockPos.getX(), this.storageBlockPos.getY(), this.storageBlockPos.getZ()});
@@ -75,7 +77,7 @@ public abstract class EnchantmentBaseTileEntity extends LockableTileEntity imple
     }
 
     @Override
-    public void load(BlockState state, CompoundNBT nbt) {
+    public void load(@Nonnull BlockState state, @Nonnull CompoundNBT nbt) {
         super.load(state, nbt);
         if (nbt.contains("storageblock")) {
             int[] pos = nbt.getIntArray("storageblock");

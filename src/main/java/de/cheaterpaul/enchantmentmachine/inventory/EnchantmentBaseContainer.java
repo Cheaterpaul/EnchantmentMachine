@@ -7,6 +7,8 @@ import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nonnull;
+
 public abstract class EnchantmentBaseContainer extends Container {
 
     private final int size;
@@ -20,7 +22,7 @@ public abstract class EnchantmentBaseContainer extends Container {
     }
 
     @Override
-    public boolean stillValid(PlayerEntity playerIn) {
+    public boolean stillValid(@Nonnull PlayerEntity playerIn) {
         return true;
     }
 
@@ -40,8 +42,9 @@ public abstract class EnchantmentBaseContainer extends Container {
         this.addPlayerSlots(playerInventory, 8, 84);
     }
 
+    @Nonnull
     @Override
-    public ItemStack quickMoveStack(PlayerEntity playerEntity, int index) {
+    public ItemStack quickMoveStack(@Nonnull PlayerEntity playerEntity, int index) {
         ItemStack result = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
         if (slot != null && slot.hasItem()) {

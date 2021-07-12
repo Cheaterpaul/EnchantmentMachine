@@ -17,6 +17,8 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nonnull;
+
 @OnlyIn(Dist.CLIENT)
 public class EnchantmentBlockTileEntityRenderer extends TileEntityRenderer<StorageTileEntity> {
 
@@ -28,7 +30,7 @@ public class EnchantmentBlockTileEntityRenderer extends TileEntityRenderer<Stora
     }
 
     @Override
-    public void render(StorageTileEntity tileEntityIn, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
+    public void render(StorageTileEntity tileEntityIn, float partialTicks, MatrixStack matrixStackIn, @Nonnull IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
         matrixStackIn.pushPose();
         matrixStackIn.translate(0.5D, 0.75D, 0.5D);
         float f = (float) tileEntityIn.getTicks() + partialTicks;

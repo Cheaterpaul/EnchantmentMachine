@@ -20,6 +20,7 @@ import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
 
 public class EnchanterBlock extends EnchantmentBaseBlock {
@@ -32,12 +33,13 @@ public class EnchanterBlock extends EnchantmentBaseBlock {
     }
 
     @Override
-    public TileEntity newBlockEntity(IBlockReader iBlockReader) {
+    public TileEntity newBlockEntity(@Nonnull IBlockReader iBlockReader) {
         return ModData.enchanter_tile.create();
     }
 
+    @Nonnull
     @Override
-    public ActionResultType use(BlockState blockState, World world, BlockPos blockPos, PlayerEntity playerEntity, Hand hand, BlockRayTraceResult rayTraceResult) {
+    public ActionResultType use(@Nonnull BlockState blockState, World world, @Nonnull BlockPos blockPos, @Nonnull PlayerEntity playerEntity, @Nonnull Hand hand, @Nonnull BlockRayTraceResult rayTraceResult) {
         TileEntity tile = world.getBlockEntity(blockPos);
         if (tile instanceof EnchanterTileEntity) {
             playerEntity.openMenu(((EnchanterTileEntity) tile));
@@ -50,8 +52,9 @@ public class EnchanterBlock extends EnchantmentBaseBlock {
         return ActionResultType.SUCCESS;
     }
 
+    @Nonnull
     @Override
-    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+    public VoxelShape getShape(@Nonnull BlockState state, @Nonnull IBlockReader worldIn, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
         return SHAPE;
     }
 

@@ -10,6 +10,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -70,7 +71,7 @@ public class ScrollableListButton<T> extends ExtendedButton {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 
         RenderSystem.pushMatrix();
         RenderSystem.enableDepthTest();
@@ -190,7 +191,7 @@ public class ScrollableListButton<T> extends ExtendedButton {
     }
 
     @Override
-    public void renderToolTip(MatrixStack matrixStack, int mouseX, int mouseY) {
+    public void renderToolTip(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY) {
         if (mouseX > this.x && mouseX < this.x + this.width && mouseY > this.y && mouseY < this.y + this.height) {
 
             int itemHeight = this.itemHeight - 1; // only 1 pixel between items

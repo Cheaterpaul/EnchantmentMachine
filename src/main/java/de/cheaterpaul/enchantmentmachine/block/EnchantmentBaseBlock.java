@@ -10,19 +10,22 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
+
 public abstract class EnchantmentBaseBlock extends ContainerBlock {
 
     public EnchantmentBaseBlock(Properties properties) {
         super(properties);
     }
 
+    @Nonnull
     @Override
-    public BlockRenderType getRenderShape(BlockState p_149645_1_) {
+    public BlockRenderType getRenderShape(@Nonnull BlockState p_149645_1_) {
         return BlockRenderType.MODEL;
     }
 
     @Override
-    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+    public void neighborChanged(@Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos, boolean isMoving) {
         if (worldIn.getBlockState(fromPos).getBlock() instanceof EnchantmentBaseBlock) {
             BlockPos mainPos = fromPos;
             TileEntity te = worldIn.getBlockEntity(pos);

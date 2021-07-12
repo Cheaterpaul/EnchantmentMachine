@@ -80,7 +80,7 @@ public class ModDataGenerator {
         }
 
         @Override
-        protected void buildShapelessRecipes(Consumer<IFinishedRecipe> consumer) {
+        protected void buildShapelessRecipes(@Nonnull Consumer<IFinishedRecipe> consumer) {
             ShapedRecipeBuilder.shaped(ModData.storage_block).define('B', Items.BOOK).define('#', Blocks.CRYING_OBSIDIAN).define('D', Items.DIAMOND).pattern("BBB").pattern("D#D").pattern("###").unlockedBy("has_obsidian", has(Blocks.CRYING_OBSIDIAN)).save(consumer);
             ShapedRecipeBuilder.shaped(ModData.disenchanter_block).define('B', Items.BOOK).define('#', Blocks.CRYING_OBSIDIAN).define('D', Items.DIAMOND_AXE).pattern(" B ").pattern("D#D").pattern("###").unlockedBy("has_obsidian", has(Blocks.CRYING_OBSIDIAN)).save(consumer);
             ShapedRecipeBuilder.shaped(ModData.enchanter_block).define('B', Items.BOOK).define('#', Blocks.CRYING_OBSIDIAN).define('D', Items.DIAMOND).pattern(" B ").pattern("D#D").pattern("###").unlockedBy("has_obsidian", has(Blocks.CRYING_OBSIDIAN)).save(consumer);
@@ -93,13 +93,14 @@ public class ModDataGenerator {
             super(dataGeneratorIn);
         }
 
+        @Nonnull
         @Override
         protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootParameterSet>> getTables() {
             return ImmutableList.of(Pair.of(Tables::new, LootParameterSets.BLOCK));
         }
 
         @Override
-        protected void validate(Map<ResourceLocation, LootTable> map, ValidationTracker validationtracker) {
+        protected void validate(Map<ResourceLocation, LootTable> map, @Nonnull ValidationTracker validationtracker) {
             map.forEach((resourceLocation, lootTable) -> LootTableManager.validate(validationtracker, resourceLocation, lootTable));
         }
 

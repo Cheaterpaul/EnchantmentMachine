@@ -25,6 +25,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -38,13 +39,13 @@ public class StorageBlock extends EnchantmentBaseBlock {
 
     @Nullable
     @Override
-    public TileEntity newBlockEntity(IBlockReader worldIn) {
+    public TileEntity newBlockEntity(@Nonnull IBlockReader worldIn) {
         return ModData.storage_tile.create();
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void appendHoverText(@Nonnull ItemStack stack, @Nullable IBlockReader worldIn, @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
         CompoundNBT nbt = stack.getTag();
         int count = nbt != null ? nbt.getInt("enchantmentcount") : 0;
@@ -52,7 +53,7 @@ public class StorageBlock extends EnchantmentBaseBlock {
     }
 
     @Override
-    public void playerDestroy(World worldIn, PlayerEntity player, BlockPos pos, BlockState state, @Nullable TileEntity te, ItemStack heldStack) {
+    public void playerDestroy(@Nonnull World worldIn, @Nonnull PlayerEntity player, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nullable TileEntity te, @Nonnull ItemStack heldStack) {
         ItemStack stack = new ItemStack(ModData.storage_block, 1);
         if (te instanceof StorageTileEntity) {
             ((StorageTileEntity) te).writeEnchantments(stack.getOrCreateTagElement("BlockEntityTag"));
@@ -61,8 +62,9 @@ public class StorageBlock extends EnchantmentBaseBlock {
         popResource(worldIn, pos, stack);
     }
 
+    @Nonnull
     @Override
-    public ActionResultType use(BlockState blockState, World world, BlockPos blockPos, PlayerEntity playerEntity, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
+    public ActionResultType use(@Nonnull BlockState blockState, World world, @Nonnull BlockPos blockPos, @Nonnull PlayerEntity playerEntity, @Nonnull Hand p_225533_5_, @Nonnull BlockRayTraceResult p_225533_6_) {
         TileEntity tile = world.getBlockEntity(blockPos);
         if (tile instanceof StorageTileEntity && playerEntity instanceof ServerPlayerEntity) {
             EnchantmentMachineMod.DISPATCHER.sendTo(new EnchantmentPacket(((StorageTileEntity) tile).getEnchantments(), true), ((ServerPlayerEntity) playerEntity));
@@ -71,8 +73,9 @@ public class StorageBlock extends EnchantmentBaseBlock {
         return ActionResultType.SUCCESS;
     }
 
+    @Nonnull
     @Override
-    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+    public VoxelShape getShape(@Nonnull BlockState state, @Nonnull IBlockReader worldIn, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
         return SHAPE;
     }
 

@@ -24,6 +24,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
 
@@ -40,13 +41,15 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
         super(ModData.enchanter_tile);
     }
 
+    @Nonnull
     @Override
     protected ITextComponent getDefaultName() {
         return name;
     }
 
+    @Nonnull
     @Override
-    protected Container createMenu(int i, PlayerInventory playerInventory) {
+    protected Container createMenu(int i, @Nonnull PlayerInventory playerInventory) {
         return new EnchanterContainer(i, this, playerInventory, IWorldPosCallable.create(this.level, this.worldPosition));
     }
 
@@ -63,23 +66,26 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
         return true;
     }
 
+    @Nonnull
     @Override
     public ItemStack getItem(int i) {
         return this.inventory.get(i);
     }
 
+    @Nonnull
     @Override
     public ItemStack removeItem(int i, int i1) {
         return ItemStackHelper.removeItem(this.inventory, i, i1);
     }
 
+    @Nonnull
     @Override
     public ItemStack removeItemNoUpdate(int i) {
         return ItemStackHelper.takeItem(this.inventory, i);
     }
 
     @Override
-    public void setItem(int i, ItemStack itemStack) {
+    public void setItem(int i, @Nonnull ItemStack itemStack) {
         this.inventory.set(i, itemStack);
         if (itemStack.getCount() > this.getMaxStackSize()) {
             itemStack.setCount(this.getMaxStackSize());
@@ -146,6 +152,7 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
         return true;
     }
 
+    @Nonnull
     @Override
     public CompoundNBT getUpdateTag() {
         return save(new CompoundNBT());

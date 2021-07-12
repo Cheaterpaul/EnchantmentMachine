@@ -24,7 +24,7 @@ public class EnchanterContainer extends EnchantmentBaseContainer implements Stor
     private final IWorldPosCallable worldPosCallable;
     private final PlayerEntity player;
     private ISlotListener listener;
-    private IInventory inventory;
+    private final IInventory inventory;
 
     public EnchanterContainer(int id, PlayerInventory playerInventory) {
         this(id, new Inventory(1), playerInventory, IWorldPosCallable.NULL);
@@ -97,16 +97,4 @@ public class EnchanterContainer extends EnchantmentBaseContainer implements Stor
     public interface ISlotListener {
         void slotChanged();
     }
-//
-//    public static class Factory implements IContainerFactory<EnchanterContainer> {
-//
-//        @Nullable
-//        @Override
-//        public EnchanterContainer create(int windowId, PlayerInventory inv, PacketBuffer data) {
-//            if (data == null)
-//                return new EnchanterContainer(windowId, inv);
-//            boolean extraSlots = data.readBoolean(); //Anything read here has to be written to buffer in open method (in EnchantmentBlock)
-//            EnchanterContainer c =  new EnchanterContainer(windowId, inv, IWorldPosCallable.DUMMY, new Inventory(extraSlots ? 8 : 6), extraSlots, null);
-//        }
-//    }
 }
