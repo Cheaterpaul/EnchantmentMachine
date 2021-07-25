@@ -1,32 +1,32 @@
 package de.cheaterpaul.enchantmentmachine.inventory;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
-public abstract class EnchantmentBaseContainer extends Container {
+public abstract class EnchantmentBaseContainer extends AbstractContainerMenu {
 
     private final int size;
 
     /**
      * @param sizeInventory inventory size of the container except the player slots
      */
-    public EnchantmentBaseContainer(ContainerType<?> containerType, int id, int sizeInventory) {
+    public EnchantmentBaseContainer(MenuType<?> containerType, int id, int sizeInventory) {
         super(containerType, id);
         this.size = sizeInventory;
     }
 
     @Override
-    public boolean stillValid(@Nonnull PlayerEntity playerIn) {
+    public boolean stillValid(@Nonnull Player playerIn) {
         return true;
     }
 
-    protected void addPlayerSlots(PlayerInventory playerInventory, int baseX, int baseY) {
+    protected void addPlayerSlots(Inventory playerInventory, int baseX, int baseY) {
         int i;
         for (i = 0; i < 3; ++i) {
             for (int j = 0; j < 9; ++j) {
@@ -38,13 +38,13 @@ public abstract class EnchantmentBaseContainer extends Container {
         }
     }
 
-    protected void addPlayerSlots(PlayerInventory playerInventory) {
+    protected void addPlayerSlots(Inventory playerInventory) {
         this.addPlayerSlots(playerInventory, 8, 84);
     }
 
     @Nonnull
     @Override
-    public ItemStack quickMoveStack(@Nonnull PlayerEntity playerEntity, int index) {
+    public ItemStack quickMoveStack(@Nonnull Player playerEntity, int index) {
         ItemStack result = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
         if (slot != null && slot.hasItem()) {

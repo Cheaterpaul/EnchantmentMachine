@@ -1,20 +1,20 @@
 package de.cheaterpaul.enchantmentmachine.util;
 
 import de.cheaterpaul.enchantmentmachine.core.ModConfig;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.enchantment.Enchantment;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-public class EnchantmentInstance {
+public class EnchantmentInstanceMod {
     @Nonnull
     private final Enchantment enchantment;
     private final int level;
 
 
-    public EnchantmentInstance(@Nonnull Enchantment enchantment, int level) {
+    public EnchantmentInstanceMod(@Nonnull Enchantment enchantment, int level) {
         this.enchantment = enchantment;
         this.level = level;
     }
@@ -32,7 +32,7 @@ public class EnchantmentInstance {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        EnchantmentInstance that = (EnchantmentInstance) o;
+        EnchantmentInstanceMod that = (EnchantmentInstanceMod) o;
         return level == that.level &&
                 enchantment.equals(that.enchantment);
     }
@@ -44,7 +44,7 @@ public class EnchantmentInstance {
 
     @Override
     public String toString() {
-        return "EnchantmentInstance{" +
+        return "EnchantmentInstanceMod{" +
                 "enchantment=" + enchantment +
                 ", level=" + level +
                 '}';

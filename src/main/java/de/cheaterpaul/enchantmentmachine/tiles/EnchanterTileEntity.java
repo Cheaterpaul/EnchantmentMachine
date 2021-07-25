@@ -2,24 +2,26 @@ package de.cheaterpaul.enchantmentmachine.tiles;
 
 import de.cheaterpaul.enchantmentmachine.core.ModData;
 import de.cheaterpaul.enchantmentmachine.inventory.EnchanterContainer;
-import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstance;
+import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstanceMod;
 import de.cheaterpaul.enchantmentmachine.util.Utils;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentData;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.ItemStackHelper;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.item.EnchantedBookItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.util.IWorldPosCallable;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.item.EnchantedBookItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.EnchantmentInstance;
+import net.minecraft.world.level.block.state.BlockState;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,25 +34,25 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final ITextComponent name = Utils.genTranslation("tile", "enchanter.name");
+    private static final Component name = Utils.genTranslation("tile", "enchanter.name");
 
     private final NonNullList<ItemStack> inventory = NonNullList.withSize(1, ItemStack.EMPTY);
 
 
-    public EnchanterTileEntity() {
-        super(ModData.enchanter_tile);
+    public EnchanterTileEntity(BlockPos pos, BlockState state) {
+        super(ModData.enchanter_tile, pos, state);
     }
 
     @Nonnull
     @Override
-    protected ITextComponent getDefaultName() {
+    protected Component getDefaultName() {
         return name;
     }
 
     @Nonnull
     @Override
-    protected Container createMenu(int i, @Nonnull PlayerInventory playerInventory) {
-        return new EnchanterContainer(i, this, playerInventory, IWorldPosCallable.create(this.level, this.worldPosition));
+    protected AbstractContainerMenu createMenu(int i, @Nonnull Inventory playerInventory) {
+        return new EnchanterContainer(i, this, playerInventory, ContainerLevelAccess.create(this.level, this.worldPosition));
     }
 
     @Override
@@ -75,13 +77,13 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
     @Nonnull
     @Override
     public ItemStack removeItem(int i, int i1) {
-        return ItemStackHelper.removeItem(this.inventory, i, i1);
+        return ContainerHelper.removeItem(this.inventory, i, i1);
     }
 
     @Nonnull
     @Override
     public ItemStack removeItemNoUpdate(int i) {
-        return ItemStackHelper.takeItem(this.inventory, i);
+        return ContainerHelper.takeItem(this.inventory, i);
     }
 
     @Override
@@ -105,7 +107,7 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
      * @param user         The player entity that provides the experience points
      * @return If all enchantments and sufficient skill points were available
      */
-    public boolean executeEnchantments(PlayerEntity user, List<EnchantmentInstance> enchantments) {
+    public boolean executeEnchantments(Player user, List<EnchantmentInstanceMod> enchantments) {
         if (!getConnectedEnchantmentTE().isPresent()) return false;
         ItemStack stack = inventory.get(0);
         if (stack.isEmpty()) return false;
@@ -117,7 +119,7 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
             stack = new ItemStack(Items.ENCHANTED_BOOK);
         }
         int requiredLevels = 0;
-        for (EnchantmentInstance enchInst : enchantments) {
+        for (EnchantmentInstanceMod enchInst : enchantments) {
             if (!te.hasEnchantment(enchInst)) {
                 LOGGER.warn("Enchantment {} requested but not available", enchInst);
                 return false;
@@ -126,14 +128,14 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
                 LOGGER.warn("Enchantment {} cannot be applied to {}", enchInst.getEnchantment(), stack);
                 return false;
             }
-            Pair<EnchantmentInstance, Integer> result = Utils.tryApplyEnchantment(enchInst, enchantmentMap, true);
+            Pair<EnchantmentInstanceMod, Integer> result = Utils.tryApplyEnchantment(enchInst, enchantmentMap, true);
             if (result == null) {
                 return false;
             }
             requiredLevels += result.getRight();
             enchantmentMap.put(result.getLeft().getEnchantment(), result.getLeft().getLevel()); //Override previous entry for this enchantment
         }
-        if (!user.abilities.instabuild) {
+        if (!user.getAbilities().instabuild) {
             if (user.experienceLevel < requiredLevels) {
                 LOGGER.warn("Not enough levels to enchant {} {}", requiredLevels, user.experienceLevel);
                 return false;
@@ -143,7 +145,7 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
         //Everything good
         if (book) {
             ItemStack finalStack = stack;
-            enchantmentMap.forEach((ench, lvl) -> EnchantedBookItem.addEnchantment(finalStack, new EnchantmentData(ench, lvl)));
+            enchantmentMap.forEach((ench, lvl) -> EnchantedBookItem.addEnchantment(finalStack, new EnchantmentInstance(ench, lvl)));
             this.inventory.set(0, stack);
         } else {
             EnchantmentHelper.setEnchantments(enchantmentMap, stack);
@@ -154,12 +156,12 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
 
     @Nonnull
     @Override
-    public CompoundNBT getUpdateTag() {
-        return save(new CompoundNBT());
+    public CompoundTag getUpdateTag() {
+        return save(new CompoundTag());
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        this.load(this.level.getBlockState(pkt.getPos()), pkt.getTag());
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+        this.load(pkt.getTag());
     }
 }

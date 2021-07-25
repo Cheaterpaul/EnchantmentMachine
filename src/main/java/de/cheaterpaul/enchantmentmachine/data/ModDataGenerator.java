@@ -5,18 +5,26 @@ import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import de.cheaterpaul.enchantmentmachine.core.ModData;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.data.*;
-import net.minecraft.data.loot.BlockLootTables;
-import net.minecraft.item.Items;
-import net.minecraft.loot.*;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.loot.BlockLoot;
+import net.minecraft.data.loot.LootTableProvider;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.LootTables;
+import net.minecraft.world.level.storage.loot.ValidationContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -80,7 +88,7 @@ public class ModDataGenerator {
         }
 
         @Override
-        protected void buildShapelessRecipes(@Nonnull Consumer<IFinishedRecipe> consumer) {
+        protected void buildCraftingRecipes(@Nonnull Consumer<FinishedRecipe> consumer) {
             ShapedRecipeBuilder.shaped(ModData.storage_block).define('B', Items.BOOK).define('#', Blocks.CRYING_OBSIDIAN).define('D', Items.DIAMOND).pattern("BBB").pattern("D#D").pattern("###").unlockedBy("has_obsidian", has(Blocks.CRYING_OBSIDIAN)).save(consumer);
             ShapedRecipeBuilder.shaped(ModData.disenchanter_block).define('B', Items.BOOK).define('#', Blocks.CRYING_OBSIDIAN).define('D', Items.DIAMOND_AXE).pattern(" B ").pattern("D#D").pattern("###").unlockedBy("has_obsidian", has(Blocks.CRYING_OBSIDIAN)).save(consumer);
             ShapedRecipeBuilder.shaped(ModData.enchanter_block).define('B', Items.BOOK).define('#', Blocks.CRYING_OBSIDIAN).define('D', Items.DIAMOND).pattern(" B ").pattern("D#D").pattern("###").unlockedBy("has_obsidian", has(Blocks.CRYING_OBSIDIAN)).save(consumer);
@@ -95,16 +103,16 @@ public class ModDataGenerator {
 
         @Nonnull
         @Override
-        protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootParameterSet>> getTables() {
-            return ImmutableList.of(Pair.of(Tables::new, LootParameterSets.BLOCK));
+        protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> getTables() {
+            return ImmutableList.of(Pair.of(Tables::new, LootContextParamSets.BLOCK));
         }
 
         @Override
-        protected void validate(Map<ResourceLocation, LootTable> map, @Nonnull ValidationTracker validationtracker) {
-            map.forEach((resourceLocation, lootTable) -> LootTableManager.validate(validationtracker, resourceLocation, lootTable));
+        protected void validate(Map<ResourceLocation, LootTable> map, @Nonnull ValidationContext validationtracker) {
+            map.forEach((resourceLocation, lootTable) -> LootTables.validate(validationtracker, resourceLocation, lootTable));
         }
 
-        private static class Tables extends BlockLootTables {
+        private static class Tables extends BlockLoot {
             @Override
             protected void addTables() {
                 this.dropSelf(ModData.disenchanter_block);

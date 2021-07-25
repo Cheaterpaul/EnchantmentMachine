@@ -3,8 +3,8 @@ package de.cheaterpaul.enchantmentmachine.network;
 import de.cheaterpaul.enchantmentmachine.network.message.EnchantingPacket;
 import de.cheaterpaul.enchantmentmachine.network.message.EnchantmentPacket;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fmllegacy.network.NetworkRegistry;
 
 public class ModPacketDispatcher extends AbstractPacketDispatcher {
 

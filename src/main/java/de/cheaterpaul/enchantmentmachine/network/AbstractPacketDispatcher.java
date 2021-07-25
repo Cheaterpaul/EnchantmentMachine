@@ -1,11 +1,11 @@
 package de.cheaterpaul.enchantmentmachine.network;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.PacketDistributor;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -49,7 +49,7 @@ public abstract class AbstractPacketDispatcher {
     /**
      * Send this message to the specified player.
      */
-    public final void sendTo(@Nonnull IMessage message, ServerPlayerEntity player) {
+    public final void sendTo(@Nonnull IMessage message, ServerPlayer player) {
         Objects.requireNonNull(message);
         dispatcher.send(PacketDistributor.PLAYER.with(() -> player), message);
         //dispatcher.sendTo(message, player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
@@ -62,7 +62,7 @@ public abstract class AbstractPacketDispatcher {
     /**
      * Sends a message to everyone within a certain range of the coordinates in the same dimension.
      */
-    public final void sendToAllAround(IMessage message, RegistryKey<World> dimension, double x, double y, double z,
+    public final void sendToAllAround(IMessage message, ResourceKey<Level> dimension, double x, double y, double z,
 
                                       double range) {
         sendToAllAround(message, new PacketDistributor.TargetPoint(x, y, z,

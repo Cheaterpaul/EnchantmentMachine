@@ -2,27 +2,27 @@ package de.cheaterpaul.enchantmentmachine.network.message;
 
 import de.cheaterpaul.enchantmentmachine.EnchantmentMachineMod;
 import de.cheaterpaul.enchantmentmachine.network.IMessage;
-import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstance;
+import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstanceMod;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.function.Supplier;
 
 public class EnchantmentPacket implements IMessage {
 
-    private final Object2IntMap<EnchantmentInstance> enchantments;
+    private final Object2IntMap<EnchantmentInstanceMod> enchantments;
     private final boolean shouldOpenEnchantmentListScreen;
 
-    public EnchantmentPacket(Object2IntMap<EnchantmentInstance> enchantments, boolean shouldOpenEnchantmentListScreen) {
+    public EnchantmentPacket(Object2IntMap<EnchantmentInstanceMod> enchantments, boolean shouldOpenEnchantmentListScreen) {
         this.enchantments = enchantments;
         this.shouldOpenEnchantmentListScreen = shouldOpenEnchantmentListScreen;
     }
 
-    public Object2IntMap<EnchantmentInstance> getEnchantments() {
+    public Object2IntMap<EnchantmentInstanceMod> getEnchantments() {
         return enchantments;
     }
 
@@ -30,7 +30,7 @@ public class EnchantmentPacket implements IMessage {
         return shouldOpenEnchantmentListScreen;
     }
 
-    public static void encode(EnchantmentPacket msg, PacketBuffer buf) {
+    public static void encode(EnchantmentPacket msg, FriendlyByteBuf buf) {
         buf.writeBoolean(msg.shouldOpenEnchantmentListScreen);
         buf.writeVarInt(msg.enchantments.size());
         msg.enchantments.forEach((inst, count) -> {
@@ -40,9 +40,9 @@ public class EnchantmentPacket implements IMessage {
         });
     }
 
-    public static EnchantmentPacket decode(PacketBuffer buf) {
+    public static EnchantmentPacket decode(FriendlyByteBuf buf) {
         boolean open = buf.readBoolean();
-        Object2IntMap<EnchantmentInstance> enchantments = new Object2IntArrayMap<>();
+        Object2IntMap<EnchantmentInstanceMod> enchantments = new Object2IntArrayMap<>();
 
         int enchantmentCount = buf.readVarInt();
         for (int i = 0; i < enchantmentCount; i++) {
@@ -51,7 +51,7 @@ public class EnchantmentPacket implements IMessage {
             int count = buf.readVarInt();
             if (ForgeRegistries.ENCHANTMENTS.containsKey(enchantment)) {
                 //noinspection ConstantConditions
-                enchantments.put(new EnchantmentInstance(ForgeRegistries.ENCHANTMENTS.getValue(enchantment), level), count);
+                enchantments.put(new EnchantmentInstanceMod(ForgeRegistries.ENCHANTMENTS.getValue(enchantment), level), count);
             }
         }
 

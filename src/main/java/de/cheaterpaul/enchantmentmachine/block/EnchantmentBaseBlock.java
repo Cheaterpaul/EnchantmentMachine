@@ -2,17 +2,17 @@ package de.cheaterpaul.enchantmentmachine.block;
 
 import de.cheaterpaul.enchantmentmachine.tiles.EnchantmentBaseTileEntity;
 import de.cheaterpaul.enchantmentmachine.tiles.StorageTileEntity;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ContainerBlock;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
 
-public abstract class EnchantmentBaseBlock extends ContainerBlock {
+public abstract class EnchantmentBaseBlock extends BaseEntityBlock {
 
     public EnchantmentBaseBlock(Properties properties) {
         super(properties);
@@ -20,15 +20,16 @@ public abstract class EnchantmentBaseBlock extends ContainerBlock {
 
     @Nonnull
     @Override
-    public BlockRenderType getRenderShape(@Nonnull BlockState p_149645_1_) {
-        return BlockRenderType.MODEL;
+    public RenderShape getRenderShape(@Nonnull BlockState p_149645_1_) {
+        return RenderShape.MODEL;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    public void neighborChanged(@Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos, boolean isMoving) {
+    public void neighborChanged(@Nonnull BlockState state, Level worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos, boolean isMoving) {
         if (worldIn.getBlockState(fromPos).getBlock() instanceof EnchantmentBaseBlock) {
             BlockPos mainPos = fromPos;
-            TileEntity te = worldIn.getBlockEntity(pos);
+            BlockEntity te = worldIn.getBlockEntity(pos);
             if (te instanceof StorageTileEntity) {
                 te = worldIn.getBlockEntity(fromPos);
                 mainPos = pos;

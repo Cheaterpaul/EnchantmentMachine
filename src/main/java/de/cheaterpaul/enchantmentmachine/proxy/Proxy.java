@@ -2,7 +2,7 @@ package de.cheaterpaul.enchantmentmachine.proxy;
 
 import de.cheaterpaul.enchantmentmachine.network.message.EnchantingPacket;
 import de.cheaterpaul.enchantmentmachine.network.message.EnchantmentPacket;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 
 public interface Proxy {
 
@@ -15,7 +15,7 @@ public interface Proxy {
     default void handleEnchantmentPacket(EnchantmentPacket packet) {
     }
 
-    default void handleEnchantingPacket(EnchantingPacket packet, PlayerEntity playerEntity) {
+    default void handleEnchantingPacket(EnchantingPacket packet, Player playerEntity) {
 
     }
 }

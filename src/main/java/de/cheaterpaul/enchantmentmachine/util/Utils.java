@@ -1,9 +1,9 @@
 package de.cheaterpaul.enchantmentmachine.util;
 
 import de.cheaterpaul.enchantmentmachine.core.ModConfig;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.item.enchantment.Enchantment;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
@@ -15,8 +15,8 @@ public class Utils {
         return type + "." + REFERENCE.MODID + "." + key;
     }
 
-    public static ITextComponent genTranslation(String type, String key) {
-        return new TranslationTextComponent(genLangKey(type, key));
+    public static Component genTranslation(String type, String key) {
+        return new TranslatableComponent(genLangKey(type, key));
     }
 
     /**
@@ -29,12 +29,12 @@ public class Utils {
      * @return Null if incompatible
      */
     @Nullable
-    public static Pair<EnchantmentInstance, Integer> tryApplyEnchantment(EnchantmentInstance enchInst, Map<Enchantment, Integer> existingEnchantments, boolean reducedPrice) {
+    public static Pair<EnchantmentInstanceMod, Integer> tryApplyEnchantment(EnchantmentInstanceMod enchInst, Map<Enchantment, Integer> existingEnchantments, boolean reducedPrice) {
         for (Map.Entry<Enchantment, Integer> entry : existingEnchantments.entrySet()) {
             Enchantment enchantment = entry.getKey();
             if (enchantment == enchInst.getEnchantment()) { //Combine enchantments if it is already present. Choose highest level or level +1 if both have the same.
                 int newLevel = Math.min(enchantment.getMaxLevel(), enchInst.getLevel() == entry.getValue() ? enchInst.getLevel() + 1 : Math.max(enchInst.getLevel(), entry.getValue()));
-                enchInst = new EnchantmentInstance(enchantment, newLevel); //Override enchInst in loop.
+                enchInst = new EnchantmentInstanceMod(enchantment, newLevel); //Override enchInst in loop.
             } else if (!(enchInst.getEnchantment().isCompatibleWith(enchantment) || ModConfig.SERVER.allowMixtureEnchantments.get())) {
                 return null;
             }

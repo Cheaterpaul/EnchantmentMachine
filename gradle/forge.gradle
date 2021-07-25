@@ -21,20 +21,19 @@ repositories {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
-    compileOnly fg.deobf("mezz.jei:jei-${project.jei_version}:api") //API for compile (not POM)
-    runtimeOnly fg.deobf("mezz.jei:jei-${project.jei_version}") //Full for runtime (not POM)
-    runtimeOnly fg.deobf("curse.maven:enchantment-description-250419:3112901")
-    runtimeOnly fg.deobf("curse.maven:bookshelf-228525:3133712")
+//    compileOnly fg.deobf("mezz.jei:jei-${project.jei_version}:api") //API for compile (not POM)
+//    runtimeOnly fg.deobf("mezz.jei:jei-${project.jei_version}") //Full for runtime (not POM)
+//    runtimeOnly fg.deobf("curse.maven:enchantment-description-250419:3112901")
+//    runtimeOnly fg.deobf("curse.maven:bookshelf-228525:3133712")
 }
 
 minecraft {
-    mappings channel: "${project.mcp_channel}".toString(), version: "${project.minecraft_version}".toString()
+    mappings channel: "${project.mcp_channel}".toString(), version: "${project.mcp_mappings}".toString()
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
         client {
             taskName 'runClient'
-            main 'net.minecraftforge.userdev.LaunchTesting'
             property 'forge.logging.console.level', 'debug'
             // "SCAN": For mods scan.
             // "REGISTRIES": For firing of registry events.

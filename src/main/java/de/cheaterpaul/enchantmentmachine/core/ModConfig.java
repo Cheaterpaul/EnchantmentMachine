@@ -1,8 +1,8 @@
 package de.cheaterpaul.enchantmentmachine.core;
 
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.ResourceLocationException;
+import net.minecraft.ResourceLocationException;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModLoadingContext;
 import org.apache.commons.lang3.tuple.Pair;

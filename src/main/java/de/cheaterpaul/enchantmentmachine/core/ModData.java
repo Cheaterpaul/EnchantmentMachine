@@ -10,15 +10,15 @@ import de.cheaterpaul.enchantmentmachine.tiles.DisenchanterTileEntity;
 import de.cheaterpaul.enchantmentmachine.tiles.EnchanterTileEntity;
 import de.cheaterpaul.enchantmentmachine.tiles.StorageTileEntity;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.material.MaterialColor;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.Rarity;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MaterialColor;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -27,21 +27,21 @@ public class ModData {
     public static final EnchanterBlock enchanter_block;
     public static final DisenchanterBlock disenchanter_block;
     public static final StorageBlock storage_block;
-    public static final TileEntityType<EnchanterTileEntity> enchanter_tile;
-    public static final TileEntityType<DisenchanterTileEntity> disenchanter_tile;
-    public static final TileEntityType<StorageTileEntity> storage_tile;
-    public static final ContainerType<EnchanterContainer> enchanter_container;
-    public static final ContainerType<DisenchanterContainer> disenchanter_container;
+    public static final BlockEntityType<EnchanterTileEntity> enchanter_tile;
+    public static final BlockEntityType<DisenchanterTileEntity> disenchanter_tile;
+    public static final BlockEntityType<StorageTileEntity> storage_tile;
+    public static final MenuType<EnchanterContainer> enchanter_container;
+    public static final MenuType<DisenchanterContainer> disenchanter_container;
 
     static {
-        (enchanter_block = new EnchanterBlock(AbstractBlock.Properties.of(Material.METAL, MaterialColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 1200.0F))).setRegistryName(REFERENCE.MODID, "enchanter_block");
-        (disenchanter_block = new DisenchanterBlock(AbstractBlock.Properties.of(Material.METAL, MaterialColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 1200.0F))).setRegistryName(REFERENCE.MODID, "disenchanter_block");
-        (storage_block = new StorageBlock(AbstractBlock.Properties.of(Material.METAL, MaterialColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 1200.0F).noOcclusion())).setRegistryName(REFERENCE.MODID, "enchantment_block");
-        (enchanter_tile = TileEntityType.Builder.of(EnchanterTileEntity::new, enchanter_block).build(null)).setRegistryName(REFERENCE.MODID, "enchanter_tile");
-        (disenchanter_tile = TileEntityType.Builder.of(DisenchanterTileEntity::new, disenchanter_block).build(null)).setRegistryName(REFERENCE.MODID, "disenchanter_tile");
-        (storage_tile = TileEntityType.Builder.of(StorageTileEntity::new, storage_block).build(null)).setRegistryName(REFERENCE.MODID, "enchantment_tile");
-        (enchanter_container = new ContainerType<>(EnchanterContainer::new)).setRegistryName(REFERENCE.MODID, "enchanter_container");
-        (disenchanter_container = new ContainerType<>(DisenchanterContainer::new)).setRegistryName(REFERENCE.MODID, "disenchanter_container");
+        (enchanter_block = new EnchanterBlock(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 1200.0F))).setRegistryName(REFERENCE.MODID, "enchanter_block");
+        (disenchanter_block = new DisenchanterBlock(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 1200.0F))).setRegistryName(REFERENCE.MODID, "disenchanter_block");
+        (storage_block = new StorageBlock(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 1200.0F).noOcclusion())).setRegistryName(REFERENCE.MODID, "enchantment_block");
+        (enchanter_tile = BlockEntityType.Builder.of(EnchanterTileEntity::new, enchanter_block).build(null)).setRegistryName(REFERENCE.MODID, "enchanter_tile");
+        (disenchanter_tile = BlockEntityType.Builder.of(DisenchanterTileEntity::new, disenchanter_block).build(null)).setRegistryName(REFERENCE.MODID, "disenchanter_tile");
+        (storage_tile = BlockEntityType.Builder.of(StorageTileEntity::new, storage_block).build(null)).setRegistryName(REFERENCE.MODID, "enchantment_tile");
+        (enchanter_container = new MenuType<>(EnchanterContainer::new)).setRegistryName(REFERENCE.MODID, "enchanter_container");
+        (disenchanter_container = new MenuType<>(DisenchanterContainer::new)).setRegistryName(REFERENCE.MODID, "disenchanter_container");
     }
 
     @SubscribeEvent
@@ -59,13 +59,13 @@ public class ModData {
     }
 
     @SubscribeEvent
-    public static void registerContainer(RegistryEvent.Register<ContainerType<?>> event) {
+    public static void registerContainer(RegistryEvent.Register<MenuType<?>> event) {
         event.getRegistry().register(enchanter_container);
         event.getRegistry().register(disenchanter_container);
     }
 
     @SubscribeEvent
-    public static void registerTiles(RegistryEvent.Register<TileEntityType<?>> event) {
+    public static void registerTiles(RegistryEvent.Register<BlockEntityType<?>> event) {
         event.getRegistry().register(enchanter_tile);
         event.getRegistry().register(disenchanter_tile);
         event.getRegistry().register(storage_tile);

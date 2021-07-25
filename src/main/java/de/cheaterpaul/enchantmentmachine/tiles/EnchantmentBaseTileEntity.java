@@ -1,20 +1,20 @@
 package de.cheaterpaul.enchantmentmachine.tiles;
 
 import de.cheaterpaul.enchantmentmachine.core.ModData;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.LockableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-public abstract class EnchantmentBaseTileEntity extends LockableTileEntity implements IEnchantmentMachine {
+public abstract class EnchantmentBaseTileEntity extends BaseContainerBlockEntity implements IEnchantmentMachine {
 
     /**
      * Stores the last known location of an adjacent enchantment storage block.
@@ -25,12 +25,12 @@ public abstract class EnchantmentBaseTileEntity extends LockableTileEntity imple
     private BlockPos storageBlockPos;
 
 
-    public EnchantmentBaseTileEntity(TileEntityType<?> tileEntityType) {
-        super(tileEntityType);
+    public EnchantmentBaseTileEntity(BlockEntityType<?> tileEntityType, BlockPos pos, BlockState state) {
+        super(tileEntityType, pos, state);
     }
 
     @Override
-    public boolean stillValid(@Nonnull PlayerEntity playerEntity) {
+    public boolean stillValid(@Nonnull Player playerEntity) {
         if (this.level.getBlockEntity(this.worldPosition) != this) {
             return false;
         } else {
@@ -42,14 +42,14 @@ public abstract class EnchantmentBaseTileEntity extends LockableTileEntity imple
     @Override
     public Optional<StorageTileEntity> getConnectedEnchantmentTE() {
         if (storageBlockPos == null) return Optional.empty();
-        TileEntity te = this.level.getBlockEntity(storageBlockPos);
+        BlockEntity te = this.level.getBlockEntity(storageBlockPos);
         if (te instanceof StorageTileEntity) {
             return Optional.of((StorageTileEntity) te);
         }
         return Optional.empty();
     }
 
-    public void onNeighbourChanged(IWorldReader iWorld, BlockPos neighborPos) {
+    public void onNeighbourChanged(LevelReader iWorld, BlockPos neighborPos) {
         if (this.storageBlockPos == null) {
             if (iWorld.getBlockState(neighborPos).getBlock() == ModData.storage_block) {
                 this.storageBlockPos = neighborPos;
@@ -68,7 +68,7 @@ public abstract class EnchantmentBaseTileEntity extends LockableTileEntity imple
 
     @Nonnull
     @Override
-    public CompoundNBT save(@Nonnull CompoundNBT compound) {
+    public CompoundTag save(@Nonnull CompoundTag compound) {
         super.save(compound);
         if (this.storageBlockPos != null) {
             compound.putIntArray("storageblock", new int[]{this.storageBlockPos.getX(), this.storageBlockPos.getY(), this.storageBlockPos.getZ()});
@@ -77,8 +77,8 @@ public abstract class EnchantmentBaseTileEntity extends LockableTileEntity imple
     }
 
     @Override
-    public void load(@Nonnull BlockState state, @Nonnull CompoundNBT nbt) {
-        super.load(state, nbt);
+    public void load(@Nonnull CompoundTag nbt) {
+        super.load(nbt);
         if (nbt.contains("storageblock")) {
             int[] pos = nbt.getIntArray("storageblock");
             this.storageBlockPos = new BlockPos(pos[0], pos[1], pos[2]);

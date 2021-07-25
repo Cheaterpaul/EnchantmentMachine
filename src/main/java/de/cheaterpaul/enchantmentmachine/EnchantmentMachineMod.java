@@ -9,8 +9,8 @@ import de.cheaterpaul.enchantmentmachine.proxy.ClientProxy;
 import de.cheaterpaul.enchantmentmachine.proxy.Proxy;
 import de.cheaterpaul.enchantmentmachine.proxy.ServerProxy;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
@@ -26,7 +26,7 @@ public class EnchantmentMachineMod {
 
     public static final Proxy PROXY = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
     public static final AbstractPacketDispatcher DISPATCHER = new ModPacketDispatcher();
-    public static final ItemGroup CREATIVE_TAB = new ItemGroup(REFERENCE.MODID) {
+    public static final CreativeModeTab CREATIVE_TAB = new CreativeModeTab(REFERENCE.MODID) {
         @Nonnull
         @Override
         public ItemStack makeIcon() {

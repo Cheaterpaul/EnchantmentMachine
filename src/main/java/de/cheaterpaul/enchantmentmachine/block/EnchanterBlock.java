@@ -5,20 +5,20 @@ import de.cheaterpaul.enchantmentmachine.core.ModData;
 import de.cheaterpaul.enchantmentmachine.network.message.EnchantmentPacket;
 import de.cheaterpaul.enchantmentmachine.tiles.EnchanterTileEntity;
 import de.cheaterpaul.enchantmentmachine.tiles.StorageTileEntity;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
@@ -33,28 +33,30 @@ public class EnchanterBlock extends EnchantmentBaseBlock {
     }
 
     @Override
-    public TileEntity newBlockEntity(@Nonnull IBlockReader iBlockReader) {
-        return ModData.enchanter_tile.create();
+    public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
+        return ModData.enchanter_tile.create(pos, state);
     }
 
+    @SuppressWarnings("deprecation")
     @Nonnull
     @Override
-    public ActionResultType use(@Nonnull BlockState blockState, World world, @Nonnull BlockPos blockPos, @Nonnull PlayerEntity playerEntity, @Nonnull Hand hand, @Nonnull BlockRayTraceResult rayTraceResult) {
-        TileEntity tile = world.getBlockEntity(blockPos);
+    public InteractionResult use(@Nonnull BlockState blockState, Level world, @Nonnull BlockPos blockPos, @Nonnull Player playerEntity, @Nonnull InteractionHand hand, @Nonnull BlockHitResult rayTraceResult) {
+        BlockEntity tile = world.getBlockEntity(blockPos);
         if (tile instanceof EnchanterTileEntity) {
             playerEntity.openMenu(((EnchanterTileEntity) tile));
-            if (!world.isClientSide() && playerEntity instanceof ServerPlayerEntity) {
+            if (!world.isClientSide() && playerEntity instanceof ServerPlayer) {
                 Optional<StorageTileEntity> s = ((EnchanterTileEntity) tile).getConnectedEnchantmentTE();
-                s.ifPresent(enchantmentTileEntity -> EnchantmentMachineMod.DISPATCHER.sendTo(new EnchantmentPacket(enchantmentTileEntity.getEnchantments(), false), ((ServerPlayerEntity) playerEntity)));
+                s.ifPresent(enchantmentTileEntity -> EnchantmentMachineMod.DISPATCHER.sendTo(new EnchantmentPacket(enchantmentTileEntity.getEnchantments(), false), ((ServerPlayer) playerEntity)));
             }
-            return ActionResultType.CONSUME;
+            return InteractionResult.CONSUME;
         }
-        return ActionResultType.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
+    @SuppressWarnings("deprecation")
     @Nonnull
     @Override
-    public VoxelShape getShape(@Nonnull BlockState state, @Nonnull IBlockReader worldIn, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
+    public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter worldIn, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
         return SHAPE;
     }
 
@@ -69,6 +71,6 @@ public class EnchanterBlock extends EnchantmentBaseBlock {
 
         VoxelShape e = Block.box(12, 13, 11, 11, 14, 5);
 
-        return VoxelShapes.or(a,b,c,d,e);
+        return Shapes.or(a,b,c,d,e);
     }
 }

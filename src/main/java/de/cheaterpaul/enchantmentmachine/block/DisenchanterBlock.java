@@ -2,21 +2,24 @@ package de.cheaterpaul.enchantmentmachine.block;
 
 import de.cheaterpaul.enchantmentmachine.core.ModData;
 import de.cheaterpaul.enchantmentmachine.tiles.DisenchanterTileEntity;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class DisenchanterBlock extends EnchantmentBaseBlock {
 
@@ -28,25 +31,37 @@ public class DisenchanterBlock extends EnchantmentBaseBlock {
     }
 
     @Override
-    public TileEntity newBlockEntity(@Nonnull IBlockReader iBlockReader) {
-        return ModData.disenchanter_tile.create();
+    public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
+        return ModData.disenchanter_tile.create(pos, state);
     }
 
+    @SuppressWarnings("deprecation")
     @Nonnull
     @Override
-    public ActionResultType use(@Nonnull BlockState p_225533_1_, World p_225533_2_, @Nonnull BlockPos p_225533_3_, @Nonnull PlayerEntity p_225533_4_, @Nonnull Hand p_225533_5_, @Nonnull BlockRayTraceResult p_225533_6_) {
-        TileEntity tile = p_225533_2_.getBlockEntity(p_225533_3_);
+    public InteractionResult use(@Nonnull BlockState p_225533_1_, Level p_225533_2_, @Nonnull BlockPos p_225533_3_, @Nonnull Player p_225533_4_, @Nonnull InteractionHand p_225533_5_, @Nonnull BlockHitResult p_225533_6_) {
+        BlockEntity tile = p_225533_2_.getBlockEntity(p_225533_3_);
         if (tile instanceof DisenchanterTileEntity) {
             p_225533_4_.openMenu(((DisenchanterTileEntity) tile));
-            return ActionResultType.CONSUME;
+            return InteractionResult.CONSUME;
         }
-        return ActionResultType.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
+    @SuppressWarnings("deprecation")
     @Nonnull
     @Override
-    public VoxelShape getShape(@Nonnull BlockState state, @Nonnull IBlockReader worldIn, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
+    public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter worldIn, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
         return SHAPE;
+    }
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> type) {
+        return createStorageTicker(level, type, ModData.disenchanter_tile);
+    }
+
+    protected static <T extends BlockEntity> BlockEntityTicker<T> createStorageTicker(Level level, BlockEntityType<T> type, BlockEntityType<? extends DisenchanterTileEntity> tile) {
+        return level.isClientSide ? null : createTickerHelper(type, tile, DisenchanterTileEntity::serverTick);
     }
 
     public static VoxelShape makeShape() {
@@ -54,7 +69,7 @@ public class DisenchanterBlock extends EnchantmentBaseBlock {
         VoxelShape a1 = Block.box(5, 11, 5, 11, 12, 11);
         VoxelShape a2 = Block.box(6, 10, 6, 10, 11, 10);
         VoxelShape a3 = Block.box(7, 9, 7, 9, 10, 9);
-        a1 = VoxelShapes.or(a1, a2, a3);
+        a1 = Shapes.or(a1, a2, a3);
 
 
         VoxelShape b = Block.box(3, 12, 3, 13, 13, 13);
@@ -70,12 +85,12 @@ public class DisenchanterBlock extends EnchantmentBaseBlock {
         VoxelShape e1 = Block.box(1, 15, 1, 15, 16, 15);
 
 
-        a = VoxelShapes.joinUnoptimized(a, a1, (first, second) -> first & !second || !first & second);
-        b = VoxelShapes.joinUnoptimized(b, b1, (first, second) -> first & !second || !first & second);
-        c = VoxelShapes.joinUnoptimized(c, c1, (first, second) -> first & !second || !first & second);
-        d = VoxelShapes.joinUnoptimized(d, d1, (first, second) -> first & !second || !first & second);
-        e = VoxelShapes.joinUnoptimized(e, e1, (first, second) -> first & !second || !first & second);
+        a = Shapes.joinUnoptimized(a, a1, (first, second) -> first & !second || !first & second);
+        b = Shapes.joinUnoptimized(b, b1, (first, second) -> first & !second || !first & second);
+        c = Shapes.joinUnoptimized(c, c1, (first, second) -> first & !second || !first & second);
+        d = Shapes.joinUnoptimized(d, d1, (first, second) -> first & !second || !first & second);
+        e = Shapes.joinUnoptimized(e, e1, (first, second) -> first & !second || !first & second);
 
-        return VoxelShapes.or(a, b, c, d, e);
+        return Shapes.or(a, b, c, d, e);
     }
 }
