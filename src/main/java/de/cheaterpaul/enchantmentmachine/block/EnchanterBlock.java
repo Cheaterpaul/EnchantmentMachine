@@ -65,11 +65,11 @@ public class EnchanterBlock extends EnchantmentBaseBlock {
 
         VoxelShape b = Block.box(2, 12, 2, 7, 15, 5);
 
-        VoxelShape c = Block.box(14, 12, 14, 9, 15, 11);
+        VoxelShape c = Block.box(9, 12, 11, 14, 15, 14);
 
         VoxelShape d = Block.box(4, 13, 5, 5, 14, 11);
 
-        VoxelShape e = Block.box(12, 13, 11, 11, 14, 5);
+        VoxelShape e = Block.box(11, 13, 5, 12, 14, 11);
 
         return Shapes.or(a,b,c,d,e);
     }

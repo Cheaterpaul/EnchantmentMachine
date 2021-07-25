@@ -1,5 +1,6 @@
 package de.cheaterpaul.enchantmentmachine.client.screen;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstanceMod;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
@@ -51,7 +52,7 @@ public class StorageScreen extends Screen {
         super.init();
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
-        this.addWidget(list = new ScrollableListButton<>(this.guiLeft + 10, this.guiTop + 10, this.xSize - 20, this.ySize - 20, 21, EnchantmentItem::new));
+        this.addRenderableWidget(list = new ScrollableListButton<>(this.guiLeft + 10, this.guiTop + 10, this.xSize - 20, this.ySize - 20, 21, EnchantmentItem::new));
     }
 
     @Override
@@ -62,7 +63,7 @@ public class StorageScreen extends Screen {
     @Override
     public void render(@Nonnull PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(matrixStack);
-        this.minecraft.getTextureManager().bindForSetup(BACKGROUND);
+        RenderSystem.setShaderTexture(0, BACKGROUND);
         int i = this.guiLeft;
         int j = this.guiTop;
         this.blit(matrixStack, i, j, 0, 0, this.xSize, this.ySize);

@@ -55,7 +55,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
     @Override
     protected void renderBg(@Nonnull PoseStack matrixStack, float partialTicks, int x, int y) {
         this.renderBackground(matrixStack);
-        this.minecraft.getTextureManager().bindForSetup(BACKGROUND);
+        RenderSystem.setShaderTexture(0, BACKGROUND);
         int i = this.leftPos;
         int j = this.topPos;
         this.blit(matrixStack, i, j, 0, 0, this.imageWidth, this.imageHeight);
@@ -70,7 +70,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
     @Override
     protected void init() {
         super.init();
-        this.addWidget(list = new ScrollableListButton<>(this.leftPos + 8, this.topPos + 15, this.imageWidth - 50, this.imageHeight - 94 - 17, 21, EnchantmentItem::new));
+        this.addRenderableWidget(list = new ScrollableListButton<>(this.leftPos + 8, this.topPos + 15, this.imageWidth - 50, this.imageHeight - 94 - 17, 21, EnchantmentItem::new));
     }
 
     public void updateEnchantments(Object2IntMap<EnchantmentInstanceMod> enchantments) {

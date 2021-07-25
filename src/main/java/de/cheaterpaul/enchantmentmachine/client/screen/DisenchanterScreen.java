@@ -1,5 +1,6 @@
 package de.cheaterpaul.enchantmentmachine.client.screen;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.cheaterpaul.enchantmentmachine.inventory.DisenchanterContainer;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
@@ -23,8 +24,7 @@ public class DisenchanterScreen extends EnchantmentBaseScreen<DisenchanterContai
     @Override
     protected void renderBg(@Nonnull PoseStack matrixStack, float partialTicks, int x, int y) {
         this.renderBackground(matrixStack);
-        //noinspection ConstantConditions
-        this.minecraft.getTextureManager().bindForSetup(BACKGROUND);
+        RenderSystem.setShaderTexture(0, BACKGROUND);
         int i = this.leftPos;
         int j = this.topPos;
         this.blit(matrixStack, i, j, 0, 0, this.imageWidth, this.imageHeight);

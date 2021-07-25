@@ -1,9 +1,10 @@
 package de.cheaterpaul.enchantmentmachine.client.screen;
 
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -72,7 +73,6 @@ public class ScrollableListButton<T> extends ExtendedButton {
 
     @Override
     public void render(@Nonnull PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-
         matrixStack.pushPose();
         RenderSystem.enableDepthTest();
         matrixStack.translate(0, 0, 950);
@@ -108,6 +108,7 @@ public class ScrollableListButton<T> extends ExtendedButton {
     }
 
     private void renderBackground(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         GuiUtils.drawContinuousTexturedBox(matrixStack, new ResourceLocation("textures/gui/widgets.png"), x, y, 0, 46, this.width - this.scrollerWidth + 1, this.height, 200, 20, 3, 3, 3, 3, this.getBlitOffset());
     }
 
@@ -125,6 +126,7 @@ public class ScrollableListButton<T> extends ExtendedButton {
     }
 
     private void renderScrollBar(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         GuiUtils.drawContinuousTexturedBox(matrixStack, MISC, this.x + this.width - this.scrollerWidth, this.y, 0, 0, 9, this.height, 9, 200, 2, getBlitOffset());
         this.renderScroller(matrixStack, mouseX, mouseY, partialTicks);
     }
@@ -134,7 +136,7 @@ public class ScrollableListButton<T> extends ExtendedButton {
         int scrollHeight = this.height - 2 - scrollerHeight;
         float perc = (float) this.scrolled / (float) (this.listItems.size() * this.itemHeight - this.height);
         int yOffset = (int) (scrollHeight * perc);
-        Minecraft.getInstance().textureManager.bindForSetup(MISC);
+        RenderSystem.setShaderTexture(0, MISC);
         blit(matrixStack, this.x + this.width - this.scrollerWidth + 1, this.y + yOffset + 1, this.canScroll ? 9 : 16, 0, 7, 27);
     }
 
@@ -232,6 +234,7 @@ public class ScrollableListButton<T> extends ExtendedButton {
         }
 
         public void render(PoseStack matrixStack, int x, int y, int listWidth, int listHeight, int itemHeight, int yOffset, int mouseX, int mouseY, float partialTicks, float zLevel) {
+            RenderSystem.setShader(GameRenderer::getPositionTexShader);
             RenderSystem.enableDepthTest();
             GuiUtils.drawContinuousTexturedBox(matrixStack, WIDGETS, x, y + yOffset, 0, 66, listWidth + 1, itemHeight, 200, 20, 3, 3, 3, 3, zLevel);
             RenderSystem.disableDepthTest();
