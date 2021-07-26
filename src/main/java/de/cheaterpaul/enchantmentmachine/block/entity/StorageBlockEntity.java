@@ -59,7 +59,7 @@ public class StorageBlockEntity extends BlockEntity implements IEnchantmentMachi
         notifyListeners();
     }
 
-    public static void serverTick(Level level, BlockPos blockPos, BlockState state, StorageBlockEntity entity) {
+    public static void clientTick(Level level, BlockPos blockPos, BlockState state, StorageBlockEntity entity) {
         entity.pageTurningSpeed = entity.nextPageTurningSpeed;
         entity.pageAngle = entity.nextPageAngle;
         //noinspection ConstantConditions

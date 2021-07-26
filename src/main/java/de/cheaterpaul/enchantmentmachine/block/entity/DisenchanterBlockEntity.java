@@ -251,7 +251,7 @@ public class DisenchanterBlockEntity extends EnchantmentBaseBlockEntity implemen
                 });
             }
         }
-        if (entity.level != null && !entity.level.isClientSide) {
+        if (entity.level != null) {
             --entity.transferCooldown;
             if (entity.transferCooldown <= 0) {
                 entity.transferCooldown = 0;
