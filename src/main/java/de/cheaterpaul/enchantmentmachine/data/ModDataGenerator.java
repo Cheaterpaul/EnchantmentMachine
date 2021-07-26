@@ -51,6 +51,7 @@ public class ModDataGenerator {
             super(generator, REFERENCE.MODID, existingFileHelper);
         }
 
+        @SuppressWarnings("ConstantConditions")
         @Override
         protected void registerModels() {
             getBuilder(ModData.enchanter_block.getRegistryName().getPath()).parent(new ModelFile.UncheckedModelFile(REFERENCE.MODID + ":block/" + ModData.enchanter_block.getRegistryName().getPath()));
@@ -64,6 +65,7 @@ public class ModDataGenerator {
             super(gen, REFERENCE.MODID, exFileHelper);
         }
 
+        @SuppressWarnings("ConstantConditions")
         @Override
         protected void registerStatesAndModels() {
             ModelFile enchanter = new ModelFile.ExistingModelFile(blockTexture(ModData.enchanter_block), models().existingFileHelper);
@@ -108,8 +110,8 @@ public class ModDataGenerator {
         }
 
         @Override
-        protected void validate(Map<ResourceLocation, LootTable> map, @Nonnull ValidationContext validationtracker) {
-            map.forEach((resourceLocation, lootTable) -> LootTables.validate(validationtracker, resourceLocation, lootTable));
+        protected void validate(Map<ResourceLocation, LootTable> map, @Nonnull ValidationContext validationContext) {
+            map.forEach((resourceLocation, lootTable) -> LootTables.validate(validationContext, resourceLocation, lootTable));
         }
 
         private static class Tables extends BlockLoot {

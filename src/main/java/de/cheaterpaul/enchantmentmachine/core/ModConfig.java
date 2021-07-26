@@ -46,7 +46,7 @@ public class ModConfig {
                     .push("server");
             allowDisenchantingItems = builder.comment("Whether items can be disenchanted. More vanilla like would be false").define("allowDisenchantingItems", true);
             allowMixtureEnchantments = builder.comment("Whether incompatible enchantments can be allied together").define("allowMixtureEnchantments", false);
-            maxEnchantmentLevels = builder.comment("Define the max level for applying enchantments. Format is [\"enchantment_id|maxlevel\",\"enchantment_id|maxlevel\"]").defineList("maxEnchantmentLevels", Collections.emptyList(), string -> {
+            maxEnchantmentLevels = builder.comment("Define the max level for applying enchantments. Format is [\"enchantment_id|max_level\",\"enchantment_id|max_level\"]").defineList("maxEnchantmentLevels", Collections.emptyList(), string -> {
                 if (string instanceof String) {
                     try {
                         String[] value = ((String) string).split("\\|");

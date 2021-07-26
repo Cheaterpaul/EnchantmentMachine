@@ -12,17 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class EnchantingPacket implements IMessage {
-
-    private final List<EnchantmentInstanceMod> enchantments;
-
-    public EnchantingPacket(List<EnchantmentInstanceMod> enchantments) {
-        this.enchantments = enchantments;
-    }
+public record EnchantingPacket(List<EnchantmentInstanceMod> enchantments) implements IMessage {
 
     public static void encode(EnchantingPacket msg, FriendlyByteBuf buf) {
         buf.writeVarInt(msg.enchantments.size());
         for (EnchantmentInstanceMod enchantment : msg.enchantments) {
+            //noinspection ConstantConditions
             buf.writeResourceLocation(enchantment.getEnchantment().getRegistryName());
             buf.writeVarInt(enchantment.getLevel());
         }
@@ -36,6 +31,7 @@ public class EnchantingPacket implements IMessage {
             ResourceLocation enchantment = buf.readResourceLocation();
             int level = buf.readVarInt();
             if (ForgeRegistries.ENCHANTMENTS.containsKey(enchantment)) {
+                //noinspection ConstantConditions
                 enchantments.add(new EnchantmentInstanceMod(ForgeRegistries.ENCHANTMENTS.getValue(enchantment), level));
             }
         }

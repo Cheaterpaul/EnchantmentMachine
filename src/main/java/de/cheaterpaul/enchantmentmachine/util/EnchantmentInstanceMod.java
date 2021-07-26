@@ -8,12 +8,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-public class EnchantmentInstanceMod {
-    @Nonnull
-    private final Enchantment enchantment;
-    private final int level;
-
-
+public record EnchantmentInstanceMod(@Nonnull Enchantment enchantment, int level) {
     public EnchantmentInstanceMod(@Nonnull Enchantment enchantment, int level) {
         this.enchantment = enchantment;
         this.level = level;
@@ -52,8 +47,8 @@ public class EnchantmentInstanceMod {
 
     public boolean canEnchant() {
         return ModConfig.SERVER.maxEnchantmentLevels.get().stream().map(s -> {
-            String[] maxlvels = s.split("\\|");
-            return Pair.of(new ResourceLocation(maxlvels[0]), Integer.parseInt(maxlvels[1]));
+            String[] maxLevels = s.split("\\|");
+            return Pair.of(new ResourceLocation(maxLevels[0]), Integer.parseInt(maxLevels[1]));
         }).filter(e -> e.getKey().equals(this.enchantment.getRegistryName())).noneMatch(a -> a.getValue() < this.level);
     }
 }

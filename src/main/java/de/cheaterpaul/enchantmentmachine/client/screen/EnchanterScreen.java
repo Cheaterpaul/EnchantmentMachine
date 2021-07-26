@@ -75,9 +75,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
 
     public void updateEnchantments(Object2IntMap<EnchantmentInstanceMod> enchantments) {
         this.enchantments.clear();
-        enchantments.forEach((instance, integer) -> {
-            this.enchantments.put(instance, Pair.of(instance, integer));
-        });
+        enchantments.forEach((instance, integer) -> this.enchantments.put(instance, Pair.of(instance, integer)));
         refreshActiveEnchantments();
     }
 
@@ -137,6 +135,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
             super(item);
             this.bookStack = new ItemStack(Items.ENCHANTED_BOOK, item.getRight());
             EnchantmentHelper.setEnchantments(Collections.singletonMap(item.getKey().getEnchantment(), item.getKey().getLevel()), bookStack);
+            //noinspection ConstantConditions
             this.name = ((MutableComponent) item.getKey().getEnchantment().getFullname(item.getKey().getLevel())).withStyle(style -> style.getColor().getValue() == ChatFormatting.GRAY.getColor() ? style.applyFormat(ChatFormatting.WHITE) : style);
             this.button = new ImageButton(0, 0, 11, 17, 1, 208, 18, new ResourceLocation("textures/gui/recipe_book.png"), 256, 256, (button) -> EnchanterScreen.this.apply(item.getKey()), new Button.OnTooltip() {
                 @Override
@@ -188,6 +187,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
             super.render(matrixStack, x, y, listWidth, listHeight, itemHeight, yOffset, mouseX, mouseY, partialTicks, zLevel);
 
             EnchanterScreen.this.itemRenderer.renderAndDecorateFakeItem(bookStack, x + 5, y + 2 + yOffset);
+            //noinspection ConstantConditions
             EnchanterScreen.this.font.drawShadow(matrixStack, name.getString(), x + 25, y + yOffset + 5, name.getStyle().getColor().getValue());
 
             String count = String.valueOf(bookStack.getCount());

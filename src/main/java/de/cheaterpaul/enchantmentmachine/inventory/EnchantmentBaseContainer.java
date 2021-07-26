@@ -47,14 +47,14 @@ public abstract class EnchantmentBaseContainer extends AbstractContainerMenu {
     public ItemStack quickMoveStack(@Nonnull Player playerEntity, int index) {
         ItemStack result = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
-        if (slot != null && slot.hasItem()) {
+        if (slot.hasItem()) {
             ItemStack slotStack = slot.getItem();
             result = slotStack.copy();
             if (index < this.size) {
                 if (!this.moveItemStackTo(slotStack, this.size, 36 + this.size, false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (index >= this.size && index < 27 + this.size) {
+            } else if (index < 27 + this.size) {
                 if (!this.moveItemStackTo(slotStack, 0, this.size, false)) {
                     if (slotStack.isEmpty()) {
                         return ItemStack.EMPTY;

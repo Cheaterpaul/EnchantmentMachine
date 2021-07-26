@@ -12,15 +12,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.function.Supplier;
 
-public class EnchantmentPacket implements IMessage {
-
-    private final Object2IntMap<EnchantmentInstanceMod> enchantments;
-    private final boolean shouldOpenEnchantmentListScreen;
-
-    public EnchantmentPacket(Object2IntMap<EnchantmentInstanceMod> enchantments, boolean shouldOpenEnchantmentListScreen) {
-        this.enchantments = enchantments;
-        this.shouldOpenEnchantmentListScreen = shouldOpenEnchantmentListScreen;
-    }
+public record EnchantmentPacket(
+        Object2IntMap<EnchantmentInstanceMod> enchantments,
+        boolean shouldOpenEnchantmentListScreen)
+        implements IMessage {
 
     public Object2IntMap<EnchantmentInstanceMod> getEnchantments() {
         return enchantments;
@@ -34,6 +29,7 @@ public class EnchantmentPacket implements IMessage {
         buf.writeBoolean(msg.shouldOpenEnchantmentListScreen);
         buf.writeVarInt(msg.enchantments.size());
         msg.enchantments.forEach((inst, count) -> {
+            //noinspection ConstantConditions
             buf.writeResourceLocation(inst.getEnchantment().getRegistryName());
             buf.writeVarInt(inst.getLevel());
             buf.writeVarInt(count);

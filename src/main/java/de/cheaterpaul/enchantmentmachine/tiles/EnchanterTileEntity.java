@@ -49,6 +49,7 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
         return name;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Nonnull
     @Override
     protected AbstractContainerMenu createMenu(int i, @Nonnull Inventory playerInventory) {
@@ -108,7 +109,7 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
      * @return If all enchantments and sufficient skill points were available
      */
     public boolean executeEnchantments(Player user, List<EnchantmentInstanceMod> enchantments) {
-        if (!getConnectedEnchantmentTE().isPresent()) return false;
+        if (getConnectedEnchantmentTE().isEmpty()) return false;
         ItemStack stack = inventory.get(0);
         if (stack.isEmpty()) return false;
         Map<Enchantment, Integer> enchantmentMap = EnchantmentHelper.getEnchantments(stack);

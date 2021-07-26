@@ -1,6 +1,5 @@
 package de.cheaterpaul.enchantmentmachine.client.screen;
 
-import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
@@ -17,7 +16,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * make sure that {@link net.minecraft.client.gui.INestedGuiEventHandler#mouseDragged(double, double, int, double, double)} is being called
+ * make sure that {@link net.minecraft.client.gui.components.events.ContainerEventHandler#mouseDragged(double, double, int, double, double)} is being called
  */
 public class ScrollableListButton<T> extends ExtendedButton {
 

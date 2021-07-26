@@ -56,8 +56,8 @@ public class EnchantmentBlockTileEntityRenderer implements BlockEntityRenderer<S
         float f5 = Mth.frac(f3 + 0.75F) * 1.6F - 0.3F;
         float f6 = Mth.lerp(partialTicks, tileEntityIn.pageTurningSpeed, tileEntityIn.nextPageTurningSpeed);
         this.modelBook.setupAnim(f, Mth.clamp(f4, 0.0F, 1.0F), Mth.clamp(f5, 0.0F, 1.0F), f6);
-        VertexConsumer ivertexbuilder = TEXTURE_BOOK.buffer(bufferIn, RenderType::entitySolid);
-        this.modelBook.render(matrixStackIn, ivertexbuilder, combinedLightIn, combinedOverlayIn, 1.0F, 1.0F, 1.0F, 1.0F);
+        VertexConsumer vertexConsumer = TEXTURE_BOOK.buffer(bufferIn, RenderType::entitySolid);
+        this.modelBook.render(matrixStackIn, vertexConsumer, combinedLightIn, combinedOverlayIn, 1.0F, 1.0F, 1.0F, 1.0F);
         matrixStackIn.popPose();
     }
 }

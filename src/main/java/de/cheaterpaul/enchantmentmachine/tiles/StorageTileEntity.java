@@ -62,6 +62,7 @@ public class StorageTileEntity extends BlockEntity implements IEnchantmentMachin
     public static void serverTick(Level level, BlockPos blockPos, BlockState state, StorageTileEntity entity) {
         entity.pageTurningSpeed = entity.nextPageTurningSpeed;
         entity.pageAngle = entity.nextPageAngle;
+        //noinspection ConstantConditions
         Player playerentity = entity.level.getNearestPlayer((double) entity.worldPosition.getX() + 0.5D, (double) entity.worldPosition.getY() + 0.5D, (double) entity.worldPosition.getZ() + 0.5D, 3.0D, false);
         if (playerentity != null) {
             double d0 = playerentity.getX() - ((double) entity.worldPosition.getX() + 0.5D);
@@ -96,8 +97,9 @@ public class StorageTileEntity extends BlockEntity implements IEnchantmentMachin
             entity.tRot += ((float) Math.PI * 2F);
         }
 
-        float f2;
-        for (f2 = entity.tRot - entity.nextPageAngle; f2 >= (float) Math.PI; f2 -= ((float) Math.PI * 2F)) {
+        float f2 = entity.tRot - entity.nextPageAngle;
+        while (f2 >= (float) Math.PI) {
+            f2 -= ((float) Math.PI * 2F);
         }
 
         while (f2 < -(float) Math.PI) {
@@ -140,8 +142,6 @@ public class StorageTileEntity extends BlockEntity implements IEnchantmentMachin
 
     /**
      * Add one enchantment instance
-     *
-     * @param enchInst
      */
     public void addEnchantment(EnchantmentInstanceMod enchInst) {
         this.addEnchantment(enchInst, 1);
@@ -152,7 +152,6 @@ public class StorageTileEntity extends BlockEntity implements IEnchantmentMachin
     }
 
     /**
-     * @param enchInst
      * @return Whether the given enchantment is present
      */
     public boolean hasEnchantment(EnchantmentInstanceMod enchInst) {
@@ -210,6 +209,7 @@ public class StorageTileEntity extends BlockEntity implements IEnchantmentMachin
         ListTag enchantments = new ListTag();
         enchantmentMaps.forEach((inst, count) -> {
             CompoundTag enchantment = new CompoundTag();
+            //noinspection ConstantConditions
             enchantment.putString("id", inst.getEnchantment().getRegistryName().toString());
             enchantment.putInt("level", inst.getLevel());
             enchantment.putInt("count", count);

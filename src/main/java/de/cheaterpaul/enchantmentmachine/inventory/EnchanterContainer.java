@@ -63,9 +63,7 @@ public class EnchanterContainer extends EnchantmentBaseContainer implements Stor
     public void removed(@Nonnull Player playerIn) {
         super.removed(playerIn);
         contactEnchantmentTileEntity(t -> t.removeListener(this));
-        this.worldPosCallable.execute((world, pos) -> {
-            this.clearContainer(playerIn, this.inventory);
-        });
+        this.worldPosCallable.execute((world, pos) -> this.clearContainer(playerIn, this.inventory));
     }
 
     @Override

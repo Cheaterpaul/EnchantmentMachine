@@ -93,7 +93,7 @@ public class StorageBlock extends EnchantmentBaseBlock {
         return createStorageTicker(level, type, ModData.storage_tile);
     }
 
-    protected static <T extends BlockEntity> BlockEntityTicker<T> createStorageTicker(Level level, BlockEntityType<T> type, BlockEntityType<? extends StorageTileEntity> tile) {
+    protected static <T extends BlockEntity> BlockEntityTicker<T> createStorageTicker(Level level, BlockEntityType<T> type, @SuppressWarnings("SameParameterValue") BlockEntityType<? extends StorageTileEntity> tile) {
         return level.isClientSide ? null : createTickerHelper(type, tile, StorageTileEntity::serverTick);
     }
 }

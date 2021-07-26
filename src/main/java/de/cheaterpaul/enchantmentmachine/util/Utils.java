@@ -20,7 +20,7 @@ public class Utils {
     }
 
     /**
-     * Tries to combine the given enchantment instance with a exisiting list of enchantments.
+     * Tries to combine the given enchantment instance with an existing list of enchantments.
      * Returns the resulting enchantment instance (can be the same as passed or a combined (higher level) one) as well as the required XP levels
      *
      * @param enchInst             toApply
@@ -41,20 +41,12 @@ public class Utils {
         }
         if (!enchInst.canEnchant()) return null;
 
-        int baseCost = 0;
-        switch (enchInst.getEnchantment().getRarity()) {
-            case COMMON:
-                baseCost = 1;
-                break;
-            case UNCOMMON:
-                baseCost = 2;
-                break;
-            case RARE:
-                baseCost = 4;
-                break;
-            case VERY_RARE:
-                baseCost = 8;
-        }
+        int baseCost = switch (enchInst.getEnchantment().getRarity()) {
+            case COMMON -> 1;
+            case UNCOMMON -> 2;
+            case RARE -> 4;
+            case VERY_RARE -> 8;
+        };
 
         if (reducedPrice) {
             baseCost = Math.max(1, baseCost / 2);

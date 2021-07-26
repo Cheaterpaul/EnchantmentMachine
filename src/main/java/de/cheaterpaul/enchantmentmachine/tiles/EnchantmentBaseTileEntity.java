@@ -31,6 +31,7 @@ public abstract class EnchantmentBaseTileEntity extends BaseContainerBlockEntity
 
     @Override
     public boolean stillValid(@Nonnull Player playerEntity) {
+        //noinspection ConstantConditions
         if (this.level.getBlockEntity(this.worldPosition) != this) {
             return false;
         } else {
@@ -42,6 +43,7 @@ public abstract class EnchantmentBaseTileEntity extends BaseContainerBlockEntity
     @Override
     public Optional<StorageTileEntity> getConnectedEnchantmentTE() {
         if (storageBlockPos == null) return Optional.empty();
+        //noinspection ConstantConditions
         BlockEntity te = this.level.getBlockEntity(storageBlockPos);
         if (te instanceof StorageTileEntity) {
             return Optional.of((StorageTileEntity) te);

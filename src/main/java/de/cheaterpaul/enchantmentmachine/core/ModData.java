@@ -37,8 +37,11 @@ public class ModData {
         (enchanter_block = new EnchanterBlock(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 1200.0F))).setRegistryName(REFERENCE.MODID, "enchanter_block");
         (disenchanter_block = new DisenchanterBlock(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 1200.0F))).setRegistryName(REFERENCE.MODID, "disenchanter_block");
         (storage_block = new StorageBlock(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 1200.0F).noOcclusion())).setRegistryName(REFERENCE.MODID, "enchantment_block");
+        //noinspection ConstantConditions
         (enchanter_tile = BlockEntityType.Builder.of(EnchanterTileEntity::new, enchanter_block).build(null)).setRegistryName(REFERENCE.MODID, "enchanter_tile");
+        //noinspection ConstantConditions
         (disenchanter_tile = BlockEntityType.Builder.of(DisenchanterTileEntity::new, disenchanter_block).build(null)).setRegistryName(REFERENCE.MODID, "disenchanter_tile");
+        //noinspection ConstantConditions
         (storage_tile = BlockEntityType.Builder.of(StorageTileEntity::new, storage_block).build(null)).setRegistryName(REFERENCE.MODID, "enchantment_tile");
         (enchanter_container = new MenuType<>(EnchanterContainer::new)).setRegistryName(REFERENCE.MODID, "enchanter_container");
         (disenchanter_container = new MenuType<>(DisenchanterContainer::new)).setRegistryName(REFERENCE.MODID, "disenchanter_container");
