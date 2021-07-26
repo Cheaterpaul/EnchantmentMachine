@@ -1,4 +1,4 @@
-Enchantment Machine for 1.16  [![](http://cf.way2muchnoise.eu/short_436934_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/enchantment-machine)  [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
+Enchantment Machine for 1.17  [![](http://cf.way2muchnoise.eu/short_436934_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/enchantment-machine) [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0) [![](https://badgen.net/maven/v/metadata-url/https/maven.paube.de/releases/de/cheaterpaul/enchantmentmachine/EnchantmentMachine/maven-metadata.xml)](https://maven.paube.de/releases/de/cheaterpaul/enchantmentmachine/EnchantmentMachine)
 ============================================ 
 
 ## Mod Description
