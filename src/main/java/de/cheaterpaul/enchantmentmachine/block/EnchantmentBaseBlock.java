@@ -1,7 +1,7 @@
 package de.cheaterpaul.enchantmentmachine.block;
 
-import de.cheaterpaul.enchantmentmachine.tiles.EnchantmentBaseTileEntity;
-import de.cheaterpaul.enchantmentmachine.tiles.StorageTileEntity;
+import de.cheaterpaul.enchantmentmachine.block.entity.EnchantmentBaseBlockEntity;
+import de.cheaterpaul.enchantmentmachine.block.entity.StorageBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -30,12 +30,12 @@ public abstract class EnchantmentBaseBlock extends BaseEntityBlock {
         if (worldIn.getBlockState(fromPos).getBlock() instanceof EnchantmentBaseBlock) {
             BlockPos mainPos = fromPos;
             BlockEntity te = worldIn.getBlockEntity(pos);
-            if (te instanceof StorageTileEntity) {
+            if (te instanceof StorageBlockEntity) {
                 te = worldIn.getBlockEntity(fromPos);
                 mainPos = pos;
             }
-            if (te instanceof EnchantmentBaseTileEntity) {
-                ((EnchantmentBaseTileEntity) te).onNeighbourChanged(worldIn, mainPos);
+            if (te instanceof EnchantmentBaseBlockEntity) {
+                ((EnchantmentBaseBlockEntity) te).onNeighbourChanged(worldIn, mainPos);
             }
         }
         super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);

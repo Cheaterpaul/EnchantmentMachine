@@ -1,9 +1,9 @@
-package de.cheaterpaul.enchantmentmachine.client;
+package de.cheaterpaul.enchantmentmachine.client.renderer.blockentity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
-import de.cheaterpaul.enchantmentmachine.tiles.StorageTileEntity;
+import de.cheaterpaul.enchantmentmachine.block.entity.StorageBlockEntity;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.BookModel;
@@ -22,7 +22,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
-public class EnchantmentBlockTileEntityRenderer implements BlockEntityRenderer<StorageTileEntity> {
+public class EnchantmentBlockTileEntityRenderer implements BlockEntityRenderer<StorageBlockEntity> {
 
     public static final Material TEXTURE_BOOK = new Material(InventoryMenu.BLOCK_ATLAS, new ResourceLocation(REFERENCE.MODID, "entity/enchanting_table_book"));
     private final BookModel modelBook = new BookModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.BOOK));
@@ -32,7 +32,7 @@ public class EnchantmentBlockTileEntityRenderer implements BlockEntityRenderer<S
     }
 
     @Override
-    public void render(StorageTileEntity tileEntityIn, float partialTicks, PoseStack matrixStackIn, @Nonnull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+    public void render(StorageBlockEntity tileEntityIn, float partialTicks, PoseStack matrixStackIn, @Nonnull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
         matrixStackIn.pushPose();
         matrixStackIn.translate(0.5D, 0.75D, 0.5D);
         float f = (float) tileEntityIn.getTicks() + partialTicks;

@@ -12,13 +12,13 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 import javax.annotation.Nonnull;
 
-public class DisenchanterContainer extends EnchantmentBaseContainer {
+public class DisenchanterContainerMenu extends EnchantmentBaseContainerMenu {
 
-    public DisenchanterContainer(int id, Inventory playerInventory) {
+    public DisenchanterContainerMenu(int id, Inventory playerInventory) {
         this(id, new SimpleContainer(2), playerInventory);
     }
 
-    public DisenchanterContainer(int id, Container inventory, Inventory playerInventory) {
+    public DisenchanterContainerMenu(int id, Container inventory, Inventory playerInventory) {
         super(ModData.disenchanter_container, id, 2);
         this.addSlot(new Slot(inventory, 0, 80, 17) {
             @Override

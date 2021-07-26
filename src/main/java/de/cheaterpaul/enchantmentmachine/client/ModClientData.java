@@ -1,7 +1,8 @@
 package de.cheaterpaul.enchantmentmachine.client;
 
-import de.cheaterpaul.enchantmentmachine.client.screen.DisenchanterScreen;
-import de.cheaterpaul.enchantmentmachine.client.screen.EnchanterScreen;
+import de.cheaterpaul.enchantmentmachine.client.gui.screens.inventory.DisenchanterScreen;
+import de.cheaterpaul.enchantmentmachine.client.gui.screens.inventory.EnchanterScreen;
+import de.cheaterpaul.enchantmentmachine.client.renderer.blockentity.EnchantmentBlockTileEntityRenderer;
 import de.cheaterpaul.enchantmentmachine.core.ModData;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;

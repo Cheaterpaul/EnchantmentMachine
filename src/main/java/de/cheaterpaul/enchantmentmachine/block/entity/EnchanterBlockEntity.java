@@ -1,7 +1,7 @@
-package de.cheaterpaul.enchantmentmachine.tiles;
+package de.cheaterpaul.enchantmentmachine.block.entity;
 
 import de.cheaterpaul.enchantmentmachine.core.ModData;
-import de.cheaterpaul.enchantmentmachine.inventory.EnchanterContainer;
+import de.cheaterpaul.enchantmentmachine.inventory.EnchanterContainerMenu;
 import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstanceMod;
 import de.cheaterpaul.enchantmentmachine.util.Utils;
 import net.minecraft.core.BlockPos;
@@ -30,7 +30,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
 
-public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
+public class EnchanterBlockEntity extends EnchantmentBaseBlockEntity {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -39,7 +39,7 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
     private final NonNullList<ItemStack> inventory = NonNullList.withSize(1, ItemStack.EMPTY);
 
 
-    public EnchanterTileEntity(BlockPos pos, BlockState state) {
+    public EnchanterBlockEntity(BlockPos pos, BlockState state) {
         super(ModData.enchanter_tile, pos, state);
     }
 
@@ -53,7 +53,7 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
     @Nonnull
     @Override
     protected AbstractContainerMenu createMenu(int i, @Nonnull Inventory playerInventory) {
-        return new EnchanterContainer(i, this, playerInventory, ContainerLevelAccess.create(this.level, this.worldPosition));
+        return new EnchanterContainerMenu(i, this, playerInventory, ContainerLevelAccess.create(this.level, this.worldPosition));
     }
 
     @Override
@@ -113,7 +113,7 @@ public class EnchanterTileEntity extends EnchantmentBaseTileEntity {
         ItemStack stack = inventory.get(0);
         if (stack.isEmpty()) return false;
         Map<Enchantment, Integer> enchantmentMap = EnchantmentHelper.getEnchantments(stack);
-        StorageTileEntity te = getConnectedEnchantmentTE().get();
+        StorageBlockEntity te = getConnectedEnchantmentTE().get();
 
         boolean book = stack.getItem() == Items.BOOK || stack.getItem() == Items.ENCHANTED_BOOK;
         if (book) {

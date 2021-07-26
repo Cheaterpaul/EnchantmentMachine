@@ -1,8 +1,8 @@
-package de.cheaterpaul.enchantmentmachine.tiles;
+package de.cheaterpaul.enchantmentmachine.block.entity;
 
 import de.cheaterpaul.enchantmentmachine.core.ModConfig;
 import de.cheaterpaul.enchantmentmachine.core.ModData;
-import de.cheaterpaul.enchantmentmachine.inventory.DisenchanterContainer;
+import de.cheaterpaul.enchantmentmachine.inventory.DisenchanterContainerMenu;
 import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstanceMod;
 import de.cheaterpaul.enchantmentmachine.util.Utils;
 import net.minecraft.core.BlockPos;
@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Map;
 
-public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements WorldlyContainer, Hopper {
+public class DisenchanterBlockEntity extends EnchantmentBaseBlockEntity implements WorldlyContainer, Hopper {
 
     private static final Component name = Utils.genTranslation("tile", "disenchanter.name");
     private static final int DURATION = 20;
@@ -48,7 +48,7 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
     private int timer;
     private int transferCooldown;
 
-    public DisenchanterTileEntity(BlockPos pos, BlockState state) {
+    public DisenchanterBlockEntity(BlockPos pos, BlockState state) {
         super(ModData.disenchanter_tile, pos, state);
     }
 
@@ -61,7 +61,7 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
     @Nonnull
     @Override
     protected AbstractContainerMenu createMenu(int i, @Nonnull Inventory playerInventory) {
-        return new DisenchanterContainer(i, this, playerInventory);
+        return new DisenchanterContainerMenu(i, this, playerInventory);
     }
 
     @Override
@@ -229,7 +229,7 @@ public class DisenchanterTileEntity extends EnchantmentBaseTileEntity implements
         return this.worldPosition.getZ() + 0.5;
     }
 
-    public static void serverTick(Level level, BlockPos blockPos, BlockState state, DisenchanterTileEntity entity) {
+    public static void serverTick(Level level, BlockPos blockPos, BlockState state, DisenchanterBlockEntity entity) {
         if (entity.timer > 0 && entity.hasConnectedTE()) {
             if (--entity.timer == 0) {
                 entity.getConnectedEnchantmentTE().ifPresent(te -> {

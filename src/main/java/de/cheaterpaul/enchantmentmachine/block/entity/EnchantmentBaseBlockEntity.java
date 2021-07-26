@@ -1,4 +1,4 @@
-package de.cheaterpaul.enchantmentmachine.tiles;
+package de.cheaterpaul.enchantmentmachine.block.entity;
 
 import de.cheaterpaul.enchantmentmachine.core.ModData;
 import net.minecraft.core.BlockPos;
@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-public abstract class EnchantmentBaseTileEntity extends BaseContainerBlockEntity implements IEnchantmentMachine {
+public abstract class EnchantmentBaseBlockEntity extends BaseContainerBlockEntity implements IEnchantmentMachine {
 
     /**
      * Stores the last known location of an adjacent enchantment storage block.
@@ -25,7 +25,7 @@ public abstract class EnchantmentBaseTileEntity extends BaseContainerBlockEntity
     private BlockPos storageBlockPos;
 
 
-    public EnchantmentBaseTileEntity(BlockEntityType<?> tileEntityType, BlockPos pos, BlockState state) {
+    public EnchantmentBaseBlockEntity(BlockEntityType<?> tileEntityType, BlockPos pos, BlockState state) {
         super(tileEntityType, pos, state);
     }
 
@@ -41,12 +41,12 @@ public abstract class EnchantmentBaseTileEntity extends BaseContainerBlockEntity
 
 
     @Override
-    public Optional<StorageTileEntity> getConnectedEnchantmentTE() {
+    public Optional<StorageBlockEntity> getConnectedEnchantmentTE() {
         if (storageBlockPos == null) return Optional.empty();
         //noinspection ConstantConditions
         BlockEntity te = this.level.getBlockEntity(storageBlockPos);
-        if (te instanceof StorageTileEntity) {
-            return Optional.of((StorageTileEntity) te);
+        if (te instanceof StorageBlockEntity) {
+            return Optional.of((StorageBlockEntity) te);
         }
         return Optional.empty();
     }

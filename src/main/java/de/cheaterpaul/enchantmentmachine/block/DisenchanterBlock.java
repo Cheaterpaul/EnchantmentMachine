@@ -1,7 +1,7 @@
 package de.cheaterpaul.enchantmentmachine.block;
 
+import de.cheaterpaul.enchantmentmachine.block.entity.DisenchanterBlockEntity;
 import de.cheaterpaul.enchantmentmachine.core.ModData;
-import de.cheaterpaul.enchantmentmachine.tiles.DisenchanterTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -40,8 +40,8 @@ public class DisenchanterBlock extends EnchantmentBaseBlock {
     @Override
     public InteractionResult use(@Nonnull BlockState p_225533_1_, Level p_225533_2_, @Nonnull BlockPos p_225533_3_, @Nonnull Player p_225533_4_, @Nonnull InteractionHand p_225533_5_, @Nonnull BlockHitResult p_225533_6_) {
         BlockEntity tile = p_225533_2_.getBlockEntity(p_225533_3_);
-        if (tile instanceof DisenchanterTileEntity) {
-            p_225533_4_.openMenu(((DisenchanterTileEntity) tile));
+        if (tile instanceof DisenchanterBlockEntity) {
+            p_225533_4_.openMenu(((DisenchanterBlockEntity) tile));
             return InteractionResult.CONSUME;
         }
         return InteractionResult.SUCCESS;
@@ -60,8 +60,8 @@ public class DisenchanterBlock extends EnchantmentBaseBlock {
         return createStorageTicker(level, type, ModData.disenchanter_tile);
     }
 
-    protected static <T extends BlockEntity> BlockEntityTicker<T> createStorageTicker(Level level, BlockEntityType<T> type, @SuppressWarnings("SameParameterValue") BlockEntityType<? extends DisenchanterTileEntity> tile) {
-        return level.isClientSide ? null : createTickerHelper(type, tile, DisenchanterTileEntity::serverTick);
+    protected static <T extends BlockEntity> BlockEntityTicker<T> createStorageTicker(Level level, BlockEntityType<T> type, @SuppressWarnings("SameParameterValue") BlockEntityType<? extends DisenchanterBlockEntity> tile) {
+        return level.isClientSide ? null : createTickerHelper(type, tile, DisenchanterBlockEntity::serverTick);
     }
 
     public static VoxelShape makeShape() {

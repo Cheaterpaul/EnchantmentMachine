@@ -1,10 +1,10 @@
 package de.cheaterpaul.enchantmentmachine.block;
 
 import de.cheaterpaul.enchantmentmachine.EnchantmentMachineMod;
+import de.cheaterpaul.enchantmentmachine.block.entity.EnchanterBlockEntity;
+import de.cheaterpaul.enchantmentmachine.block.entity.StorageBlockEntity;
 import de.cheaterpaul.enchantmentmachine.core.ModData;
 import de.cheaterpaul.enchantmentmachine.network.message.EnchantmentPacket;
-import de.cheaterpaul.enchantmentmachine.tiles.EnchanterTileEntity;
-import de.cheaterpaul.enchantmentmachine.tiles.StorageTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -42,10 +42,10 @@ public class EnchanterBlock extends EnchantmentBaseBlock {
     @Override
     public InteractionResult use(@Nonnull BlockState blockState, Level world, @Nonnull BlockPos blockPos, @Nonnull Player playerEntity, @Nonnull InteractionHand hand, @Nonnull BlockHitResult rayTraceResult) {
         BlockEntity tile = world.getBlockEntity(blockPos);
-        if (tile instanceof EnchanterTileEntity) {
-            playerEntity.openMenu(((EnchanterTileEntity) tile));
+        if (tile instanceof EnchanterBlockEntity) {
+            playerEntity.openMenu(((EnchanterBlockEntity) tile));
             if (!world.isClientSide() && playerEntity instanceof ServerPlayer) {
-                Optional<StorageTileEntity> s = ((EnchanterTileEntity) tile).getConnectedEnchantmentTE();
+                Optional<StorageBlockEntity> s = ((EnchanterBlockEntity) tile).getConnectedEnchantmentTE();
                 s.ifPresent(enchantmentTileEntity -> EnchantmentMachineMod.DISPATCHER.sendTo(new EnchantmentPacket(enchantmentTileEntity.getEnchantments(), false), ((ServerPlayer) playerEntity)));
             }
             return InteractionResult.CONSUME;

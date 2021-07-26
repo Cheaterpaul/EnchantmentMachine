@@ -1,10 +1,10 @@
 package de.cheaterpaul.enchantmentmachine.inventory;
 
 import de.cheaterpaul.enchantmentmachine.EnchantmentMachineMod;
+import de.cheaterpaul.enchantmentmachine.block.entity.EnchanterBlockEntity;
+import de.cheaterpaul.enchantmentmachine.block.entity.StorageBlockEntity;
 import de.cheaterpaul.enchantmentmachine.core.ModData;
 import de.cheaterpaul.enchantmentmachine.network.message.EnchantmentPacket;
-import de.cheaterpaul.enchantmentmachine.tiles.EnchanterTileEntity;
-import de.cheaterpaul.enchantmentmachine.tiles.StorageTileEntity;
 import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstanceMod;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,21 +20,21 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 
-public class EnchanterContainer extends EnchantmentBaseContainer implements StorageTileEntity.IEnchantmentListener {
+public class EnchanterContainerMenu extends EnchantmentBaseContainerMenu implements StorageBlockEntity.IEnchantmentListener {
 
     private final ContainerLevelAccess worldPosCallable;
     private final Player player;
     private ISlotListener listener;
-    private final Container inventory;
+    private final Container menu;
 
-    public EnchanterContainer(int id, Inventory playerInventory) {
+    public EnchanterContainerMenu(int id, Inventory playerInventory) {
         this(id, new SimpleContainer(1), playerInventory, ContainerLevelAccess.NULL);
     }
 
-    public EnchanterContainer(int id, Container inventory, Inventory playerInventory, ContainerLevelAccess worldPosCallable) {
+    public EnchanterContainerMenu(int id, Container menu, Inventory playerInventory, ContainerLevelAccess worldPosCallable) {
         super(ModData.enchanter_container, id, 1);
-        this.inventory = inventory;
-        this.addSlot(new Slot(inventory, 0, 203, 19) {
+        this.menu = menu;
+        this.addSlot(new Slot(menu, 0, 203, 19) {
 
             @Override
             public int getMaxStackSize() {
@@ -44,8 +44,8 @@ public class EnchanterContainer extends EnchantmentBaseContainer implements Stor
             @Override
             public void setChanged() {
                 super.setChanged();
-                if (EnchanterContainer.this.listener != null) {
-                    EnchanterContainer.this.listener.slotChanged();
+                if (EnchanterContainerMenu.this.listener != null) {
+                    EnchanterContainerMenu.this.listener.slotChanged();
                 }
             }
         });
@@ -63,7 +63,7 @@ public class EnchanterContainer extends EnchantmentBaseContainer implements Stor
     public void removed(@Nonnull Player playerIn) {
         super.removed(playerIn);
         contactEnchantmentTileEntity(t -> t.removeListener(this));
-        this.worldPosCallable.execute((world, pos) -> this.clearContainer(playerIn, this.inventory));
+        this.worldPosCallable.execute((world, pos) -> this.clearContainer(playerIn, this.menu));
     }
 
     @Override
@@ -88,11 +88,11 @@ public class EnchanterContainer extends EnchantmentBaseContainer implements Stor
         return super.quickMoveStack(playerEntity, index);
     }
 
-    private void contactEnchantmentTileEntity(Consumer<StorageTileEntity> consumer) {
+    private void contactEnchantmentTileEntity(Consumer<StorageBlockEntity> consumer) {
         this.worldPosCallable.execute((w, p) -> {
             BlockEntity t = w.getBlockEntity(p);
-            if (t instanceof EnchanterTileEntity) {
-                ((EnchanterTileEntity) t).getConnectedEnchantmentTE().ifPresent(consumer);
+            if (t instanceof EnchanterBlockEntity) {
+                ((EnchanterBlockEntity) t).getConnectedEnchantmentTE().ifPresent(consumer);
             }
         });
     }

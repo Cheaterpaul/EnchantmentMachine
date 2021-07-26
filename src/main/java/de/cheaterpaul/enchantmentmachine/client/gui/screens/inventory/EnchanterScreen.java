@@ -1,10 +1,11 @@
-package de.cheaterpaul.enchantmentmachine.client.screen;
+package de.cheaterpaul.enchantmentmachine.client.gui.screens.inventory;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.cheaterpaul.enchantmentmachine.EnchantmentMachineMod;
+import de.cheaterpaul.enchantmentmachine.client.gui.components.ScrollableListButton;
 import de.cheaterpaul.enchantmentmachine.core.ModConfig;
-import de.cheaterpaul.enchantmentmachine.inventory.EnchanterContainer;
+import de.cheaterpaul.enchantmentmachine.inventory.EnchanterContainerMenu;
 import de.cheaterpaul.enchantmentmachine.network.message.EnchantingPacket;
 import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstanceMod;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
@@ -34,7 +35,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @OnlyIn(Dist.CLIENT)
-public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
+public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMenu> {
 
     private static final ResourceLocation BACKGROUND = new ResourceLocation(REFERENCE.MODID, "textures/gui/container/enchanter.png");
 
@@ -43,7 +44,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
     private Map<Enchantment, Integer> itemEnchantments = new HashMap<>();
 
 
-    public EnchanterScreen(EnchanterContainer container, Inventory playerInventory, Component name) {
+    public EnchanterScreen(EnchanterContainerMenu container, Inventory playerInventory, Component name) {
         super(container, playerInventory, name);
         this.imageWidth = 232;
         this.imageHeight = 241;

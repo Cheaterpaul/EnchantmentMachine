@@ -9,14 +9,14 @@ import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
-public abstract class EnchantmentBaseContainer extends AbstractContainerMenu {
+public abstract class EnchantmentBaseContainerMenu extends AbstractContainerMenu {
 
     private final int size;
 
     /**
      * @param sizeInventory inventory size of the container except the player slots
      */
-    public EnchantmentBaseContainer(MenuType<?> containerType, int id, int sizeInventory) {
+    public EnchantmentBaseContainerMenu(MenuType<?> containerType, int id, int sizeInventory) {
         super(containerType, id);
         this.size = sizeInventory;
     }

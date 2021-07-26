@@ -1,9 +1,9 @@
 package de.cheaterpaul.enchantmentmachine.block;
 
 import de.cheaterpaul.enchantmentmachine.EnchantmentMachineMod;
+import de.cheaterpaul.enchantmentmachine.block.entity.StorageBlockEntity;
 import de.cheaterpaul.enchantmentmachine.core.ModData;
 import de.cheaterpaul.enchantmentmachine.network.message.EnchantmentPacket;
-import de.cheaterpaul.enchantmentmachine.tiles.StorageTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -57,9 +57,9 @@ public class StorageBlock extends EnchantmentBaseBlock {
     @Override
     public void playerDestroy(@Nonnull Level worldIn, @Nonnull Player player, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nullable BlockEntity te, @Nonnull ItemStack heldStack) {
         ItemStack stack = new ItemStack(ModData.storage_block, 1);
-        if (te instanceof StorageTileEntity) {
-            ((StorageTileEntity) te).writeEnchantments(stack.getOrCreateTagElement("BlockEntityTag"));
-            stack.getOrCreateTag().putInt("enchantmentcount", ((StorageTileEntity) te).getEnchantmentCount());
+        if (te instanceof StorageBlockEntity) {
+            ((StorageBlockEntity) te).writeEnchantments(stack.getOrCreateTagElement("BlockEntityTag"));
+            stack.getOrCreateTag().putInt("enchantmentcount", ((StorageBlockEntity) te).getEnchantmentCount());
         }
         popResource(worldIn, pos, stack);
     }
@@ -69,8 +69,8 @@ public class StorageBlock extends EnchantmentBaseBlock {
     @Override
     public InteractionResult use(@Nonnull BlockState blockState, Level world, @Nonnull BlockPos blockPos, @Nonnull Player playerEntity, @Nonnull InteractionHand p_225533_5_, @Nonnull BlockHitResult p_225533_6_) {
         BlockEntity tile = world.getBlockEntity(blockPos);
-        if (tile instanceof StorageTileEntity && playerEntity instanceof ServerPlayer) {
-            EnchantmentMachineMod.DISPATCHER.sendTo(new EnchantmentPacket(((StorageTileEntity) tile).getEnchantments(), true), ((ServerPlayer) playerEntity));
+        if (tile instanceof StorageBlockEntity && playerEntity instanceof ServerPlayer) {
+            EnchantmentMachineMod.DISPATCHER.sendTo(new EnchantmentPacket(((StorageBlockEntity) tile).getEnchantments(), true), ((ServerPlayer) playerEntity));
             return InteractionResult.CONSUME;
         }
         return InteractionResult.SUCCESS;
@@ -93,7 +93,7 @@ public class StorageBlock extends EnchantmentBaseBlock {
         return createStorageTicker(level, type, ModData.storage_tile);
     }
 
-    protected static <T extends BlockEntity> BlockEntityTicker<T> createStorageTicker(Level level, BlockEntityType<T> type, @SuppressWarnings("SameParameterValue") BlockEntityType<? extends StorageTileEntity> tile) {
-        return level.isClientSide ? null : createTickerHelper(type, tile, StorageTileEntity::serverTick);
+    protected static <T extends BlockEntity> BlockEntityTicker<T> createStorageTicker(Level level, BlockEntityType<T> type, @SuppressWarnings("SameParameterValue") BlockEntityType<? extends StorageBlockEntity> tile) {
+        return level.isClientSide ? null : createTickerHelper(type, tile, StorageBlockEntity::serverTick);
     }
 }

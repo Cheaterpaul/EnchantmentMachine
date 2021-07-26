@@ -1,4 +1,4 @@
-package de.cheaterpaul.enchantmentmachine.tiles;
+package de.cheaterpaul.enchantmentmachine.block.entity;
 
 import de.cheaterpaul.enchantmentmachine.core.ModData;
 import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstanceMod;
@@ -27,7 +27,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.WeakHashMap;
 
-public class StorageTileEntity extends BlockEntity implements IEnchantmentMachine {
+public class StorageBlockEntity extends BlockEntity implements IEnchantmentMachine {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Component name = Utils.genTranslation("tile", "enchantment.name");
@@ -49,7 +49,7 @@ public class StorageTileEntity extends BlockEntity implements IEnchantmentMachin
     public float pageAngle;
     public float tRot;
 
-    public StorageTileEntity(BlockPos blockPos, BlockState state) {
+    public StorageBlockEntity(BlockPos blockPos, BlockState state) {
         super(ModData.storage_tile, blockPos, state);
     }
 
@@ -59,7 +59,7 @@ public class StorageTileEntity extends BlockEntity implements IEnchantmentMachin
         notifyListeners();
     }
 
-    public static void serverTick(Level level, BlockPos blockPos, BlockState state, StorageTileEntity entity) {
+    public static void serverTick(Level level, BlockPos blockPos, BlockState state, StorageBlockEntity entity) {
         entity.pageTurningSpeed = entity.nextPageTurningSpeed;
         entity.pageAngle = entity.nextPageAngle;
         //noinspection ConstantConditions
@@ -220,7 +220,7 @@ public class StorageTileEntity extends BlockEntity implements IEnchantmentMachin
     }
 
     @Override
-    public Optional<StorageTileEntity> getConnectedEnchantmentTE() {
+    public Optional<StorageBlockEntity> getConnectedEnchantmentTE() {
         return Optional.of(this);
     }
 

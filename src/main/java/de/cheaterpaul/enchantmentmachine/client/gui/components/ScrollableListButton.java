@@ -1,4 +1,4 @@
-package de.cheaterpaul.enchantmentmachine.client.screen;
+package de.cheaterpaul.enchantmentmachine.client.gui.components;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;

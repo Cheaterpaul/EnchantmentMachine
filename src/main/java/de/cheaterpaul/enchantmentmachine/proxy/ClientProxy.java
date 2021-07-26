@@ -1,8 +1,8 @@
 package de.cheaterpaul.enchantmentmachine.proxy;
 
 import de.cheaterpaul.enchantmentmachine.client.ModClientData;
-import de.cheaterpaul.enchantmentmachine.client.screen.EnchanterScreen;
-import de.cheaterpaul.enchantmentmachine.client.screen.StorageScreen;
+import de.cheaterpaul.enchantmentmachine.client.gui.screens.StorageScreen;
+import de.cheaterpaul.enchantmentmachine.client.gui.screens.inventory.EnchanterScreen;
 import de.cheaterpaul.enchantmentmachine.network.message.EnchantmentPacket;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
 import net.minecraft.client.Minecraft;

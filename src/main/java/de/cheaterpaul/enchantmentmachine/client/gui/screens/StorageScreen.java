@@ -1,7 +1,8 @@
-package de.cheaterpaul.enchantmentmachine.client.screen;
+package de.cheaterpaul.enchantmentmachine.client.gui.screens;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import de.cheaterpaul.enchantmentmachine.client.gui.components.ScrollableListButton;
 import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstanceMod;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
