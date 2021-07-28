@@ -9,6 +9,7 @@ import de.cheaterpaul.enchantmentmachine.proxy.ClientProxy;
 import de.cheaterpaul.enchantmentmachine.proxy.Proxy;
 import de.cheaterpaul.enchantmentmachine.proxy.ServerProxy;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
+import de.cheaterpaul.enchantmentmachine.util.Utils;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -42,6 +43,8 @@ public class EnchantmentMachineMod {
         bus.addListener(this::onLoadComplete);
         bus.addListener(this::onCommonSetup);
         bus.addListener(this::onClientSetup);
+
+        Utils.updateMods();
     }
 
     private void onClientSetup(FMLClientSetupEvent event) {

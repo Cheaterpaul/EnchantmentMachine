@@ -114,7 +114,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
     private boolean hasEqualEnchantments(Map<Enchantment, Integer> itemEnchantments, EnchantmentInstance enchantment) {
         for (Map.Entry<Enchantment, Integer> entry : itemEnchantments.entrySet()) {
             if (entry.getKey() == enchantment.getEnchantment()) {
-                if (entry.getKey().getMaxLevel() != entry.getValue() && entry.getValue() <= enchantment.getLevel()) {
+                if (Utils.getEnchantmentMaxLevel(entry.getKey()) != entry.getValue() && entry.getValue() <= enchantment.getLevel()) {
                     return true;
                 }
             }
@@ -172,7 +172,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
             for (Map.Entry<Enchantment, Integer> entry : EnchanterScreen.this.itemEnchantments.entrySet()) {
                 Enchantment enchantment = entry.getKey();
                 if (enchantment == s.getEnchantment()) { //Combine enchantments if it is already present. Choose highest level or level +1 if both have the same.
-                    int newLevel = Math.min(enchantment.getMaxLevel(), s.getLevel() == entry.getValue() ? s.getLevel() + 1 : Math.max(s.getLevel(), entry.getValue()));
+                    int newLevel = Math.min(Utils.getEnchantmentMaxLevel(enchantment), s.getLevel() == entry.getValue() ? s.getLevel() + 1 : Math.max(s.getLevel(), entry.getValue()));
                     s = new EnchantmentInstance(enchantment, newLevel); //Override enchInst in loop.
                 }
             }
