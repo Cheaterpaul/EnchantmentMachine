@@ -20,7 +20,7 @@ public abstract class CommonProxy implements Proxy {
                 }
                 return null;
             });
-            tile.ifPresent(enchanterBlockEntity -> enchanterBlockEntity.executeEnchantments(playerEntity, packet.getEnchantments()));
+            tile.ifPresent(enchanterBlockEntity -> enchanterBlockEntity.executeEnchantments(playerEntity, packet.enchantments()));
         }
     }
 }

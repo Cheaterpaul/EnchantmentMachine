@@ -45,7 +45,4 @@ public record EnchantingPacket(List<EnchantmentInstanceMod> enchantments) implem
         ctx.setPacketHandled(true);
     }
 
-    public List<EnchantmentInstanceMod> getEnchantments() {
-        return enchantments;
-    }
 }

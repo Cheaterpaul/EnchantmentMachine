@@ -17,14 +17,6 @@ public record EnchantmentPacket(
         boolean shouldOpenEnchantmentListScreen)
         implements IMessage {
 
-    public Object2IntMap<EnchantmentInstanceMod> getEnchantments() {
-        return enchantments;
-    }
-
-    public boolean shouldOpenEnchantmentScreen() {
-        return shouldOpenEnchantmentListScreen;
-    }
-
     public static void encode(EnchantmentPacket msg, FriendlyByteBuf buf) {
         buf.writeBoolean(msg.shouldOpenEnchantmentListScreen);
         buf.writeVarInt(msg.enchantments.size());

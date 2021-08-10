@@ -34,14 +34,13 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void handleEnchantmentPacket(EnchantmentPacket packet) {
         if (Minecraft.getInstance().screen instanceof StorageScreen) {
-            ((StorageScreen) Minecraft.getInstance().screen).updateEnchantments(packet.getEnchantments());
+            ((StorageScreen) Minecraft.getInstance().screen).updateEnchantments(packet.enchantments());
         } else if (Minecraft.getInstance().screen instanceof EnchanterScreen) {
-            ((EnchanterScreen) Minecraft.getInstance().screen).updateEnchantments(packet.getEnchantments());
-        } else if (packet.shouldOpenEnchantmentScreen()) {
+            ((EnchanterScreen) Minecraft.getInstance().screen).updateEnchantments(packet.enchantments());
+        } else if (packet.shouldOpenEnchantmentListScreen()) {
             StorageScreen screen = new StorageScreen();
             Minecraft.getInstance().setScreen(screen);
-            screen.updateEnchantments(packet.getEnchantments());
-
+            screen.updateEnchantments(packet.enchantments());
         }
     }
 }
