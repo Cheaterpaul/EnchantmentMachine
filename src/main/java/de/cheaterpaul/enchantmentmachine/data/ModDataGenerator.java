@@ -11,7 +11,9 @@ import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -27,6 +29,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -43,6 +46,7 @@ public class ModDataGenerator {
         }
         generator.addProvider(new ModLootTableProvider(generator));
         generator.addProvider(new RecipeGenerator(generator));
+        generator.addProvider(new ModBlockTagsProvider(generator, event.getExistingFileHelper()));
     }
 
     public static class ItemModelGenerator extends ItemModelProvider {
@@ -95,6 +99,12 @@ public class ModDataGenerator {
             ShapedRecipeBuilder.shaped(ModData.disenchanter_block).define('B', Items.BOOK).define('#', Blocks.CRYING_OBSIDIAN).define('D', Items.DIAMOND_AXE).pattern(" B ").pattern("D#D").pattern("###").unlockedBy("has_obsidian", has(Blocks.CRYING_OBSIDIAN)).save(consumer);
             ShapedRecipeBuilder.shaped(ModData.enchanter_block).define('B', Items.BOOK).define('#', Blocks.CRYING_OBSIDIAN).define('D', Items.DIAMOND).pattern(" B ").pattern("D#D").pattern("###").unlockedBy("has_obsidian", has(Blocks.CRYING_OBSIDIAN)).save(consumer);
         }
+
+        @Nonnull
+        @Override
+        public String getName() {
+            return "EnchantmentMachine Recipes";
+        }
     }
 
     private static class ModLootTableProvider extends LootTableProvider {
@@ -114,6 +124,12 @@ public class ModDataGenerator {
             map.forEach((resourceLocation, lootTable) -> LootTables.validate(validationContext, resourceLocation, lootTable));
         }
 
+        @Nonnull
+        @Override
+        public String getName() {
+            return "EnchantmentMachine Loot Tables";
+        }
+
         private static class Tables extends BlockLoot {
             @Override
             protected void addTables() {
@@ -127,6 +143,24 @@ public class ModDataGenerator {
             protected Iterable<Block> getKnownBlocks() {
                 return Lists.newArrayList(ModData.disenchanter_block, ModData.enchanter_block, ModData.storage_block);
             }
+        }
+    }
+
+    public static class ModBlockTagsProvider extends BlockTagsProvider {
+
+        public ModBlockTagsProvider(DataGenerator p_126511_, @Nullable ExistingFileHelper existingFileHelper) {
+            super(p_126511_, REFERENCE.MODID, existingFileHelper);
+        }
+
+        @Override
+        protected void addTags() {
+            this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModData.disenchanter_block, ModData.enchanter_block, ModData.storage_block);
+        }
+
+        @Nonnull
+        @Override
+        public String getName() {
+            return "EnchantmentMachine Block Tags";
         }
     }
 }

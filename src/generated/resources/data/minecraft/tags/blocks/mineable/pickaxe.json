@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "enchantmentmachine:disenchanter_block",
+    "enchantmentmachine:enchanter_block",
+    "enchantmentmachine:enchantment_block"
+  ]
+}

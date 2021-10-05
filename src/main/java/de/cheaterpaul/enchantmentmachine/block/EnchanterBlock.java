@@ -33,6 +33,11 @@ public class EnchanterBlock extends EnchantmentBaseBlock {
     }
 
     @Override
+    public boolean useShapeForLightOcclusion(@Nonnull BlockState state) {
+        return true;
+    }
+
+    @Override
     public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         return ModData.enchanter_tile.create(pos, state);
     }
