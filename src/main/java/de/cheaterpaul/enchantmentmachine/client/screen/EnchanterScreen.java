@@ -92,7 +92,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
         if (stack.isEmpty()) {
             this.list.setItems(this.enchantments.values());
         } else {
-            this.list.setItems(this.enchantments.values().stream().filter(pair -> stack.getItem() == Items.BOOK || stack.getItem() == Items.ENCHANTED_BOOK || stack.canApplyAtEnchantingTable(pair.getKey().getEnchantment())).collect(Collectors.toList()));
+            this.list.setItems(this.enchantments.values().stream().filter(pair -> stack.getItem() == Items.BOOK || stack.getItem() == Items.ENCHANTED_BOOK || pair.getKey().getEnchantment().canEnchant(stack)).collect(Collectors.toList()));
         }
     }
 
