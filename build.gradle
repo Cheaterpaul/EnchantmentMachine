@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1+', changing: true
     }
 }
 
@@ -22,7 +22,7 @@ apply plugin: 'eclipse'
 group = 'de.cheaterpaul.enchantmentmachine' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'EnchantmentMachine'
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 ext.mod_version="Test"
 ext.type="test"
