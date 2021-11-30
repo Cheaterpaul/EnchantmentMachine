@@ -5,7 +5,7 @@ import de.cheaterpaul.enchantmentmachine.network.IMessage;
 import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstanceMod;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
