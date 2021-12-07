@@ -6,6 +6,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -52,6 +53,18 @@ public class DisenchanterBlock extends EnchantmentBaseBlock {
             return InteractionResult.CONSUME;
         }
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state1, boolean p_60519_) {
+        if (!state.is(state1.getBlock())) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof DisenchanterBlockEntity entity) {
+                Containers.dropContents(level, pos, entity);
+            }
+            level.updateNeighbourForOutputSignal(pos, this);
+            super.onRemove(state, level, pos, state1, p_60519_);
+        }
     }
 
     @Override
