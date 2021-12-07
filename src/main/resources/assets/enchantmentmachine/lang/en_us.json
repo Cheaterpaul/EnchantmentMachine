@@ -9,5 +9,6 @@
   "text.enchantmentmachine.enchant_for_level": "Enchant using %d levels",
   "text.enchantmentmachine.require_level": "Requires %d levels",
   "text.enchantmentmachine.unavailable": "Incompatible",
-  "text.enchantment_block.contained_enchantments": "Contained Enchantments: %s"
+  "text.enchantment_block.contained_enchantments": "Contained Enchantments: %s",
+  "text.enchantmentmachine.next_to_storage_block": "Must be places next to an %s"
 }
