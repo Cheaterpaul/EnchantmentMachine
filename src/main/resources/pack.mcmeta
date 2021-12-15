@@ -1,7 +1,6 @@
 {
     "pack": {
-        "description": "Enchantment machine resources",
-        "pack_format": 6,
-        "_comment": "Default resources"
+        "description": "Enchantment Machine resources",
+        "pack_format": 8
     }
 }
