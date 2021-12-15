@@ -1,5 +1,10 @@
-Enchantment Machine for 1.17  [![](http://cf.way2muchnoise.eu/short_436934_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/enchantment-machine) [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0) [![](https://badgen.net/maven/v/metadata-url/https/maven.paube.de/releases/de/cheaterpaul/enchantmentmachine/EnchantmentMachine/maven-metadata.xml)](https://maven.paube.de/releases/de/cheaterpaul/enchantmentmachine/EnchantmentMachine)
-============================================ 
+# Enchantment Machine for 1.18  
+[![](https://cf.way2muchnoise.eu/versions/436934.svg)](https://minecraft.curseforge.com/projects/enchantment-machine) 
+[![](http://cf.way2muchnoise.eu/short_436934_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/enchantment-machine)
+[![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0) 
+[![](https://badgen.net/maven/v/metadata-url/https/maven.paube.de/releases/de/cheaterpaul/enchantmentmachine/EnchantmentMachine/maven-metadata.xml)](https://maven.paube.de/releases/de/cheaterpaul/enchantmentmachine/EnchantmentMachine)
+
+
 
 ## Mod Description
 
@@ -10,6 +15,7 @@ To put them onto new items you can use the enchanter.
 
 ## Links
 [Curseforge](https://www.curseforge.com/minecraft/mc-mods/enchantment-machine) Download  
+[Modrinth](https://modrinth.com/mod/enchantmentmachine) Download  
 [Crowdin](https://crowdin.com/project/enchantmentmachine) Translate the mod
 
 ## People
