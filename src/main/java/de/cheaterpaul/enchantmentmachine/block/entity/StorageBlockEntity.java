@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
@@ -166,7 +167,7 @@ public class StorageBlockEntity extends BlockEntity implements IEnchantmentMachi
     }
 
     public int getEnchantmentCount() {
-        return enchantmentMaps.values().stream().mapToInt(s -> s).sum();
+        return enchantmentMaps.values().intStream().sum();
     }
 
     @Override
@@ -195,14 +196,9 @@ public class StorageBlockEntity extends BlockEntity implements IEnchantmentMachi
         });
     }
 
-    @Nonnull
     @Override
-    public CompoundTag save(@Nonnull CompoundTag compound) {
-        compound = super.save(compound);
-
+    protected void saveAdditional(@NotNull CompoundTag compound) {
         writeEnchantments(compound);
-
-        return compound;
     }
 
     public void writeEnchantments(CompoundTag compound) {
