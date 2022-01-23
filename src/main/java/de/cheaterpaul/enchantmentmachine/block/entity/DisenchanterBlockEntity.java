@@ -29,6 +29,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -178,18 +179,18 @@ public class DisenchanterBlockEntity extends EnchantmentBaseBlockEntity implemen
         ContainerHelper.loadAllItems(nbt, this.inventory);
     }
 
-    @Nonnull
     @Override
-    public CompoundTag save(@Nonnull CompoundTag compound) {
-        super.save(compound);
+    protected void saveAdditional(@NotNull CompoundTag compound) {
+        super.saveAdditional(compound);
         ContainerHelper.saveAllItems(compound, this.inventory);
-        return compound;
     }
 
     @Nonnull
     @Override
     public CompoundTag getUpdateTag() {
-        return save(new CompoundTag());
+        CompoundTag tag = new CompoundTag();
+        saveAdditional(tag);
+        return tag;
     }
 
     @Override

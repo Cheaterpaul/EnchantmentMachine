@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -68,14 +69,12 @@ public abstract class EnchantmentBaseBlockEntity extends BaseContainerBlockEntit
         return storageBlockPos != null;
     }
 
-    @Nonnull
     @Override
-    public CompoundTag save(@Nonnull CompoundTag compound) {
-        super.save(compound);
+    protected void saveAdditional(@NotNull CompoundTag compound) {
+        super.saveAdditional(compound);
         if (this.storageBlockPos != null) {
             compound.putIntArray("storageblock", new int[]{this.storageBlockPos.getX(), this.storageBlockPos.getY(), this.storageBlockPos.getZ()});
         }
-        return compound;
     }
 
     @Override
