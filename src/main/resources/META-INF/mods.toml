@@ -1,16 +1,16 @@
-modLoader="javafml" #mandatory
-loaderVersion="[39,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
+modLoader="javafml"
+loaderVersion="[40,)"
 issueTrackerURL = "https://github.com/Cheaterpaul/EnchantmentMachine/issues"
 license="LGPL-3.0"
 
 [[mods]] #mandatory
-modId="enchantmentmachine" #mandatory
-version="${version}" #mandatory
-displayName="Enchantment machine" #mandatory
+modId="enchantmentmachine"
+version="${version}"
+displayName="Enchantment Machine"
 authors = "Cheaterpaul, maxanier"
-[[dependencies.enchantmentmachine]] #optional
-    modId="forge" #mandatory
-    mandatory=true #mandatory
+[[dependencies.enchantmentmachine]]
+    modId="forge"
+    mandatory=true
     versionRange="[${forge_version},)"
     ordering="NONE"
     side="BOTH"
