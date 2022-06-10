@@ -133,7 +133,12 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
             super(item);
             this.bookStack = new ItemStack(Items.ENCHANTED_BOOK, item.getRight());
             EnchantmentHelper.setEnchantments(Collections.singletonMap(item.getKey().getEnchantment(), item.getKey().getLevel()), bookStack);
-            this.name = ((IFormattableTextComponent) item.getKey().getEnchantment().getFullname(item.getKey().getLevel())).withStyle(style -> style.getColor().getValue() == TextFormatting.GRAY.getColor() ? style.applyFormat(TextFormatting.WHITE) : style);
+            this.name = item.getKey().getEnchantment().getFullname(item.getKey().getLevel());
+            Style style = this.name.getStyle();
+            //noinspection ConstantConditions
+            if  (style.getColor() != null && style.getColor().getValue() == TextFormatting.GRAY.getColor()){
+                style.withColor(TextFormatting.WHITE);
+            }
             this.button = new ImageButton(0, 0, 11, 17, 1, 208, 18, new ResourceLocation("textures/gui/recipe_book.png"), 256, 256, (button) -> EnchanterScreen.this.apply(item.getKey()), new Button.ITooltip() {
                 @Override
                 public void onTooltip(@Nonnull Button button, @Nonnull MatrixStack matrixStack, int mouseX, int mouseY) {
