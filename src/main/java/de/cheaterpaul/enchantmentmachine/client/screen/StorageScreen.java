@@ -11,10 +11,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
@@ -81,16 +78,21 @@ public class StorageScreen extends Screen {
 
         public EnchantmentItem(Pair<EnchantmentInstance, Integer> item) {
             super(item);
-            bookStack = new ItemStack(Items.ENCHANTED_BOOK, item.getRight());
+            this.bookStack = new ItemStack(Items.ENCHANTED_BOOK, item.getRight());
             EnchantmentHelper.setEnchantments(Collections.singletonMap(item.getKey().getEnchantment(), item.getKey().getLevel()), bookStack);
-            name = ((IFormattableTextComponent) item.getKey().getEnchantment().getFullname(item.getKey().getLevel())).withStyle(style -> style.getColor().getValue() == TextFormatting.GRAY.getColor() ? style.applyFormat(TextFormatting.WHITE) : style);
+            this.name = item.getKey().getEnchantment().getFullname(item.getKey().getLevel());
+            Style style = this.name.getStyle();
+            //noinspection ConstantConditions
+            if(style.getColor() == null || style.getColor().getValue() == TextFormatting.GRAY.getColor()) {
+                ((IFormattableTextComponent) this.name).withStyle(style.withColor(TextFormatting.WHITE));
+            }
         }
 
         @Override
         public void render(MatrixStack matrixStack, int x, int y, int listWidth, int listHeight, int itemHeight, int yOffset, int mouseX, int mouseY, float partialTicks, float zLevel) {
             super.render(matrixStack, x, y, listWidth, listHeight, itemHeight, yOffset, mouseX, mouseY, partialTicks, zLevel);
             StorageScreen.this.itemRenderer.renderAndDecorateFakeItem(bookStack, x + 5, y + 2 + yOffset);
-            StorageScreen.this.font.drawShadow(matrixStack, name.getString(), x + 25, y + yOffset + 5, name.getStyle().getColor().getValue());
+            StorageScreen.this.font.drawShadow(matrixStack, name, x + 25, y + yOffset + 5, -1);
 
 
             String count = String.valueOf(bookStack.getCount());

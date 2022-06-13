@@ -137,7 +137,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
             Style style = this.name.getStyle();
             //noinspection ConstantConditions
             if  (style.getColor() != null && style.getColor().getValue() == TextFormatting.GRAY.getColor()){
-                style.withColor(TextFormatting.WHITE);
+                ((IFormattableTextComponent)this.name).withStyle(TextFormatting.WHITE);
             }
             this.button = new ImageButton(0, 0, 11, 17, 1, 208, 18, new ResourceLocation("textures/gui/recipe_book.png"), 256, 256, (button) -> EnchanterScreen.this.apply(item.getKey()), new Button.ITooltip() {
                 @Override
@@ -189,7 +189,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainer> {
             super.render(matrixStack, x, y, listWidth, listHeight, itemHeight, yOffset, mouseX, mouseY, partialTicks, zLevel);
 
             EnchanterScreen.this.itemRenderer.renderAndDecorateFakeItem(bookStack, x + 5, y + 2 + yOffset);
-            EnchanterScreen.this.font.drawShadow(matrixStack, name.getString(), x + 25, y + yOffset + 5, name.getStyle().getColor().getValue());
+            EnchanterScreen.this.font.drawShadow(matrixStack, name, x + 25, y + yOffset + 5, -1);
 
             String count = String.valueOf(bookStack.getCount());
             EnchanterScreen.this.font.drawShadow(matrixStack, count, x + listWidth - 20, y + yOffset + 5, 0xffffff);
