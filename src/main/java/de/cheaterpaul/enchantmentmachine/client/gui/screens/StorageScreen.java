@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -83,18 +84,21 @@ public class StorageScreen extends Screen {
 
         public EnchantmentItem(Pair<EnchantmentInstanceMod, Integer> item) {
             super(item);
-            bookStack = new ItemStack(Items.ENCHANTED_BOOK, item.getRight());
+            this.bookStack = new ItemStack(Items.ENCHANTED_BOOK, item.getRight());
             EnchantmentHelper.setEnchantments(Collections.singletonMap(item.getKey().getEnchantment(), item.getKey().getLevel()), bookStack);
+            this.name = item.getKey().getEnchantment().getFullname(item.getKey().getLevel());
+            Style style = this.name.getStyle();
             //noinspection ConstantConditions
-            name = ((MutableComponent) item.getKey().getEnchantment().getFullname(item.getKey().getLevel())).withStyle(style -> style.getColor().getValue() == ChatFormatting.GRAY.getColor() ? style.applyFormat(ChatFormatting.WHITE) : style);
+            if(style.getColor() == null || style.getColor().getValue() == ChatFormatting.GRAY.getColor()) {
+                ((MutableComponent) this.name).withStyle(style.withColor(ChatFormatting.WHITE));
+            }
         }
 
         @Override
         public void render(PoseStack matrixStack, int x, int y, int listWidth, int listHeight, int itemHeight, int yOffset, int mouseX, int mouseY, float partialTicks, float zLevel) {
             super.render(matrixStack, x, y, listWidth, listHeight, itemHeight, yOffset, mouseX, mouseY, partialTicks, zLevel);
             StorageScreen.this.itemRenderer.renderAndDecorateFakeItem(bookStack, x + 5, y + 2 + yOffset);
-            //noinspection ConstantConditions
-            StorageScreen.this.font.drawShadow(matrixStack, name.getString(), x + 25, y + yOffset + 5, name.getStyle().getColor().getValue());
+            StorageScreen.this.font.drawShadow(matrixStack, name, x + 25, y + yOffset + 5, -1);
 
 
             String count = String.valueOf(bookStack.getCount());
