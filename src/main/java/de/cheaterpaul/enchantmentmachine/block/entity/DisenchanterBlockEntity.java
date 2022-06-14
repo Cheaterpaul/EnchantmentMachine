@@ -50,7 +50,7 @@ public class DisenchanterBlockEntity extends EnchantmentBaseBlockEntity implemen
     private int transferCooldown;
 
     public DisenchanterBlockEntity(BlockPos pos, BlockState state) {
-        super(ModData.disenchanter_tile, pos, state);
+        super(ModData.disenchanter_tile.get(), pos, state);
     }
 
     @Nonnull

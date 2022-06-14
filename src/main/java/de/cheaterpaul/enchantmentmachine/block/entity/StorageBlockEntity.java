@@ -51,7 +51,7 @@ public class StorageBlockEntity extends BlockEntity implements IEnchantmentMachi
     public float tRot;
 
     public StorageBlockEntity(BlockPos blockPos, BlockState state) {
-        super(ModData.storage_tile, blockPos, state);
+        super(ModData.storage_tile.get(), blockPos, state);
     }
 
     public void addEnchantment(EnchantmentInstanceMod enchInst, int count) {
@@ -206,7 +206,7 @@ public class StorageBlockEntity extends BlockEntity implements IEnchantmentMachi
         enchantmentMaps.forEach((inst, count) -> {
             CompoundTag enchantment = new CompoundTag();
             //noinspection ConstantConditions
-            enchantment.putString("id", inst.getEnchantment().getRegistryName().toString());
+            enchantment.putString("id", ForgeRegistries.ENCHANTMENTS.getKey(inst.getEnchantment()).toString());
             enchantment.putInt("level", inst.getLevel());
             enchantment.putInt("count", count);
             enchantments.add(enchantment);

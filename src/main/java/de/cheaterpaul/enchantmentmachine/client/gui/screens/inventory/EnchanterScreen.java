@@ -2,7 +2,6 @@ package de.cheaterpaul.enchantmentmachine.client.gui.screens.inventory;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.datafixers.kinds.IdF;
 import de.cheaterpaul.enchantmentmachine.EnchantmentMachineMod;
 import de.cheaterpaul.enchantmentmachine.client.gui.components.ScrollableListButton;
 import de.cheaterpaul.enchantmentmachine.core.ModConfig;
@@ -147,17 +146,17 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
                         MutableComponent text;
                         if (isCompatible()) {
                             if (hasSufficientLevels()) {
-                                text = new TranslatableComponent("text.enchantmentmachine.enchant_for_level", EnchantmentItem.this.requiredLevels).withStyle(ChatFormatting.GREEN);
+                                text = Component.translatable("text.enchantmentmachine.enchant_for_level", EnchantmentItem.this.requiredLevels).withStyle(ChatFormatting.GREEN);
                             } else {
-                                text = new TranslatableComponent("text.enchantmentmachine.require_level", EnchantmentItem.this.requiredLevels).withStyle(ChatFormatting.YELLOW);
+                                text = Component.translatable("text.enchantmentmachine.require_level", EnchantmentItem.this.requiredLevels).withStyle(ChatFormatting.YELLOW);
                             }
                         } else {
-                            text = new TranslatableComponent("text.enchantmentmachine.unavailable").withStyle(ChatFormatting.RED);
+                            text = Component.translatable("text.enchantmentmachine.unavailable").withStyle(ChatFormatting.RED);
                         }
                         EnchanterScreen.this.renderTooltip(matrixStack, text, mouseX, mouseY);
                     }
                 }
-            }, TextComponent.EMPTY);
+            }, Component.empty());
             requiredLevels = calculateRequiredLevels();
         }
 

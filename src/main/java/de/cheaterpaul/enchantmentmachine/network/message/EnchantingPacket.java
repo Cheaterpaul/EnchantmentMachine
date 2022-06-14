@@ -18,7 +18,7 @@ public record EnchantingPacket(List<EnchantmentInstanceMod> enchantments) implem
         buf.writeVarInt(msg.enchantments.size());
         for (EnchantmentInstanceMod enchantment : msg.enchantments) {
             //noinspection ConstantConditions
-            buf.writeResourceLocation(enchantment.getEnchantment().getRegistryName());
+            buf.writeResourceLocation(ForgeRegistries.ENCHANTMENTS.getKey(enchantment.getEnchantment()));
             buf.writeVarInt(enchantment.getLevel());
         }
     }

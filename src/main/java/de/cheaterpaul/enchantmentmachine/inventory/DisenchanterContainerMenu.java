@@ -19,7 +19,7 @@ public class DisenchanterContainerMenu extends EnchantmentBaseContainerMenu {
     }
 
     public DisenchanterContainerMenu(int id, Container inventory, Inventory playerInventory) {
-        super(ModData.disenchanter_container, id, 2);
+        super(ModData.disenchanter_container.get(), id, 2);
         this.addSlot(new Slot(inventory, 0, 80, 17) {
             @Override
             public boolean mayPlace(@Nonnull ItemStack itemStack) {

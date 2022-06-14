@@ -32,7 +32,7 @@ public class EnchanterContainerMenu extends EnchantmentBaseContainerMenu impleme
     }
 
     public EnchanterContainerMenu(int id, Container menu, Inventory playerInventory, ContainerLevelAccess worldPosCallable) {
-        super(ModData.enchanter_container, id, 1);
+        super(ModData.enchanter_container.get(), id, 1);
         this.menu = menu;
         this.addSlot(new Slot(menu, 0, 203, 19) {
 

@@ -14,12 +14,12 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 public class ModClientData {
 
     public static void registerScreens() {
-        MenuScreens.register(ModData.enchanter_container, EnchanterScreen::new);
-        MenuScreens.register(ModData.disenchanter_container, DisenchanterScreen::new);
+        MenuScreens.register(ModData.enchanter_container.get(), EnchanterScreen::new);
+        MenuScreens.register(ModData.disenchanter_container.get(), DisenchanterScreen::new);
     }
 
     public static void registerTileEntityRenderer() {
-        BlockEntityRenderers.register(ModData.storage_tile, EnchantmentBlockTileEntityRenderer::new);
+        BlockEntityRenderers.register(ModData.storage_tile.get(), EnchantmentBlockTileEntityRenderer::new);
     }
 
     public static void textureStitchEvent(TextureStitchEvent.Pre event) {

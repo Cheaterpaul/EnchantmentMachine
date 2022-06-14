@@ -54,11 +54,11 @@ public abstract class EnchantmentBaseBlockEntity extends BaseContainerBlockEntit
 
     public void onNeighbourChanged(LevelReader iWorld, BlockPos neighborPos) {
         if (this.storageBlockPos == null) {
-            if (iWorld.getBlockState(neighborPos).getBlock() == ModData.storage_block) {
+            if (iWorld.getBlockState(neighborPos).getBlock() == ModData.storage_block.get()) {
                 this.storageBlockPos = neighborPos;
             }
         } else if (this.storageBlockPos.equals(neighborPos)) {
-            if (iWorld.getBlockState(neighborPos).getBlock() != ModData.storage_block) {
+            if (iWorld.getBlockState(neighborPos).getBlock() != ModData.storage_block.get()) {
                 this.storageBlockPos = null;
             }
         }

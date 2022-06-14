@@ -3,6 +3,7 @@ package de.cheaterpaul.enchantmentmachine.util;
 import de.cheaterpaul.enchantmentmachine.core.ModConfig;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -49,6 +50,6 @@ public record EnchantmentInstanceMod(@Nonnull Enchantment enchantment, int level
         return ModConfig.SERVER.maxEnchantmentLevels.get().stream().map(s -> {
             String[] maxLevels = s.split("\\|");
             return Pair.of(new ResourceLocation(maxLevels[0]), Integer.parseInt(maxLevels[1]));
-        }).filter(e -> e.getKey().equals(this.enchantment.getRegistryName())).noneMatch(a -> a.getValue() < this.level);
+        }).filter(e -> e.getKey().equals(ForgeRegistries.ENCHANTMENTS.getKey(this.enchantment))).noneMatch(a -> a.getValue() < this.level);
     }
 }

@@ -30,18 +30,18 @@ public class EnchantmentMachineMod {
         @Nonnull
         @Override
         public ItemStack makeIcon() {
-            return new ItemStack(ModData.storage_block);
+            return new ItemStack(ModData.storage_block.get());
         }
     };
 
     public EnchantmentMachineMod() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         ModConfig.init();
-        bus.register(ModData.class);
         bus.addListener(ModDataGenerator::gatherData);
         bus.addListener(this::onLoadComplete);
         bus.addListener(this::onCommonSetup);
         bus.addListener(this::onClientSetup);
+        ModData.register(bus);
     }
 
     private void onClientSetup(FMLClientSetupEvent event) {
@@ -55,4 +55,5 @@ public class EnchantmentMachineMod {
     private void onLoadComplete(FMLLoadCompleteEvent event) {
         PROXY.onLoadComplete();
     }
+
 }

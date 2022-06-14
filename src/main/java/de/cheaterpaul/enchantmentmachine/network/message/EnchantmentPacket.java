@@ -22,7 +22,7 @@ public record EnchantmentPacket(
         buf.writeVarInt(msg.enchantments.size());
         msg.enchantments.forEach((inst, count) -> {
             //noinspection ConstantConditions
-            buf.writeResourceLocation(inst.getEnchantment().getRegistryName());
+            buf.writeResourceLocation(ForgeRegistries.ENCHANTMENTS.getKey(inst.getEnchantment()));
             buf.writeVarInt(inst.getLevel());
             buf.writeVarInt(count);
         });

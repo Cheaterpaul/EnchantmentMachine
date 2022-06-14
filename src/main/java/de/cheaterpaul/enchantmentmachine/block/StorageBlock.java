@@ -7,7 +7,6 @@ import de.cheaterpaul.enchantmentmachine.network.message.EnchantmentPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -42,7 +41,7 @@ public class StorageBlock extends EnchantmentBaseBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
-        return ModData.storage_tile.create(pos, state);
+        return ModData.storage_tile.map(tile ->tile.create(pos, state)).orElse(null);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -51,12 +50,12 @@ public class StorageBlock extends EnchantmentBaseBlock {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
         CompoundTag nbt = stack.getTag();
         int count = nbt != null ? nbt.getInt("enchantmentcount") : 0;
-        tooltip.add(new TranslatableComponent("text.enchantment_block.contained_enchantments", count));
+        tooltip.add(Component.translatable("text.enchantment_block.contained_enchantments", count));
     }
 
     @Override
     public void playerDestroy(@Nonnull Level worldIn, @Nonnull Player player, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nullable BlockEntity te, @Nonnull ItemStack heldStack) {
-        ItemStack stack = new ItemStack(ModData.storage_block, 1);
+        ItemStack stack = new ItemStack(ModData.storage_block.get(), 1);
         if (te instanceof StorageBlockEntity) {
             ((StorageBlockEntity) te).writeEnchantments(stack.getOrCreateTagElement("BlockEntityTag"));
             stack.getOrCreateTag().putInt("enchantmentcount", ((StorageBlockEntity) te).getEnchantmentCount());
@@ -90,7 +89,7 @@ public class StorageBlock extends EnchantmentBaseBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> type) {
-        return createStorageTicker(level, type, ModData.storage_tile);
+        return createStorageTicker(level, type, ModData.storage_tile.get());
     }
 
     protected static <T extends BlockEntity> BlockEntityTicker<T> createStorageTicker(Level level, BlockEntityType<T> type, @SuppressWarnings("SameParameterValue") BlockEntityType<? extends StorageBlockEntity> tile) {

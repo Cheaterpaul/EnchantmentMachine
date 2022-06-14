@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraftforge.client.gui.GuiUtils;
@@ -38,7 +38,7 @@ public class ScrollableListButton<T> extends ExtendedButton {
     }
 
     public ScrollableListButton(int xPos, int yPos, int width, int height, int itemHeight, ItemCreator<T> itemSupplier) {
-        super(xPos, yPos, width, height, new TextComponent(""), (button) -> {
+        super(xPos, yPos, width, height, Component.empty(), (button) -> {
         });
         this.itemHeight = itemHeight;
         this.itemSupplier = itemSupplier;

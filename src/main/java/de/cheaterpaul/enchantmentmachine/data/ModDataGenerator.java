@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import de.cheaterpaul.enchantmentmachine.core.ModData;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
+import net.minecraft.core.Holder;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.loot.BlockLoot;
 import net.minecraft.data.loot.LootTableProvider;
@@ -23,10 +24,13 @@ import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -40,13 +44,11 @@ public class ModDataGenerator {
 
     public static void gatherData(final GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
-        if (event.includeClient()) {
-            generator.addProvider(new BlockStateGenerator(generator, event.getExistingFileHelper()));
-            generator.addProvider(new ItemModelGenerator(generator, event.getExistingFileHelper()));
-        }
-        generator.addProvider(new ModLootTableProvider(generator));
-        generator.addProvider(new RecipeGenerator(generator));
-        generator.addProvider(new ModBlockTagsProvider(generator, event.getExistingFileHelper()));
+        generator.addProvider(event.includeClient(), new BlockStateGenerator(generator, event.getExistingFileHelper()));
+        generator.addProvider(event.includeClient(), new ItemModelGenerator(generator, event.getExistingFileHelper()));
+        generator.addProvider(event.includeServer(), new ModLootTableProvider(generator));
+        generator.addProvider(event.includeServer(), new RecipeGenerator(generator));
+        generator.addProvider(event.includeServer(), new ModBlockTagsProvider(generator, event.getExistingFileHelper()));
     }
 
     public static class ItemModelGenerator extends ItemModelProvider {
@@ -55,12 +57,11 @@ public class ModDataGenerator {
             super(generator, REFERENCE.MODID, existingFileHelper);
         }
 
-        @SuppressWarnings("ConstantConditions")
         @Override
         protected void registerModels() {
-            getBuilder(ModData.enchanter_block.getRegistryName().getPath()).parent(new ModelFile.UncheckedModelFile(REFERENCE.MODID + ":block/" + ModData.enchanter_block.getRegistryName().getPath()));
-            getBuilder(ModData.disenchanter_block.getRegistryName().getPath()).parent(new ModelFile.UncheckedModelFile(REFERENCE.MODID + ":block/" + ModData.disenchanter_block.getRegistryName().getPath()));
-            getBuilder(ModData.storage_block.getRegistryName().getPath()).parent(new ModelFile.UncheckedModelFile(REFERENCE.MODID + ":block/" + ModData.storage_block.getRegistryName().getPath()));
+            getBuilder(ModData.enchanter_block.getId().toString()).parent(new ModelFile.UncheckedModelFile(REFERENCE.MODID + ":block/" + ModData.enchanter_block.getId().getPath()));
+            getBuilder(ModData.disenchanter_block.getId().toString()).parent(new ModelFile.UncheckedModelFile(REFERENCE.MODID + ":block/" + ModData.disenchanter_block.getId().getPath()));
+            getBuilder(ModData.storage_block.getId().toString()).parent(new ModelFile.UncheckedModelFile(REFERENCE.MODID + ":block/" + ModData.storage_block.getId().getPath()));
         }
     }
 
@@ -69,22 +70,21 @@ public class ModDataGenerator {
             super(gen, REFERENCE.MODID, exFileHelper);
         }
 
-        @SuppressWarnings("ConstantConditions")
         @Override
         protected void registerStatesAndModels() {
-            ModelFile enchanter = new ModelFile.ExistingModelFile(blockTexture(ModData.enchanter_block), models().existingFileHelper);
+            ModelFile enchanter = new ModelFile.ExistingModelFile(blockTexture(ModData.enchanter_block.get()), models().existingFileHelper);
 
-            ModelFile enchantment_block = models().withExistingParent(ModData.storage_block.getRegistryName().toString(), "block/enchanting_table")
+            ModelFile enchantment_block = models().withExistingParent(ForgeRegistries.BLOCKS.getKey(ModData.storage_block.get()).toString(), "block/enchanting_table")
                     .texture("particle", new ResourceLocation(REFERENCE.MODID, "block/enchanting_table_bottom"))
                     .texture("top", new ResourceLocation(REFERENCE.MODID, "block/enchanting_table_top"))
                     .texture("side", new ResourceLocation(REFERENCE.MODID, "block/enchanting_table_side"))
                     .texture("bottom", new ResourceLocation(REFERENCE.MODID, "block/enchanting_table_bottom"));
 
-            ModelFile disenchanter = new ModelFile.ExistingModelFile(blockTexture(ModData.disenchanter_block), models().existingFileHelper);
+            ModelFile disenchanter = new ModelFile.ExistingModelFile(blockTexture(ModData.disenchanter_block.get()), models().existingFileHelper);
 
-            simpleBlock(ModData.enchanter_block, enchanter);
-            simpleBlock(ModData.disenchanter_block, disenchanter);
-            simpleBlock(ModData.storage_block, enchantment_block);
+            simpleBlock(ModData.enchanter_block.get(), enchanter);
+            simpleBlock(ModData.disenchanter_block.get(), disenchanter);
+            simpleBlock(ModData.storage_block.get(), enchantment_block);
         }
     }
 
@@ -95,9 +95,9 @@ public class ModDataGenerator {
 
         @Override
         protected void buildCraftingRecipes(@Nonnull Consumer<FinishedRecipe> consumer) {
-            ShapedRecipeBuilder.shaped(ModData.storage_block).define('B', Items.BOOK).define('#', Blocks.CRYING_OBSIDIAN).define('D', Items.DIAMOND).pattern("BBB").pattern("D#D").pattern("###").unlockedBy("has_obsidian", has(Blocks.CRYING_OBSIDIAN)).save(consumer);
-            ShapedRecipeBuilder.shaped(ModData.disenchanter_block).define('B', Items.BOOK).define('#', Blocks.CRYING_OBSIDIAN).define('D', Items.DIAMOND_AXE).pattern(" B ").pattern("D#D").pattern("###").unlockedBy("has_obsidian", has(Blocks.CRYING_OBSIDIAN)).save(consumer);
-            ShapedRecipeBuilder.shaped(ModData.enchanter_block).define('B', Items.BOOK).define('#', Blocks.CRYING_OBSIDIAN).define('D', Items.DIAMOND).pattern(" B ").pattern("D#D").pattern("###").unlockedBy("has_obsidian", has(Blocks.CRYING_OBSIDIAN)).save(consumer);
+            ShapedRecipeBuilder.shaped(ModData.storage_block.get()).define('B', Items.BOOK).define('#', Blocks.CRYING_OBSIDIAN).define('D', Items.DIAMOND).pattern("BBB").pattern("D#D").pattern("###").unlockedBy("has_obsidian", has(Blocks.CRYING_OBSIDIAN)).save(consumer);
+            ShapedRecipeBuilder.shaped(ModData.disenchanter_block.get()).define('B', Items.BOOK).define('#', Blocks.CRYING_OBSIDIAN).define('D', Items.DIAMOND_AXE).pattern(" B ").pattern("D#D").pattern("###").unlockedBy("has_obsidian", has(Blocks.CRYING_OBSIDIAN)).save(consumer);
+            ShapedRecipeBuilder.shaped(ModData.enchanter_block.get()).define('B', Items.BOOK).define('#', Blocks.CRYING_OBSIDIAN).define('D', Items.DIAMOND).pattern(" B ").pattern("D#D").pattern("###").unlockedBy("has_obsidian", has(Blocks.CRYING_OBSIDIAN)).save(consumer);
         }
 
         @Nonnull
@@ -133,15 +133,15 @@ public class ModDataGenerator {
         private static class Tables extends BlockLoot {
             @Override
             protected void addTables() {
-                this.dropSelf(ModData.disenchanter_block);
-                this.dropSelf(ModData.enchanter_block);
-                this.dropSelf(ModData.storage_block);
+                this.dropSelf(ModData.disenchanter_block.get());
+                this.dropSelf(ModData.enchanter_block.get());
+                this.dropSelf(ModData.storage_block.get());
             }
 
             @Nonnull
             @Override
             protected Iterable<Block> getKnownBlocks() {
-                return Lists.newArrayList(ModData.disenchanter_block, ModData.enchanter_block, ModData.storage_block);
+                return Lists.newArrayList(ModData.disenchanter_block.get(), ModData.enchanter_block.get(), ModData.storage_block.get());
             }
         }
     }
@@ -154,7 +154,7 @@ public class ModDataGenerator {
 
         @Override
         protected void addTags() {
-            this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModData.disenchanter_block, ModData.enchanter_block, ModData.storage_block);
+            this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModData.disenchanter_block.get(), ModData.enchanter_block.get(), ModData.storage_block.get());
         }
 
         @Nonnull

@@ -40,7 +40,7 @@ public class EnchanterBlockEntity extends EnchantmentBaseBlockEntity {
 
 
     public EnchanterBlockEntity(BlockPos pos, BlockState state) {
-        super(ModData.enchanter_tile, pos, state);
+        super(ModData.enchanter_tile.get(), pos, state);
     }
 
     @Nonnull

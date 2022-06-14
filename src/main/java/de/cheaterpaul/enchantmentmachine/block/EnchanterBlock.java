@@ -8,7 +8,6 @@ import de.cheaterpaul.enchantmentmachine.network.message.EnchantmentPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -47,7 +46,7 @@ public class EnchanterBlock extends EnchantmentBaseBlock {
 
     @Override
     public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
-        return ModData.enchanter_tile.create(pos, state);
+        return ModData.enchanter_tile.map(tile -> tile.create(pos, state)).orElse(null);
     }
 
     @SuppressWarnings("deprecation")
@@ -69,7 +68,7 @@ public class EnchanterBlock extends EnchantmentBaseBlock {
     @Override
     public void appendHoverText(@NotNull ItemStack itemStack, @Nullable BlockGetter p_49817_, @NotNull List<Component> tooltips, @NotNull TooltipFlag flag) {
         super.appendHoverText(itemStack, p_49817_, tooltips, flag);
-        tooltips.add(new TranslatableComponent("text.enchantmentmachine.next_to_storage_block", ModData.storage_block.getName()).withStyle(ChatFormatting.GRAY));
+        tooltips.add(Component.translatable("text.enchantmentmachine.next_to_storage_block", ModData.storage_block.get().getName()).withStyle(ChatFormatting.GRAY));
 
     }
 

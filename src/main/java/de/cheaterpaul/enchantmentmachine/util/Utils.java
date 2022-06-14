@@ -2,7 +2,6 @@ package de.cheaterpaul.enchantmentmachine.util;
 
 import de.cheaterpaul.enchantmentmachine.core.ModConfig;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.enchantment.Enchantment;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -16,7 +15,7 @@ public class Utils {
     }
 
     public static Component genTranslation(String type, String key) {
-        return new TranslatableComponent(genLangKey(type, key));
+        return Component.translatable(genLangKey(type, key));
     }
 
     /**
