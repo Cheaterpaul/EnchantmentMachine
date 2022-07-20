@@ -28,7 +28,7 @@ import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -78,7 +78,7 @@ public class ModDataGenerator {
                     .texture("particle", new ResourceLocation(REFERENCE.MODID, "block/enchanting_table_bottom"))
                     .texture("top", new ResourceLocation(REFERENCE.MODID, "block/enchanting_table_top"))
                     .texture("side", new ResourceLocation(REFERENCE.MODID, "block/enchanting_table_side"))
-                    .texture("bottom", new ResourceLocation(REFERENCE.MODID, "block/enchanting_table_bottom"));
+                    .texture("bottom", new ResourceLocation(REFERENCE.MODID, "block/enchanting_table_bottom")).renderType(new ResourceLocation("cutout"));
 
             ModelFile disenchanter = new ModelFile.ExistingModelFile(blockTexture(ModData.disenchanter_block.get()), models().existingFileHelper);
 

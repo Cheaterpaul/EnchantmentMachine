@@ -8,7 +8,8 @@
 		"side": "enchantmentmachine:block/enchanting_table_side",
 		"hammer": "enchantmentmachine:block/enchanting_block_hammer"
 	},
-	"elements": [ 	 
+	"render_type": "cutout",
+	"elements": [
 		{
 			"__comment": "Element",
 			"from": [ 0, 0, 0 ],
