@@ -3,12 +3,19 @@ package de.cheaterpaul.enchantmentmachine.core;
 
 import net.minecraft.ResourceLocationException;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ModConfig {
 
@@ -29,10 +36,11 @@ public class ModConfig {
     public static void init() {
         //This initiates the static initializers
         ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.SERVER, serverSpec);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(SERVER::onConfigLoad);
     }
 
     /**
-     * This is stored server side on an per world base.
+     * This is stored server side on a per world base.
      * Config is synced to clients on connect
      */
     public static class Server {
@@ -40,6 +48,10 @@ public class ModConfig {
         public final ForgeConfigSpec.BooleanValue allowDisenchantingItems;
         public final ForgeConfigSpec.BooleanValue allowMixtureEnchantments;
         public final ForgeConfigSpec.ConfigValue<List<? extends String>> maxEnchantmentLevels;
+        public final ForgeConfigSpec.BooleanValue allowDisenchantingCurses;
+        public final ForgeConfigSpec.ConfigValue<List<? extends String>> disallowedDisenchantingEnchantments;
+
+        private Set<Enchantment> disallowedDisenchantingEnchantmentsMap;
 
         Server(ForgeConfigSpec.Builder builder) {
             builder.comment("Server configuration settings")
@@ -60,7 +72,25 @@ public class ModConfig {
                     return false;
                 }
             });
+            allowDisenchantingCurses = builder.comment("Whether curses can be removed from items", "Only relevant when `allowDisenchantingItems` is enabled").define("allowDisenchantingCurses", false);
+            disallowedDisenchantingEnchantments = builder.comment("List of enchantments that can not be removed from items", "Only relevant when `allowDisenchantingItems` is enabled", "This overrides `allowDisenchantingCurses`").defineList("disallowedDisenchantingEnchantments", Collections.emptyList(), this::isResourceLocation);
             builder.pop();
+        }
+
+        private boolean isResourceLocation(Object obj) {
+            if (obj instanceof String string) {
+                return ResourceLocation.tryParse(string) != null;
+            } else {
+                return false;
+            }
+        }
+
+        public Set<Enchantment> getDisallowedDisenchantingEnchantments() {
+            return Objects.requireNonNullElse(this.disallowedDisenchantingEnchantmentsMap, Collections.emptySet());
+        }
+
+        public void onConfigLoad(ModConfigEvent event) {
+            this.disallowedDisenchantingEnchantmentsMap = this.disallowedDisenchantingEnchantments.get().stream().map(ResourceLocation::new).map(ForgeRegistries.ENCHANTMENTS::getValue).collect(Collectors.toSet());
         }
     }
 }

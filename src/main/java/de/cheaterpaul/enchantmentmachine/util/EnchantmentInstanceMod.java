@@ -10,10 +10,6 @@ import javax.annotation.Nonnull;
 import java.util.Objects;
 
 public record EnchantmentInstanceMod(@Nonnull Enchantment enchantment, int level) {
-    public EnchantmentInstanceMod(@Nonnull Enchantment enchantment, int level) {
-        this.enchantment = enchantment;
-        this.level = level;
-    }
 
     public int getLevel() {
         return level;
@@ -22,28 +18,6 @@ public record EnchantmentInstanceMod(@Nonnull Enchantment enchantment, int level
     @Nonnull
     public Enchantment getEnchantment() {
         return enchantment;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        EnchantmentInstanceMod that = (EnchantmentInstanceMod) o;
-        return level == that.level &&
-                enchantment.equals(that.enchantment);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(enchantment, level);
-    }
-
-    @Override
-    public String toString() {
-        return "EnchantmentInstanceMod{" +
-                "enchantment=" + enchantment +
-                ", level=" + level +
-                '}';
     }
 
     public boolean canEnchant() {

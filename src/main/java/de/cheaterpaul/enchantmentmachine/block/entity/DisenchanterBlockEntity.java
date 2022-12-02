@@ -12,6 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -29,12 +30,14 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class DisenchanterBlockEntity extends EnchantmentBaseBlockEntity implements WorldlyContainer, Hopper {
 
@@ -121,13 +124,29 @@ public class DisenchanterBlockEntity extends EnchantmentBaseBlockEntity implemen
         }
         ItemStack stack1 = stack.copy();
         stack1.getOrCreateTag().remove("StoredEnchantments");
-        EnchantmentHelper.setEnchantments(Collections.emptyMap(), stack1);
+        EnchantmentHelper.setEnchantments(getRemainingEnchantments(stack), stack1);
         return stack1;
     }
 
     private Map<Enchantment, Integer> getEnchantments(ItemStack stack) {
         Map<Enchantment, Integer> map = EnchantmentHelper.deserializeEnchantments(stack.getEnchantmentTags());
         map.putAll(EnchantmentHelper.deserializeEnchantments(EnchantedBookItem.getEnchantments(stack)));
+        return map;
+    }
+
+    private Map<Enchantment, Integer> getRemainingEnchantments(ItemStack stack) {
+        Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(stack);
+        boolean allowCurses = ModConfig.SERVER.allowDisenchantingCurses.get();
+        Set<Enchantment> disallowedEnchantments = ModConfig.SERVER.getDisallowedDisenchantingEnchantments();
+        map.entrySet().removeIf(entry -> !disallowedEnchantments.contains(entry.getKey()) && (allowCurses || !entry.getKey().isCurse()));
+        return map;
+    }
+
+    private Map<Enchantment, Integer> getExtractedEnchantments(ItemStack stack) {
+        Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(stack);
+        boolean allowCurses = ModConfig.SERVER.allowDisenchantingCurses.get();
+        Set<Enchantment> disallowedEnchantments = ModConfig.SERVER.getDisallowedDisenchantingEnchantments();
+        map.entrySet().removeIf(entry -> disallowedEnchantments.contains(entry.getKey()) || (!allowCurses && entry.getKey().isCurse()));
         return map;
     }
 
@@ -236,16 +255,18 @@ public class DisenchanterBlockEntity extends EnchantmentBaseBlockEntity implemen
                 entity.getConnectedEnchantmentTE().ifPresent(te -> {
                     ItemStack stack = entity.inventory.get(0);
                     if (entity.canDisenchant(stack)) {
-                        Map<Enchantment, Integer> map = entity.getEnchantments(stack);
+                        Map<Enchantment, Integer> map = entity.getExtractedEnchantments(stack);
                         map.forEach((key, value) -> {
-                            EnchantmentInstanceMod inst = new EnchantmentInstanceMod(key, value);
-                            te.addEnchantment(inst);
+                            te.addEnchantment(new EnchantmentInstanceMod(key, value));
                         });
                         stack = entity.resultItem(stack);
                         ItemStack slot = entity.getItem(1);
                         if (!slot.isEmpty() && slot.sameItem(stack)) {
                             stack.shrink(-slot.getCount());
                         }
+                        entity.setItem(1, stack);
+                        entity.setItem(0, ItemStack.EMPTY);
+                    } else {
                         entity.setItem(1, stack);
                         entity.setItem(0, ItemStack.EMPTY);
                     }
@@ -264,6 +285,9 @@ public class DisenchanterBlockEntity extends EnchantmentBaseBlockEntity implemen
     }
 
     private boolean canDisenchant(ItemStack stack) {
-        return ModConfig.SERVER.allowDisenchantingItems.get() || !EnchantedBookItem.getEnchantments(stack).isEmpty();
+        if (ModConfig.SERVER.allowDisenchantingItems.get()) {
+            return getExtractedEnchantments(stack).size() > 0;
+        }
+        return !EnchantedBookItem.getEnchantments(stack).isEmpty();
     }
 }
