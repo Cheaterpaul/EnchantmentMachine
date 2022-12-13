@@ -27,6 +27,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -90,9 +91,9 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
         ItemStack stack = this.menu.getSlot(0).getItem();
         this.itemEnchantments = EnchantmentHelper.getEnchantments(stack);
         if (stack.isEmpty()) {
-            this.list.setItems(this.enchantments.values());
+            this.list.setItems(this.enchantments.values().stream().sorted(Comparator.comparing(o -> o.getKey().getEnchantmentName())).collect(Collectors.toList()));
         } else {
-            this.list.setItems(this.enchantments.values().stream().filter(pair -> stack.getItem() == Items.BOOK || stack.getItem() == Items.ENCHANTED_BOOK || pair.getKey().getEnchantment().canEnchant(stack)).collect(Collectors.toList()));
+            this.list.setItems(this.enchantments.values().stream().filter(pair -> stack.getItem() == Items.BOOK || stack.getItem() == Items.ENCHANTED_BOOK || pair.getKey().getEnchantment().canEnchant(stack)).sorted(Comparator.comparing(o -> o.getKey().getEnchantmentName())).collect(Collectors.toList()));
         }
     }
 

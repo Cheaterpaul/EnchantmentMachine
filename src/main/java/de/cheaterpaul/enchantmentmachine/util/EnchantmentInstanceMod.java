@@ -20,6 +20,10 @@ public record EnchantmentInstanceMod(@Nonnull Enchantment enchantment, int level
         return enchantment;
     }
 
+    public String getEnchantmentName(){
+        return enchantment.getFullname(level).getString();
+    }
+
     public boolean canEnchant() {
         return ModConfig.SERVER.maxEnchantmentLevels.get().stream().map(s -> {
             String[] maxLevels = s.split("\\|");
