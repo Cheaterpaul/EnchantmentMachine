@@ -24,6 +24,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 @OnlyIn(Dist.CLIENT)
@@ -74,7 +75,7 @@ public class StorageScreen extends Screen {
 
     public void updateEnchantments(Object2IntMap<EnchantmentInstanceMod> enchantments) {
         this.enchantments = enchantments;
-        this.list.setItems(enchantments.object2IntEntrySet().stream().map(s -> Pair.of(s.getKey(), s.getIntValue())).collect(Collectors.toSet()));
+        this.list.setItems(enchantments.object2IntEntrySet().stream().map(s -> Pair.of(s.getKey(), s.getIntValue())).sorted(Comparator.comparing(o -> o.getKey().getEnchantmentName())).collect(Collectors.toList()));
     }
 
     private class EnchantmentItem extends ScrollableListButton.ListItem<Pair<EnchantmentInstanceMod, Integer>> {
