@@ -9,8 +9,11 @@ import de.cheaterpaul.enchantmentmachine.proxy.ClientProxy;
 import de.cheaterpaul.enchantmentmachine.proxy.Proxy;
 import de.cheaterpaul.enchantmentmachine.proxy.ServerProxy;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
@@ -18,21 +21,14 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 @Mod(REFERENCE.MODID)
 public class EnchantmentMachineMod {
 
     public static final Proxy PROXY = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
     public static final AbstractPacketDispatcher DISPATCHER = new ModPacketDispatcher();
-    public static final CreativeModeTab CREATIVE_TAB = new CreativeModeTab(REFERENCE.MODID) {
-        @Nonnull
-        @Override
-        public ItemStack makeIcon() {
-            return new ItemStack(ModData.storage_block.get());
-        }
-    };
+    private static CreativeModeTab creativeTab;
 
     public EnchantmentMachineMod() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -41,6 +37,7 @@ public class EnchantmentMachineMod {
         bus.addListener(this::onLoadComplete);
         bus.addListener(this::onCommonSetup);
         bus.addListener(this::onClientSetup);
+        bus.addListener(this::onRegisterTab);
         ModData.register(bus);
     }
 
@@ -54,6 +51,15 @@ public class EnchantmentMachineMod {
 
     private void onLoadComplete(FMLLoadCompleteEvent event) {
         PROXY.onLoadComplete();
+    }
+
+    private void onRegisterTab(CreativeModeTabEvent.Register event) {
+        creativeTab = event.registerCreativeModeTab(new ResourceLocation(REFERENCE.MODID, "main"), builder ->
+                builder.icon(() -> ModData.storage_block.get().asItem().getDefaultInstance()).title(Component.translatable("itemGroup.enchantmentmachine")).displayItems((featureFlagSet, output, hasPermissions) -> {
+                    output.accept(ModData.enchanter_block.get());
+                    output.accept(ModData.disenchanter_block.get());
+                    output.accept(ModData.storage_block.get());
+                }));
     }
 
 }

@@ -21,8 +21,4 @@ public class ModClientData {
     public static void registerTileEntityRenderer() {
         BlockEntityRenderers.register(ModData.storage_tile.get(), EnchantmentBlockTileEntityRenderer::new);
     }
-
-    public static void textureStitchEvent(TextureStitchEvent.Pre event) {
-        event.addSprite(EnchantmentBlockTileEntityRenderer.TEXTURE_BOOK.texture());
-    }
 }

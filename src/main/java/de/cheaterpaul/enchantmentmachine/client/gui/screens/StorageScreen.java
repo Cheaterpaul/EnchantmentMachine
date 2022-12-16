@@ -2,8 +2,9 @@ package de.cheaterpaul.enchantmentmachine.client.gui.screens;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import de.cheaterpaul.enchantmentmachine.client.gui.components.ScrollableListButton;
+import de.cheaterpaul.enchantmentmachine.client.gui.components.ScrollableList;
 import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstanceMod;
+import de.cheaterpaul.enchantmentmachine.util.MultilineTooltip;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
@@ -13,7 +14,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -34,7 +34,7 @@ public class StorageScreen extends Screen {
     private final int xSize = 197;
     private final int ySize = 222;
     private Object2IntMap<EnchantmentInstanceMod> enchantments = new Object2IntArrayMap<>();
-    private ScrollableListButton<Pair<EnchantmentInstanceMod, Integer>> list;
+    private ScrollableList<Pair<EnchantmentInstanceMod, Integer>> list;
     private int guiLeft;
     private int guiTop;
 
@@ -55,7 +55,7 @@ public class StorageScreen extends Screen {
         super.init();
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
-        this.addRenderableWidget(list = new ScrollableListButton<>(this.guiLeft + 10, this.guiTop + 10, this.xSize - 20, this.ySize - 20, 21, EnchantmentItem::new));
+        this.addRenderableWidget(list = new ScrollableList<>(this.guiLeft + 10, this.guiTop + 10, this.xSize - 20, this.ySize - 20, 21, EnchantmentItem::new));
     }
 
     @Override
@@ -78,13 +78,13 @@ public class StorageScreen extends Screen {
         this.list.setItems(enchantments.object2IntEntrySet().stream().map(s -> Pair.of(s.getKey(), s.getIntValue())).sorted(Comparator.comparing(o -> o.getKey().getEnchantmentName())).collect(Collectors.toList()));
     }
 
-    private class EnchantmentItem extends ScrollableListButton.ListItem<Pair<EnchantmentInstanceMod, Integer>> {
+    private class EnchantmentItem extends ScrollableList.ListItem<Pair<EnchantmentInstanceMod, Integer>> {
 
         private final ItemStack bookStack;
         private final Component name;
 
-        public EnchantmentItem(Pair<EnchantmentInstanceMod, Integer> item) {
-            super(item);
+        public EnchantmentItem(int width, int height, Pair<EnchantmentInstanceMod, Integer> item) {
+            super(width, height, item);
             this.bookStack = new ItemStack(Items.ENCHANTED_BOOK, item.getRight());
             EnchantmentHelper.setEnchantments(Collections.singletonMap(item.getKey().getEnchantment(), item.getKey().getLevel()), bookStack);
             this.name = item.getKey().getEnchantment().getFullname(item.getKey().getLevel());
@@ -96,22 +96,20 @@ public class StorageScreen extends Screen {
         }
 
         @Override
-        public void render(PoseStack matrixStack, int x, int y, int listWidth, int listHeight, int itemHeight, int yOffset, int mouseX, int mouseY, float partialTicks, float zLevel) {
-            super.render(matrixStack, x, y, listWidth, listHeight, itemHeight, yOffset, mouseX, mouseY, partialTicks, zLevel);
-            StorageScreen.this.itemRenderer.renderAndDecorateFakeItem(bookStack, x + 5, y + 2 + yOffset);
-            StorageScreen.this.font.drawShadow(matrixStack, name, x + 25, y + yOffset + 5, -1);
+        public void renderButton(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick) {
+            super.renderButton(pPoseStack, pMouseX, pMouseY, pPartialTick);
+            StorageScreen.this.itemRenderer.renderAndDecorateFakeItem(bookStack, 5, 2);
+            StorageScreen.this.font.drawShadow(pPoseStack, name, 25, 5, -1);
 
 
             String count = String.valueOf(bookStack.getCount());
 
-            StorageScreen.this.font.drawShadow(matrixStack, count, x + listWidth - 10, y + yOffset + 5, 0xffffff);
-        }
+            StorageScreen.this.font.drawShadow(pPoseStack, count, this.width - 10, 5, 0xffffff);
 
-        @Override
-        public void renderToolTip(PoseStack matrixStack, int x, int y, int listWidth, int listHeight, int itemHeight, int yOffset, int mouseX, int mouseY, float zLevel) {
-            if (mouseX > x && mouseX < x + listWidth && mouseY > y && mouseY < y + ySize) {
-                StorageScreen.this.renderTooltip(matrixStack, bookStack, mouseX, mouseY);
+            if (this.isHovered) {
+                this.setTooltip(new MultilineTooltip(StorageScreen.this.getTooltipFromItem(this.bookStack)));
             }
         }
+
     }
 }

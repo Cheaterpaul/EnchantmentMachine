@@ -3,17 +3,19 @@ package de.cheaterpaul.enchantmentmachine.client.gui.screens.inventory;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.cheaterpaul.enchantmentmachine.EnchantmentMachineMod;
-import de.cheaterpaul.enchantmentmachine.client.gui.components.ScrollableListButton;
+import de.cheaterpaul.enchantmentmachine.client.gui.components.ScrollableList;
 import de.cheaterpaul.enchantmentmachine.core.ModConfig;
 import de.cheaterpaul.enchantmentmachine.inventory.EnchanterContainerMenu;
 import de.cheaterpaul.enchantmentmachine.network.message.EnchantingPacket;
 import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstanceMod;
+import de.cheaterpaul.enchantmentmachine.util.MultilineTooltip;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
 import de.cheaterpaul.enchantmentmachine.util.Utils;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -26,10 +28,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @OnlyIn(Dist.CLIENT)
@@ -38,7 +37,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
     private static final ResourceLocation BACKGROUND = new ResourceLocation(REFERENCE.MODID, "textures/gui/container/enchanter.png");
 
     private final Map<EnchantmentInstanceMod, Pair<EnchantmentInstanceMod, Integer>> enchantments = new HashMap<>();
-    private ScrollableListButton<Pair<EnchantmentInstanceMod, Integer>> list;
+    private ScrollableList<Pair<EnchantmentInstanceMod, Integer>> list;
     private Map<Enchantment, Integer> itemEnchantments = new HashMap<>();
 
 
@@ -69,7 +68,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
     @Override
     protected void init() {
         super.init();
-        this.addRenderableWidget(list = new ScrollableListButton<>(this.leftPos + 8, this.topPos + 15, this.imageWidth - 50, this.imageHeight - 94 - 17, 21, EnchantmentItem::new));
+        this.addRenderableWidget(list = new ScrollableList<>(this.leftPos + 8, this.topPos + 15, this.imageWidth - 50, this.imageHeight - 94 - 17, 21, EnchantmentItem::new));
     }
 
     public void updateEnchantments(Object2IntMap<EnchantmentInstanceMod> enchantments) {
@@ -123,15 +122,15 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
         return false;
     }
 
-    private class EnchantmentItem extends ScrollableListButton.ListItem<Pair<EnchantmentInstanceMod, Integer>> {
+    private class EnchantmentItem extends ScrollableList.ListItem<Pair<EnchantmentInstanceMod, Integer>> {
 
         private final ItemStack bookStack;
         private final Component name;
         private final Button button;
         private final int requiredLevels;
 
-        public EnchantmentItem(Pair<EnchantmentInstanceMod, Integer> item) {
-            super(item);
+        public EnchantmentItem(int width, int height, Pair<EnchantmentInstanceMod, Integer> item) {
+            super(width, height, item);
             this.bookStack = new ItemStack(Items.ENCHANTED_BOOK, item.getRight());
             EnchantmentHelper.setEnchantments(Collections.singletonMap(item.getKey().getEnchantment(), item.getKey().getLevel()), bookStack);
             this.name = item.getKey().getEnchantment().getFullname(item.getKey().getLevel());
@@ -140,37 +139,29 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
             if(style.getColor() == null || style.getColor().getValue() == ChatFormatting.GRAY.getColor()) {
                 ((MutableComponent) this.name).withStyle(style.withColor(ChatFormatting.WHITE));
             }
-            this.button = new ImageButton(0, 0, 11, 17, 1, 208, 18, new ResourceLocation("textures/gui/recipe_book.png"), 256, 256, (button) -> EnchanterScreen.this.apply(item.getKey()), new Button.OnTooltip() {
-                @Override
-                public void onTooltip(@Nonnull Button button, @Nonnull PoseStack matrixStack, int mouseX, int mouseY) {
-                    if (mouseX > button.x && mouseX < button.x + button.getWidth() && mouseY > button.y && mouseY < button.y + button.getHeight()) {
-                        MutableComponent text;
-                        if (isCompatible()) {
-                            if (hasSufficientLevels()) {
-                                text = Component.translatable("text.enchantmentmachine.enchant_for_level", EnchantmentItem.this.requiredLevels).withStyle(ChatFormatting.GREEN);
-                            } else {
-                                text = Component.translatable("text.enchantmentmachine.require_level", EnchantmentItem.this.requiredLevels).withStyle(ChatFormatting.YELLOW);
-                            }
-                        } else {
-                            text = Component.translatable("text.enchantmentmachine.unavailable").withStyle(ChatFormatting.RED);
-                        }
-                        EnchanterScreen.this.renderTooltip(matrixStack, text, mouseX, mouseY);
-                    }
+            this.button = new ImageButton(0, 0, 11, 17, 1, 208, 18, new ResourceLocation("textures/gui/recipe_book.png"), 256, 256, (button) -> EnchanterScreen.this.apply(item.getKey()), Component.empty());
+            MutableComponent text;
+            if (isCompatible()) {
+                if (hasSufficientLevels()) {
+                    text = Component.translatable("text.enchantmentmachine.enchant_for_level", EnchantmentItem.this.requiredLevels).withStyle(ChatFormatting.GREEN);
+                } else {
+                    text = Component.translatable("text.enchantmentmachine.require_level", EnchantmentItem.this.requiredLevels).withStyle(ChatFormatting.YELLOW);
                 }
-            }, Component.empty());
+            } else {
+                text = Component.translatable("text.enchantmentmachine.unavailable").withStyle(ChatFormatting.RED);
+            }
+            this.button.setTooltip(Tooltip.create(text));
             requiredLevels = calculateRequiredLevels();
         }
 
         @Override
-        public boolean onClick(double mouseX, double mouseY) {
-            if (!this.button.visible) return false;
-            if (mouseX > this.button.x && mouseX < this.button.x + this.button.getWidth() && mouseY > this.button.y && mouseY < this.button.y + this.button.getHeight()) {
-                if (isCompatible() && hasSufficientLevels()) {
-                    this.button.onClick(mouseX, mouseY);
-                }
-                return true;
-            }
-            return false;
+        protected boolean clicked(double pMouseX, double pMouseY) {
+            return this.button.visible && super.clicked(pMouseX, pMouseY) && isCompatible() && hasSufficientLevels();
+        }
+
+        @Override
+        public void onClick(double pMouseX, double pMouseY) {
+            this.button.onPress();
         }
 
         private boolean isCompatible() {
@@ -186,17 +177,15 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
         }
 
         @Override
-        public void render(PoseStack matrixStack, int x, int y, int listWidth, int listHeight, int itemHeight, int yOffset, int mouseX, int mouseY, float partialTicks, float zLevel) {
-            super.render(matrixStack, x, y, listWidth, listHeight, itemHeight, yOffset, mouseX, mouseY, partialTicks, zLevel);
-
-            EnchanterScreen.this.itemRenderer.renderAndDecorateFakeItem(bookStack, x + 5, y + 2 + yOffset);
-            EnchanterScreen.this.font.drawShadow(matrixStack, name, x + 25, y + yOffset + 5,-1);
+        public void renderButton(PoseStack poseStack, int pMouseX, int pMouseY, float pPartialTick) {
+            super.renderButton(poseStack, pMouseX, pMouseY, pPartialTick);
+            EnchanterScreen.this.itemRenderer.renderAndDecorateFakeItem(bookStack, 5, 2);
+            EnchanterScreen.this.font.drawShadow(poseStack, name, 25, 5,-1);
 
             String count = String.valueOf(bookStack.getCount());
-            EnchanterScreen.this.font.drawShadow(matrixStack, count, x + listWidth - 20, y + yOffset + 5, 0xffffff);
+            EnchanterScreen.this.font.drawShadow(poseStack, count, this.width - 20, 5, 0xffffff);
 
-            this.button.x = x + listWidth - 12;
-            this.button.y = y + yOffset + 2;
+            this.button.setPosition(this.width - 12, 2);
 
             this.button.visible = EnchanterScreen.this.menu.getSlot(0).hasItem();
 
@@ -209,21 +198,15 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
             } else {
                 RenderSystem.setShaderColor(1f, 0.2f, 0.4f, 1);
             }
-            matrixStack.pushPose();
-            this.button.render(matrixStack, mouseX, mouseY, partialTicks);
-            matrixStack.popPose();
+            poseStack.pushPose();
+
+            if (isHovered) {
+                setTooltip(new MultilineTooltip(EnchanterScreen.this.getTooltipFromItem(this.bookStack)));
+            }
+
+            this.button.render(poseStack, pMouseX, pMouseY, pPartialTick);
+            poseStack.popPose();
             RenderSystem.setShaderColor(1, 1, 1, 1);
-
-        }
-
-        @Override
-        public void renderToolTip(PoseStack matrixStack, int x, int y, int listWidth, int listHeight, int itemHeight, int yOffset, int mouseX, int mouseY, float zLevel) {
-            if (mouseX > x && mouseX < x + listWidth - 12 && mouseY > y && mouseY < y + itemHeight) {
-                EnchanterScreen.this.renderTooltip(matrixStack, bookStack, mouseX, mouseY);
-            }
-            if (button.visible) {
-                this.button.renderToolTip(matrixStack, mouseX, mouseY);
-            }
         }
 
         private int calculateRequiredLevels() {

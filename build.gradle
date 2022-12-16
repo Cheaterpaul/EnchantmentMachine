@@ -4,20 +4,18 @@ buildscript {
         maven { url = 'https://maven.parchmentmc.org' }
         mavenCentral()
     }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1+', changing: true
-    }
 }
 
 plugins {
+    id 'net.minecraftforge.gradle' version '5.1+'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
     id 'com.matthewprenger.cursegradle' version '1.2.0'
     id 'de.undercouch.download' version '3.3.0'
     id "com.modrinth.minotaur" version "2.+"
     id 'idea'
+    id 'eclipse'
 }
 
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'eclipse'
 //apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
 group = 'de.cheaterpaul.enchantmentmachine' // http://maven.apache.org/guides/mini/guide-naming-conventions.html

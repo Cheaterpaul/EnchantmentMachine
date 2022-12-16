@@ -2,7 +2,7 @@ package de.cheaterpaul.enchantmentmachine.client.renderer.blockentity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import de.cheaterpaul.enchantmentmachine.block.entity.StorageBlockEntity;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
 import net.minecraft.client.Minecraft;
@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -24,7 +25,7 @@ import javax.annotation.Nonnull;
 @OnlyIn(Dist.CLIENT)
 public class EnchantmentBlockTileEntityRenderer implements BlockEntityRenderer<StorageBlockEntity> {
 
-    public static final Material TEXTURE_BOOK = new Material(InventoryMenu.BLOCK_ATLAS, new ResourceLocation(REFERENCE.MODID, "entity/enchanting_table_book"));
+    public static final Material TEXTURE_BOOK = new Material(InventoryMenu.BLOCK_ATLAS, new ResourceLocation("entity/enchanting_table_book"));
     private final BookModel modelBook = new BookModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.BOOK));
 
     public EnchantmentBlockTileEntityRenderer(BlockEntityRendererProvider.Context context) {
@@ -49,8 +50,8 @@ public class EnchantmentBlockTileEntityRenderer implements BlockEntityRenderer<S
         }
 
         float f2 = tileEntityIn.pageAngle + f1 * partialTicks;
-        matrixStackIn.mulPose(Vector3f.YP.rotation(-f2));
-        matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(80.0F));
+        matrixStackIn.mulPose(Axis.YP.rotation(-f2));
+        matrixStackIn.mulPose(Axis.ZP.rotationDegrees(80.0F));
         float f3 = Mth.lerp(partialTicks, tileEntityIn.oFlip, tileEntityIn.flip);
         float f4 = Mth.frac(f3 + 0.25F) * 1.6F - 0.3F;
         float f5 = Mth.frac(f3 + 0.75F) * 1.6F - 0.3F;

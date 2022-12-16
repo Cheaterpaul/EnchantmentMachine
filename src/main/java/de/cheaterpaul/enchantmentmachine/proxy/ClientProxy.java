@@ -26,11 +26,6 @@ public class ClientProxy extends CommonProxy {
         ModClientData.registerTileEntityRenderer();
     }
 
-    @SubscribeEvent
-    public static void onTextureStitchEvent(TextureStitchEvent.Pre event) {
-        ModClientData.textureStitchEvent(event);
-    }
-
     @Override
     public void handleEnchantmentPacket(EnchantmentPacket packet) {
         if (Minecraft.getInstance().screen instanceof StorageScreen) {

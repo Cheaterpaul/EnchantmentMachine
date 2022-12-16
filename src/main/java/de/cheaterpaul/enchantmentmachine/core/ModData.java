@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.DeferredRegister;
@@ -36,9 +37,9 @@ public class ModData {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, REFERENCE.MODID);
     public static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(ForgeRegistries.MENU_TYPES, REFERENCE.MODID);
 
-    public static final RegistryObject<EnchanterBlock> enchanter_block = registerItemBlock("enchanter_block", () ->new EnchanterBlock(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 1200.0F)), new Item.Properties().tab(EnchantmentMachineMod.CREATIVE_TAB));
-    public static final RegistryObject<DisenchanterBlock> disenchanter_block = registerItemBlock("disenchanter_block", () ->new DisenchanterBlock(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 1200.0F)), new Item.Properties().tab(EnchantmentMachineMod.CREATIVE_TAB));
-    public static final RegistryObject<StorageBlock> storage_block = registerItemBlock("enchantment_block",() ->new StorageBlock(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 1200.0F).noOcclusion()), new Item.Properties().tab(EnchantmentMachineMod.CREATIVE_TAB).stacksTo(1).rarity(Rarity.EPIC) );
+    public static final RegistryObject<EnchanterBlock> enchanter_block = registerItemBlock("enchanter_block", () ->new EnchanterBlock(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 1200.0F)), new Item.Properties());
+    public static final RegistryObject<DisenchanterBlock> disenchanter_block = registerItemBlock("disenchanter_block", () ->new DisenchanterBlock(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 1200.0F)), new Item.Properties());
+    public static final RegistryObject<StorageBlock> storage_block = registerItemBlock("enchantment_block",() ->new StorageBlock(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 1200.0F).noOcclusion()), new Item.Properties().stacksTo(1).rarity(Rarity.EPIC) );
     public static final RegistryObject<BlockEntityType<EnchanterBlockEntity>> enchanter_tile = BLOCK_ENTITIES.register("enchanter_tile", () ->BlockEntityType.Builder.of(EnchanterBlockEntity::new, enchanter_block.get()).build(null));
     public static final RegistryObject<BlockEntityType<DisenchanterBlockEntity>> disenchanter_tile = BLOCK_ENTITIES.register("disenchanter_tile", () ->BlockEntityType.Builder.of(DisenchanterBlockEntity::new, disenchanter_block.get()).build(null) );
     public static final RegistryObject<BlockEntityType<StorageBlockEntity>> storage_tile = BLOCK_ENTITIES.register("storage_tile", () ->BlockEntityType.Builder.of(StorageBlockEntity::new, storage_block.get()).build(null));
@@ -58,5 +59,4 @@ public class ModData {
         ITEMS.register(name, () -> new BlockItem(blockreg.get(), properties));
         return blockreg;
     }
-
 }
