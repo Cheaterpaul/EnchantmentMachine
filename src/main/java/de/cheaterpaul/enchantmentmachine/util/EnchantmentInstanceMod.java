@@ -1,6 +1,7 @@
 package de.cheaterpaul.enchantmentmachine.util;
 
 import de.cheaterpaul.enchantmentmachine.core.ModConfig;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -20,8 +21,8 @@ public record EnchantmentInstanceMod(@Nonnull Enchantment enchantment, int level
         return enchantment;
     }
 
-    public String getEnchantmentName(){
-        return enchantment.getFullname(level).getString();
+    public Component getEnchantmentName(){
+        return enchantment.getFullname(level);
     }
 
     public boolean canEnchant() {

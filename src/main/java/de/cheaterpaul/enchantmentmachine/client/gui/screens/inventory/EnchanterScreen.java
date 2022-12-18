@@ -3,7 +3,7 @@ package de.cheaterpaul.enchantmentmachine.client.gui.screens.inventory;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.cheaterpaul.enchantmentmachine.EnchantmentMachineMod;
-import de.cheaterpaul.enchantmentmachine.client.gui.components.ScrollableList;
+import de.cheaterpaul.enchantmentmachine.client.gui.components.ScrollWidget;
 import de.cheaterpaul.enchantmentmachine.core.ModConfig;
 import de.cheaterpaul.enchantmentmachine.inventory.EnchanterContainerMenu;
 import de.cheaterpaul.enchantmentmachine.network.message.EnchantingPacket;
@@ -13,9 +13,8 @@ import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
 import de.cheaterpaul.enchantmentmachine.util.Utils;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.ImageButton;
-import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.*;
 import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -25,10 +24,13 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.gui.ScreenUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @OnlyIn(Dist.CLIENT)
@@ -37,7 +39,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
     private static final ResourceLocation BACKGROUND = new ResourceLocation(REFERENCE.MODID, "textures/gui/container/enchanter.png");
 
     private final Map<EnchantmentInstanceMod, Pair<EnchantmentInstanceMod, Integer>> enchantments = new HashMap<>();
-    private ScrollableList<Pair<EnchantmentInstanceMod, Integer>> list;
+    private ScrollWidget<Pair<EnchantmentInstanceMod, Integer>> list;
     private Map<Enchantment, Integer> itemEnchantments = new HashMap<>();
 
 
@@ -48,6 +50,12 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
         this.inventoryLabelX = 36;
         this.inventoryLabelY = this.imageHeight - 94;
         container.setListener(this::refreshActiveEnchantments);
+    }
+
+    @Override
+    public void resize(Minecraft pMinecraft, int pWidth, int pHeight) {
+        super.resize(pMinecraft, pWidth, pHeight);
+        refreshActiveEnchantments();
     }
 
     @Override
@@ -68,7 +76,15 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
     @Override
     protected void init() {
         super.init();
-        this.addRenderableWidget(list = new ScrollableList<>(this.leftPos + 8, this.topPos + 15, this.imageWidth - 50, this.imageHeight - 94 - 17, 21, EnchantmentItem::new));
+        this.addRenderableWidget(this.list = new ScrollWidget<>(this.leftPos + 8, this.topPos + 15, this.imageWidth - 70, this.imageHeight - 94 - 17));
+    }
+
+    @Override
+    public boolean mouseDragged(double pMouseX, double pMouseY, int pButton, double pDragX, double pDragY) {
+        if(!(this.getFocused() != null && this.isDragging() && pButton == 0 && this.getFocused().mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY))) {
+            return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
+        }
+        return true;
     }
 
     public void updateEnchantments(Object2IntMap<EnchantmentInstanceMod> enchantments) {
@@ -77,23 +93,26 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
         refreshActiveEnchantments();
     }
 
-    @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
-        if (!this.isQuickCrafting) {
-            this.list.mouseDragged(mouseX, mouseY, button, dragX, dragY);
-        }
-        return true;
-    }
+//    @Override
+//    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+//        super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+//        if (!this.isQuickCrafting) {
+//            this.list.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+//        }
+//        return true;
+//    }
 
     public void refreshActiveEnchantments() {
         ItemStack stack = this.menu.getSlot(0).getItem();
         this.itemEnchantments = EnchantmentHelper.getEnchantments(stack);
+
+        List<Pair<EnchantmentInstanceMod, Integer>> availableEnchantments;
         if (stack.isEmpty()) {
-            this.list.setItems(this.enchantments.values().stream().sorted(Comparator.comparing(o -> o.getKey().getEnchantmentName())).collect(Collectors.toList()));
+            availableEnchantments = this.enchantments.values().stream().sorted(Comparator.comparing(o -> o.getKey().getEnchantmentName().getString())).collect(Collectors.toList());
         } else {
-            this.list.setItems(this.enchantments.values().stream().filter(pair -> stack.getItem() == Items.BOOK || stack.getItem() == Items.ENCHANTED_BOOK || pair.getKey().getEnchantment().canEnchant(stack)).sorted(Comparator.comparing(o -> o.getKey().getEnchantmentName())).collect(Collectors.toList()));
+            availableEnchantments = this.enchantments.values().stream().filter(pair -> stack.getItem() == Items.BOOK || stack.getItem() == Items.ENCHANTED_BOOK || pair.getKey().getEnchantment().canEnchant(stack)).sorted(Comparator.comparing(o -> o.getKey().getEnchantmentName().getString())).collect(Collectors.toList());
         }
+        this.list.updateContent(EnchantmentItem::new, pairContentBuilder -> availableEnchantments.forEach(pairContentBuilder::addWidget));
     }
 
     private void apply(EnchantmentInstanceMod instance) {
@@ -122,24 +141,29 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
         return false;
     }
 
-    private class EnchantmentItem extends ScrollableList.ListItem<Pair<EnchantmentInstanceMod, Integer>> {
+    private class EnchantmentItem extends AbstractContainerWidget {
 
         private final ItemStack bookStack;
         private final Component name;
         private final Button button;
+        private final AbstractWidget text;
         private final int requiredLevels;
+        private final Pair<EnchantmentInstanceMod, Integer> item;
+        private final BiFunction<Integer, Integer, Boolean> isXYInBounds;
 
-        public EnchantmentItem(int width, int height, Pair<EnchantmentInstanceMod, Integer> item) {
-            super(width, height, item);
+        public EnchantmentItem(Pair<EnchantmentInstanceMod, Integer> item, int x, int y, int width, BiFunction<Integer, Integer, Boolean> isXYInBounds) {
+            super(x, y, width, 18, item.getKey().getEnchantmentName());
+            this.isXYInBounds = isXYInBounds;
             this.bookStack = new ItemStack(Items.ENCHANTED_BOOK, item.getRight());
+            this.item = item;
             EnchantmentHelper.setEnchantments(Collections.singletonMap(item.getKey().getEnchantment(), item.getKey().getLevel()), bookStack);
-            this.name = item.getKey().getEnchantment().getFullname(item.getKey().getLevel());
+            this.name = item.getKey().getEnchantmentName();
             Style style = this.name.getStyle();
             //noinspection ConstantConditions
             if(style.getColor() == null || style.getColor().getValue() == ChatFormatting.GRAY.getColor()) {
                 ((MutableComponent) this.name).withStyle(style.withColor(ChatFormatting.WHITE));
             }
-            this.button = new ImageButton(0, 0, 11, 17, 1, 208, 18, new ResourceLocation("textures/gui/recipe_book.png"), 256, 256, (button) -> EnchanterScreen.this.apply(item.getKey()), Component.empty());
+            this.button = new ImageButton(this.width -12, 2, 11, 17, 1, 208, 18, new ResourceLocation("textures/gui/recipe_book.png"), 256, 256, (button) -> EnchanterScreen.this.apply(item.getKey()), Component.empty());
             MutableComponent text;
             if (isCompatible()) {
                 if (hasSufficientLevels()) {
@@ -151,17 +175,14 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
                 text = Component.translatable("text.enchantmentmachine.unavailable").withStyle(ChatFormatting.RED);
             }
             this.button.setTooltip(Tooltip.create(text));
-            requiredLevels = calculateRequiredLevels();
+            this.requiredLevels = calculateRequiredLevels();
+            this.text = MultiLineTextWidget.create(200, Minecraft.getInstance().font, this.name);
+            this.text.setPosition(25,5);
         }
 
         @Override
-        protected boolean clicked(double pMouseX, double pMouseY) {
-            return this.button.visible && super.clicked(pMouseX, pMouseY) && isCompatible() && hasSufficientLevels();
-        }
-
-        @Override
-        public void onClick(double pMouseX, double pMouseY) {
-            this.button.onPress();
+        protected List<? extends AbstractWidget> getContainedChildren() {
+            return List.of(button, text);
         }
 
         private boolean isCompatible() {
@@ -178,14 +199,27 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
 
         @Override
         public void renderButton(PoseStack poseStack, int pMouseX, int pMouseY, float pPartialTick) {
-            super.renderButton(poseStack, pMouseX, pMouseY, pPartialTick);
-            EnchanterScreen.this.itemRenderer.renderAndDecorateFakeItem(bookStack, 5, 2);
-            EnchanterScreen.this.font.drawShadow(poseStack, name, 25, 5,-1);
+            this.isHovered = this.isHovered && this.isXYInBounds.apply(pMouseX, pMouseY);
+            this.button.visible = EnchanterScreen.this.menu.getSlot(0).hasItem();
+
+            ScreenUtils.blitWithBorder(poseStack, WIDGETS_LOCATION, this.getX(), this.getY(), 0, 46 + 21, this.width, this.height, 200, 18, 2, 3, 2, 2, this.getBlitOffset());
+            this.renderBg(poseStack, Minecraft.getInstance(), pMouseX, pMouseY);
+
+            PoseStack modelViewStack = RenderSystem.getModelViewStack();
+            modelViewStack.pushPose();
+            modelViewStack.translate(0,-EnchanterScreen.this.list.getScrollAmount(),0);
+            RenderSystem.applyModelViewMatrix();
+            EnchanterScreen.this.itemRenderer.renderAndDecorateFakeItem(bookStack, this.getX() + 5, this.getY() + 1);
+            modelViewStack.popPose();
+            RenderSystem.applyModelViewMatrix();
+
+
+            EnchanterScreen.this.font.drawShadow(poseStack, name, this.getX() + 25, this.getY() +5,-1);
 
             String count = String.valueOf(bookStack.getCount());
-            EnchanterScreen.this.font.drawShadow(poseStack, count, this.width - 20, 5, 0xffffff);
+            EnchanterScreen.this.font.drawShadow(poseStack, count, this.getX() + this.width - 20, this.getY() +5, 0xffffff);
 
-            this.button.setPosition(this.width - 12, 2);
+            this.button.setPosition(this.getX() + this.width - 12, this.getY() +1);
 
             this.button.visible = EnchanterScreen.this.menu.getSlot(0).hasItem();
 
