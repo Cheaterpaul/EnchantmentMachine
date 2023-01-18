@@ -56,8 +56,8 @@ public class ModDataGenerator {
     public static void gatherData(final GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         PackOutput packOutput = generator.getPackOutput();
-        generator.addProvider(event.includeClient(), new BlockStateGenerator(generator, event.getExistingFileHelper()));
-        generator.addProvider(event.includeClient(), new ItemModelGenerator(generator, event.getExistingFileHelper()));
+        generator.addProvider(event.includeClient(), new BlockStateGenerator(packOutput, event.getExistingFileHelper()));
+        generator.addProvider(event.includeClient(), new ItemModelGenerator(packOutput, event.getExistingFileHelper()));
         generator.addProvider(event.includeServer(), new ModLootTableProvider(packOutput));
         generator.addProvider(event.includeServer(), new RecipeGenerator(packOutput));
         generator.addProvider(event.includeServer(), new ModBlockTagsProvider(packOutput, event.getLookupProvider(), event.getExistingFileHelper()));
@@ -65,8 +65,8 @@ public class ModDataGenerator {
 
     public static class ItemModelGenerator extends ItemModelProvider {
 
-        public ItemModelGenerator(DataGenerator generator, ExistingFileHelper existingFileHelper) {
-            super(generator, REFERENCE.MODID, existingFileHelper);
+        public ItemModelGenerator(PackOutput output, ExistingFileHelper existingFileHelper) {
+            super(output, REFERENCE.MODID, existingFileHelper);
         }
 
         @Override
@@ -78,8 +78,8 @@ public class ModDataGenerator {
     }
 
     public static class BlockStateGenerator extends BlockStateProvider {
-        public BlockStateGenerator(DataGenerator gen, ExistingFileHelper exFileHelper) {
-            super(gen, REFERENCE.MODID, exFileHelper);
+        public BlockStateGenerator(PackOutput packOutput, ExistingFileHelper exFileHelper) {
+            super(packOutput, REFERENCE.MODID, exFileHelper);
         }
 
         @Override
