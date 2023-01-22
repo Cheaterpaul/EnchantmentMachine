@@ -90,7 +90,9 @@ public class ModConfig {
         }
 
         public void onConfigLoad(ModConfigEvent event) {
-            this.disallowedDisenchantingEnchantmentsMap = this.disallowedDisenchantingEnchantments.get().stream().map(ResourceLocation::new).map(ForgeRegistries.ENCHANTMENTS::getValue).collect(Collectors.toSet());
+            if (serverSpec.isLoaded()) {
+                this.disallowedDisenchantingEnchantmentsMap = this.disallowedDisenchantingEnchantments.get().stream().map(ResourceLocation::new).map(ForgeRegistries.ENCHANTMENTS::getValue).collect(Collectors.toSet());
+            }
         }
     }
 }
