@@ -15,6 +15,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.*;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -183,6 +184,28 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
         @Override
         protected List<? extends AbstractWidget> getContainedChildren() {
             return List.of(button, text);
+        }
+
+        @Override
+        public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
+            GuiEventListener guieventlistener = null;
+
+            for(GuiEventListener guieventlistener1 : List.copyOf(this.children())) {
+                if (guieventlistener1.mouseClicked(pMouseX, pMouseY + EnchanterScreen.this.list.getScrollAmount(), pButton)) {
+                    guieventlistener = guieventlistener1;
+                }
+            }
+
+            if (guieventlistener != null) {
+                this.setFocused(guieventlistener);
+                if (pButton == 0) {
+                    this.setDragging(true);
+                }
+
+                return true;
+            } else {
+                return false;
+            }
         }
 
         private boolean isCompatible() {
