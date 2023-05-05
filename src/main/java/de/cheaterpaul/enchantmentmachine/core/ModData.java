@@ -12,6 +12,8 @@ import de.cheaterpaul.enchantmentmachine.inventory.EnchanterContainerMenu;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.Holder;
+import net.minecraft.world.flag.FeatureFlag;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -43,8 +45,8 @@ public class ModData {
     public static final RegistryObject<BlockEntityType<EnchanterBlockEntity>> enchanter_tile = BLOCK_ENTITIES.register("enchanter_tile", () ->BlockEntityType.Builder.of(EnchanterBlockEntity::new, enchanter_block.get()).build(null));
     public static final RegistryObject<BlockEntityType<DisenchanterBlockEntity>> disenchanter_tile = BLOCK_ENTITIES.register("disenchanter_tile", () ->BlockEntityType.Builder.of(DisenchanterBlockEntity::new, disenchanter_block.get()).build(null) );
     public static final RegistryObject<BlockEntityType<StorageBlockEntity>> storage_tile = BLOCK_ENTITIES.register("storage_tile", () ->BlockEntityType.Builder.of(StorageBlockEntity::new, storage_block.get()).build(null));
-    public static final RegistryObject<MenuType<EnchanterContainerMenu>> enchanter_container = MENU_TYPES.register("enchanter_container", () -> new MenuType<>(EnchanterContainerMenu::new));
-    public static final RegistryObject<MenuType<DisenchanterContainerMenu>> disenchanter_container = MENU_TYPES.register("disenchanter_container",() -> new MenuType<>(DisenchanterContainerMenu::new));
+    public static final RegistryObject<MenuType<EnchanterContainerMenu>> enchanter_container = MENU_TYPES.register("enchanter_container", () -> new MenuType<>(EnchanterContainerMenu::new, FeatureFlags.DEFAULT_FLAGS));
+    public static final RegistryObject<MenuType<DisenchanterContainerMenu>> disenchanter_container = MENU_TYPES.register("disenchanter_container",() -> new MenuType<>(DisenchanterContainerMenu::new, FeatureFlags.DEFAULT_FLAGS));
 
 
     public static void register(IEventBus bus) {

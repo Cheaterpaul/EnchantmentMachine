@@ -2,7 +2,8 @@ package de.cheaterpaul.enchantmentmachine.client.gui.screens;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import de.cheaterpaul.enchantmentmachine.client.gui.components.ScrollWidget;
+import de.cheaterpaul.enchantmentmachine.client.gui.components.EnchantmentItem;
+import de.cheaterpaul.enchantmentmachine.client.gui.components.SimpleList;
 import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstanceMod;
 import de.cheaterpaul.enchantmentmachine.util.MultilineTooltip;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
@@ -39,7 +40,7 @@ public class StorageScreen extends Screen {
     private final int xSize = 197;
     private final int ySize = 222;
     private Object2IntMap<EnchantmentInstanceMod> enchantments = new Object2IntArrayMap<>();
-    private ScrollWidget<Pair<EnchantmentInstanceMod, Integer>> list;
+    private SimpleList<EnchantmentItem> list;
     private int guiLeft;
     private int guiTop;
 
@@ -57,8 +58,8 @@ public class StorageScreen extends Screen {
     protected void init() {
         super.init();
         this.guiLeft = (this.width - this.xSize) / 2;
-        this.guiTop = (this.height - this.ySize) / 2;
-        this.addRenderableWidget(this.list = new ScrollWidget<>(this.guiLeft + 10, this.guiTop + 10, this.xSize - 25, this.ySize - 20));
+        this.guiTop = (this.height - this.ySize) / 2;this.list = SimpleList.<EnchantmentItem>builder(this.guiLeft + 10, this.guiTop + 10, this.xSize - 25, this.ySize - 20).build();
+        this.addRenderableWidget(this.list);
     }
 
     @Override
@@ -78,13 +79,7 @@ public class StorageScreen extends Screen {
 
     public void updateEnchantments(Object2IntMap<EnchantmentInstanceMod> enchantments) {
         this.enchantments = enchantments;
-        this.list.updateContent(EnchantmentItem::new, builder -> {
-            if (this.enchantments != null) {
-                for (Map.Entry<EnchantmentInstanceMod, Integer> entry : this.enchantments.object2IntEntrySet()) {
-                    builder.addWidget(Pair.of(entry.getKey(), entry.getValue()));
-                }
-            }
-        });
+        this.list.replace(this.enchantments.object2IntEntrySet().stream().map(entry -> new EnchantmentItem(Pair.of(entry.getKey(), entry.getValue()))).toList());
     }
 
     @Override
@@ -92,56 +87,4 @@ public class StorageScreen extends Screen {
         return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
     }
 
-    private class EnchantmentItem extends AbstractWidget {
-
-        private final ItemStack bookStack;
-        private final Component name;
-        private final BiFunction<Integer, Integer, Boolean> isXYInBounds;
-
-        public EnchantmentItem(Pair<EnchantmentInstanceMod, Integer> item, int x, int y, int width, BiFunction<Integer, Integer, Boolean> isXYInBounds) {
-            super(x, y, width, 18, item.getKey().getEnchantmentName());
-            this.bookStack = new ItemStack(Items.ENCHANTED_BOOK, item.getRight());
-            this.isXYInBounds = isXYInBounds;
-            EnchantmentHelper.setEnchantments(Collections.singletonMap(item.getKey().getEnchantment(), item.getKey().getLevel()), bookStack);
-            this.name = item.getKey().getEnchantment().getFullname(item.getKey().getLevel());
-            Style style = this.name.getStyle();
-            //noinspection ConstantConditions
-            if(style.getColor() == null || style.getColor().getValue() == ChatFormatting.GRAY.getColor()) {
-                ((MutableComponent) this.name).withStyle(style.withColor(ChatFormatting.WHITE));
-            }
-        }
-
-        @Override
-        public void renderButton(@NotNull PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick) {
-            this.isHovered = this.isHovered && this.isXYInBounds.apply(pMouseX, pMouseY);
-            ScreenUtils.blitWithBorder(pPoseStack, WIDGETS_LOCATION, this.getX(), this.getY(), 0, 46 + 21, this.width, this.height, 200, 18, 2, 3, 2, 2, this.getBlitOffset());
-            this.renderBg(pPoseStack, Minecraft.getInstance(), pMouseX, pMouseY);
-
-            Minecraft minecraft = Minecraft.getInstance();
-            Font font = minecraft.font;
-
-            PoseStack modelViewStack = RenderSystem.getModelViewStack();
-            modelViewStack.pushPose();
-            modelViewStack.translate(0,-StorageScreen.this.list.getScrollAmount(),0);
-            RenderSystem.applyModelViewMatrix();
-            StorageScreen.this.itemRenderer.renderAndDecorateFakeItem(bookStack, this.getX()+5, this.getY() +1);
-            modelViewStack.popPose();
-            RenderSystem.applyModelViewMatrix();
-            drawString(pPoseStack, font, name, this.getX() + 25, this.getY() + 5, -1);
-
-            String count = String.valueOf(bookStack.getCount());
-
-            drawString(pPoseStack, font, count, this.getX() + this.width - 10, this.getY() + 5, 0xffffff);
-
-            if (this.isHovered) {
-                this.setTooltip(new MultilineTooltip(StorageScreen.this.getTooltipFromItem(this.bookStack)));
-            }
-        }
-
-        @Override
-        protected void updateWidgetNarration(@NotNull NarrationElementOutput output) {
-            defaultButtonNarrationText(output);
-        }
-
-    }
 }

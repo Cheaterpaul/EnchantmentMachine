@@ -28,7 +28,6 @@ public class EnchantmentMachineMod {
 
     public static final Proxy PROXY = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
     public static final AbstractPacketDispatcher DISPATCHER = new ModPacketDispatcher();
-    private static CreativeModeTab creativeTab;
 
     public EnchantmentMachineMod() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -54,8 +53,8 @@ public class EnchantmentMachineMod {
     }
 
     private void onRegisterTab(CreativeModeTabEvent.Register event) {
-        creativeTab = event.registerCreativeModeTab(new ResourceLocation(REFERENCE.MODID, "main"), builder ->
-                builder.icon(() -> ModData.storage_block.get().asItem().getDefaultInstance()).title(Component.translatable("itemGroup.enchantmentmachine")).displayItems((featureFlagSet, output, hasPermissions) -> {
+        event.registerCreativeModeTab(new ResourceLocation(REFERENCE.MODID, "main"), builder ->
+                builder.icon(() -> ModData.storage_block.get().asItem().getDefaultInstance()).title(Component.translatable("itemGroup.enchantmentmachine")).displayItems((params, output) -> {
                     output.accept(ModData.enchanter_block.get());
                     output.accept(ModData.disenchanter_block.get());
                     output.accept(ModData.storage_block.get());
