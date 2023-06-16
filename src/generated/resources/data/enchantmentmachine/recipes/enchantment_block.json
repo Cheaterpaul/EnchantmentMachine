@@ -1,22 +1,24 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "BBB",
-    "D#D",
-    "###"
-  ],
+  "category": "misc",
   "key": {
-    "B": {
-      "item": "minecraft:book"
-    },
     "#": {
       "item": "minecraft:crying_obsidian"
+    },
+    "B": {
+      "item": "minecraft:book"
     },
     "D": {
       "item": "minecraft:diamond"
     }
   },
+  "pattern": [
+    "BBB",
+    "D#D",
+    "###"
+  ],
   "result": {
     "item": "enchantmentmachine:enchantment_block"
-  }
+  },
+  "show_notification": true
 }

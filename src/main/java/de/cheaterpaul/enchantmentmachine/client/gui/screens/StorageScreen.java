@@ -12,6 +12,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
@@ -24,7 +25,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.gui.ScreenUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
@@ -58,7 +58,8 @@ public class StorageScreen extends Screen {
     protected void init() {
         super.init();
         this.guiLeft = (this.width - this.xSize) / 2;
-        this.guiTop = (this.height - this.ySize) / 2;this.list = SimpleList.<EnchantmentItem>builder(this.guiLeft + 10, this.guiTop + 10, this.xSize - 25, this.ySize - 20).build();
+        this.guiTop = (this.height - this.ySize) / 2;
+        this.list = SimpleList.<EnchantmentItem>builder(this.guiLeft + 10, this.guiTop + 10, this.xSize - 25, this.ySize - 20).build();
         this.addRenderableWidget(this.list);
     }
 
@@ -68,13 +69,12 @@ public class StorageScreen extends Screen {
     }
 
     @Override
-    public void render(@Nonnull PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(matrixStack);
-        RenderSystem.setShaderTexture(0, BACKGROUND);
+    public void render(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(guiGraphics);
         int i = this.guiLeft;
         int j = this.guiTop;
-        this.blit(matrixStack, i, j, 0, 0, this.xSize, this.ySize);
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
+        guiGraphics.blit(BACKGROUND, i, j, 0, 0, this.xSize, this.ySize);
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
     public void updateEnchantments(Object2IntMap<EnchantmentInstanceMod> enchantments) {

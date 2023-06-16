@@ -25,7 +25,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.LootTables;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
@@ -118,11 +117,6 @@ public class ModDataGenerator {
 
         public ModLootTableProvider(PackOutput packOutput) {
             super(packOutput, Collections.emptySet(), ImmutableList.of(new SubProviderEntry(Tables::new, LootContextParamSets.BLOCK)));
-        }
-
-        @Override
-        protected void validate(Map<ResourceLocation, LootTable> map, @Nonnull ValidationContext validationContext) {
-            map.forEach((resourceLocation, lootTable) -> LootTables.validate(validationContext, resourceLocation, lootTable));
         }
 
         private static class Tables extends BlockLootSubProvider {

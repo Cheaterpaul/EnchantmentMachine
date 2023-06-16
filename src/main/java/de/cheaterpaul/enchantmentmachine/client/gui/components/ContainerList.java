@@ -3,7 +3,7 @@ package de.cheaterpaul.enchantmentmachine.client.gui.components;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.ObjectSelectionList;
@@ -28,19 +28,19 @@ public class ContainerList<T extends ContainerObjectSelectionList.Entry<T>> exte
     }
 
     @Override
-    protected void renderDecorations(@NotNull PoseStack pPoseStack, int pMouseX, int pMouseY) {
-        fillGradient(pPoseStack, this.x0, this.y0, this.x1 - 6, this.y0 + 4, -16777216, 0);
-        fillGradient(pPoseStack, this.x0, this.y1 - 4, this.x1 - 6, this.y1, 0, -16777216);
+    protected void renderDecorations(@NotNull GuiGraphics guiGraphics, int pMouseX, int pMouseY) {
+        guiGraphics.fillGradient(this.x0, this.y0, this.x1 - 6, this.y0 + 4, -16777216, 0);
+        guiGraphics.fillGradient(this.x0, this.y1 - 4, this.x1 - 6, this.y1, 0, -16777216);
     }
 
     @Override
-    protected void renderItem(@NotNull PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick, int pIndex, int pLeft, int pTop, int pWidth, int pHeight) {
-        super.renderItem(pPoseStack, pMouseX, pMouseY, pPartialTick, pIndex, pLeft, pTop, pWidth - 6, pHeight);
+    protected void renderItem(@NotNull GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick, int pIndex, int pLeft, int pTop, int pWidth, int pHeight) {
+        super.renderItem(guiGraphics, pMouseX, pMouseY, pPartialTick, pIndex, pLeft, pTop, pWidth - 6, pHeight);
     }
 
     @Override
-    protected void renderBackground(@NotNull PoseStack pPoseStack) {
-        fillGradient(pPoseStack, this.x0, this.y0, this.x1 - 6, this.y1, -1072689136, -804253680);
+    protected void renderBackground(@NotNull GuiGraphics guiGraphics) {
+        guiGraphics.fillGradient(this.x0, this.y0, this.x1 - 6, this.y1, -1072689136, -804253680);
     }
 
     @Override
@@ -119,7 +119,7 @@ public class ContainerList<T extends ContainerObjectSelectionList.Entry<T>> exte
         }
 
         @Override
-        public void render(@NotNull PoseStack pPoseStack, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTick) {
+        public void render(@NotNull GuiGraphics guiGraphics, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTick) {
         }
 
         public int getTextureY(boolean isMouseOver) {

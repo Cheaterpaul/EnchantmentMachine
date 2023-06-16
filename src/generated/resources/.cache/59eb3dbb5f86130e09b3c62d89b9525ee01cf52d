@@ -1,0 +1,4 @@
+// 1.20.1	2023-06-16T13:53:29.124387844	Loot Tables
+e3f4ccaf3dea50058d6bc9255ea8c97be9bf62b3 data/enchantmentmachine/loot_tables/blocks/disenchanter_block.json
+4166a48baf2976a94971814298dced0514fce03e data/enchantmentmachine/loot_tables/blocks/enchanter_block.json
+88bcc929a5be9ed2e90ce75d48a008ff156f4d87 data/enchantmentmachine/loot_tables/blocks/enchantment_block.json

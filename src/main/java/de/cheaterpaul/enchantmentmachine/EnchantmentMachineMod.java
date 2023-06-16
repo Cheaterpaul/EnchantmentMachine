@@ -13,7 +13,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
@@ -36,7 +35,6 @@ public class EnchantmentMachineMod {
         bus.addListener(this::onLoadComplete);
         bus.addListener(this::onCommonSetup);
         bus.addListener(this::onClientSetup);
-        bus.addListener(this::onRegisterTab);
         ModData.register(bus);
     }
 
@@ -50,15 +48,6 @@ public class EnchantmentMachineMod {
 
     private void onLoadComplete(FMLLoadCompleteEvent event) {
         PROXY.onLoadComplete();
-    }
-
-    private void onRegisterTab(CreativeModeTabEvent.Register event) {
-        event.registerCreativeModeTab(new ResourceLocation(REFERENCE.MODID, "main"), builder ->
-                builder.icon(() -> ModData.storage_block.get().asItem().getDefaultInstance()).title(Component.translatable("itemGroup.enchantmentmachine")).displayItems((params, output) -> {
-                    output.accept(ModData.enchanter_block.get());
-                    output.accept(ModData.disenchanter_block.get());
-                    output.accept(ModData.storage_block.get());
-                }));
     }
 
 }

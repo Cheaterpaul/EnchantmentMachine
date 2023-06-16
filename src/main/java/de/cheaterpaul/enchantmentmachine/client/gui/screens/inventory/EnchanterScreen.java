@@ -16,6 +16,7 @@ import de.cheaterpaul.enchantmentmachine.util.Utils;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.*;
@@ -61,18 +62,17 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
     }
 
     @Override
-    protected void renderBg(@Nonnull PoseStack matrixStack, float partialTicks, int x, int y) {
-        this.renderBackground(matrixStack);
-        RenderSystem.setShaderTexture(0, BACKGROUND);
+    protected void renderBg(@Nonnull GuiGraphics guiGraphics, float partialTicks, int x, int y) {
+        this.renderBackground(guiGraphics);
         int i = this.leftPos;
         int j = this.topPos;
-        this.blit(matrixStack, i, j, 0, 0, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(BACKGROUND, i, j, 0, 0, this.imageWidth, this.imageHeight);
     }
 
     @Override
-    public void render(@Nonnull PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
-        this.renderTooltip(matrixStack, mouseX, mouseY);
+    public void render(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
 
     @Override
@@ -166,8 +166,8 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
             }
             this.button.setTooltip(Tooltip.create(text));
             this.requiredLevels = calculateRequiredLevels();
-            this.widgets.add(this.text = new MultiLineTextWidget(this.name, Minecraft.getInstance().font).m_269098_(200));
-            this.text.m_264152_(25,5);
+            this.widgets.add(this.text = new MultiLineTextWidget(this.name, Minecraft.getInstance().font).setMaxWidth(200));
+            this.text.setPosition(25,5);
 
         }
 
@@ -206,15 +206,15 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
         }
 
         @Override
-        public void render(@NotNull PoseStack pPoseStack, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTick) {
+        public void render(@NotNull GuiGraphics guiGraphics, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTick) {
             this.button.visible = EnchanterScreen.this.menu.getSlot(0).hasItem();
-            ScreenUtils.blitWithBorder(pPoseStack, WIDGETS_LOCATION, pLeft, pTop, 0, 46 + 21, pWidth, pHeight+5, 200, 18, 2, 3, 2, 2, 0);
-            EnchanterScreen.this.itemRenderer.m_274336_(pPoseStack, bookStack, pLeft+5, pTop+1);
-            EnchanterScreen.this.font.drawShadow(pPoseStack, name, pLeft + 25, pTop +5,-1);
+            guiGraphics.blitWithBorder(WIDGETS_LOCATION, pLeft, pTop, 0, 46 + 21, pWidth, pHeight+5, 200, 18, 2, 3, 2, 2);
+            guiGraphics.renderItem(bookStack, pLeft+ 5, pTop+1);
+            guiGraphics.drawString(EnchanterScreen.this.font, name, pLeft + 25, pTop +5,-1);
             String count = String.valueOf(bookStack.getCount());
-            EnchanterScreen.this.font.drawShadow(pPoseStack, count, pLeft + pWidth - 20, pTop +5, 0xffffff);
-            this.button.m_264152_(pLeft + pWidth - 12, pTop +1);
-            this.text.m_264152_(pLeft + 25,pTop + 5);
+            guiGraphics.drawString(EnchanterScreen.this.font, count, pLeft + pWidth - 20, pTop +5, 0xffffff);
+            this.button.setPosition(pLeft + pWidth - 12, pTop +1);
+            this.text.setPosition(pLeft + 25,pTop + 5);
 
             this.button.visible = EnchanterScreen.this.menu.getSlot(0).hasItem();
             if (isCompatible()) {
@@ -226,14 +226,14 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
             } else {
                 RenderSystem.setShaderColor(1f, 0.2f, 0.4f, 1);
             }
-            pPoseStack.pushPose();
+            guiGraphics.pose().pushPose();
 
             if (pIsMouseOver) {
-                setTooltipForNextRenderPass(EnchanterScreen.this.getTooltipFromItem(this.bookStack).stream().flatMap(a -> Tooltip.splitTooltip(Minecraft.getInstance(),a).stream()).toList());
+                setTooltipForNextRenderPass(getTooltipFromItem(Minecraft.getInstance(), this.bookStack).stream().flatMap(a -> Tooltip.splitTooltip(Minecraft.getInstance(),a).stream()).toList());
             }
 
-            this.button.render(pPoseStack, pMouseX, pMouseY, pPartialTick);
-            pPoseStack.popPose();
+            this.button.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
+            guiGraphics.pose().popPose();
             RenderSystem.setShaderColor(1, 1, 1, 1);
         }
 

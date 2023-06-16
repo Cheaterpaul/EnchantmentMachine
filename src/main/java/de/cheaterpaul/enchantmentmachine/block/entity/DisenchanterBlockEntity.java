@@ -12,7 +12,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -27,6 +26,7 @@ import net.minecraft.world.level.block.entity.Hopper;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
@@ -111,7 +111,7 @@ public class DisenchanterBlockEntity extends EnchantmentBaseBlockEntity implemen
 
 
     private void setTimer() {
-        if (!getItem(0).isEmpty() && (getItem(1).isEmpty() || (resultItem(getItem(0)).sameItem(getItem(1)) && getItem(1).getCount() + 1 <= getItem(1).getMaxStackSize()))) {
+        if (!getItem(0).isEmpty() && (getItem(1).isEmpty() || ItemStack.isSameItem(resultItem(getItem(0)), getItem(1)) && getItem(1).getCount() + 1 <= getItem(1).getMaxStackSize())) {
             this.timer = DURATION;
         } else {
             this.timer = 0;
@@ -220,7 +220,7 @@ public class DisenchanterBlockEntity extends EnchantmentBaseBlockEntity implemen
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction facing) {
-        if (!this.remove && facing != null && cap == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (!this.remove && facing != null && cap == ForgeCapabilities.ITEM_HANDLER) {
             if (facing == Direction.UP)
                 return itemHandler[0].cast();
             else if (facing == Direction.DOWN)
@@ -261,7 +261,7 @@ public class DisenchanterBlockEntity extends EnchantmentBaseBlockEntity implemen
                         });
                         stack = entity.resultItem(stack);
                         ItemStack slot = entity.getItem(1);
-                        if (!slot.isEmpty() && slot.sameItem(stack)) {
+                        if (!slot.isEmpty() && slot.is(stack.getItem())) {
                             stack.shrink(-slot.getCount());
                         }
                         entity.setItem(1, stack);

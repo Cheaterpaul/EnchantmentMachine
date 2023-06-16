@@ -1,22 +1,24 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    " B ",
-    "D#D",
-    "###"
-  ],
+  "category": "misc",
   "key": {
-    "B": {
-      "item": "minecraft:book"
-    },
     "#": {
       "item": "minecraft:crying_obsidian"
+    },
+    "B": {
+      "item": "minecraft:book"
     },
     "D": {
       "item": "minecraft:diamond_axe"
     }
   },
+  "pattern": [
+    " B ",
+    "D#D",
+    "###"
+  ],
   "result": {
     "item": "enchantmentmachine:disenchanter_block"
-  }
+  },
+  "show_notification": true
 }

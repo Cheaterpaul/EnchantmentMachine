@@ -1,9 +1,10 @@
 {
   "parent": "minecraft:block/enchanting_table",
+  "render_type": "minecraft:cutout",
   "textures": {
+    "bottom": "enchantmentmachine:block/enchanting_table_bottom",
     "particle": "enchantmentmachine:block/enchanting_table_bottom",
-    "top": "enchantmentmachine:block/enchanting_table_top",
     "side": "enchantmentmachine:block/enchanting_table_side",
-    "bottom": "enchantmentmachine:block/enchanting_table_bottom"
+    "top": "enchantmentmachine:block/enchanting_table_top"
   }
 }

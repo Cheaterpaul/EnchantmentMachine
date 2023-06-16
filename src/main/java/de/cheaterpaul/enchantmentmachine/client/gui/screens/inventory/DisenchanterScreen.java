@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.cheaterpaul.enchantmentmachine.inventory.DisenchanterContainerMenu;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -22,17 +23,16 @@ public class DisenchanterScreen extends EnchantmentBaseScreen<DisenchanterContai
     }
 
     @Override
-    protected void renderBg(@Nonnull PoseStack matrixStack, float partialTicks, int x, int y) {
-        this.renderBackground(matrixStack);
-        RenderSystem.setShaderTexture(0, BACKGROUND);
+    protected void renderBg(@Nonnull GuiGraphics guiGraphics, float partialTicks, int x, int y) {
+        this.renderBackground(guiGraphics);
         int i = this.leftPos;
         int j = this.topPos;
-        this.blit(matrixStack, i, j, 0, 0, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(BACKGROUND, i, j, 0, 0, this.imageWidth, this.imageHeight);
     }
 
     @Override
-    public void render(@Nonnull PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
-        this.renderTooltip(matrixStack, mouseX, mouseY);
+    public void render(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
 }
