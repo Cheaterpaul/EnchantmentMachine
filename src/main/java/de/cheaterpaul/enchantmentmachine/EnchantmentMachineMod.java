@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 @Mod(REFERENCE.MODID)
 public class EnchantmentMachineMod {
 
-    public static final Proxy PROXY = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
+    public static final Proxy PROXY = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
     public static final AbstractPacketDispatcher DISPATCHER = new ModPacketDispatcher();
 
     public EnchantmentMachineMod() {
