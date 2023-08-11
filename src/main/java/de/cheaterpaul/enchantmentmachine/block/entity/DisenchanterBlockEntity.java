@@ -119,9 +119,6 @@ public class DisenchanterBlockEntity extends EnchantmentBaseBlockEntity implemen
     }
 
     private ItemStack resultItem(ItemStack stack) {
-        if (stack.getItem() instanceof EnchantedBookItem) {
-            return new ItemStack(Items.BOOK);
-        }
         ItemStack stack1 = stack.copy();
         stack1.getOrCreateTag().remove("StoredEnchantments");
         EnchantmentHelper.setEnchantments(getRemainingEnchantments(stack), stack1);
@@ -266,9 +263,6 @@ public class DisenchanterBlockEntity extends EnchantmentBaseBlockEntity implemen
                         }
                         entity.setItem(1, stack);
                         entity.setItem(0, ItemStack.EMPTY);
-                    } else {
-                        entity.setItem(1, stack);
-                        entity.setItem(0, ItemStack.EMPTY);
                     }
                 });
             }
@@ -286,7 +280,7 @@ public class DisenchanterBlockEntity extends EnchantmentBaseBlockEntity implemen
 
     private boolean canDisenchant(ItemStack stack) {
         if (ModConfig.SERVER.allowDisenchantingItems.get()) {
-            return getExtractedEnchantments(stack).size() > 0;
+            return getExtractedEnchantments(stack).size() > 0 && (this.inventory.get(1).isEmpty() || ModConfig.SERVER.allowDisenchantingCurses.get() || EnchantmentHelper.getEnchantments(stack).keySet().stream().noneMatch(Enchantment::isCurse));
         }
         return !EnchantedBookItem.getEnchantments(stack).isEmpty();
     }
