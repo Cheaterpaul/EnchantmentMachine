@@ -121,7 +121,11 @@ public class DisenchanterBlockEntity extends EnchantmentBaseBlockEntity implemen
     private ItemStack resultItem(ItemStack stack) {
         ItemStack stack1 = stack.copy();
         stack1.getOrCreateTag().remove("StoredEnchantments");
-        EnchantmentHelper.setEnchantments(getRemainingEnchantments(stack), stack1);
+        var remainingEnchantments = getRemainingEnchantments(stack);
+        EnchantmentHelper.setEnchantments(remainingEnchantments, stack1);
+        if (stack.getItem() instanceof EnchantedBookItem item && remainingEnchantments.isEmpty()) {
+            return new ItemStack(Items.BOOK);
+        }
         return stack1;
     }
 
