@@ -176,7 +176,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
             GuiEventListener guieventlistener = null;
 
             for(GuiEventListener guieventlistener1 : List.copyOf(this.children())) {
-                if (guieventlistener1.mouseClicked(pMouseX, pMouseY + EnchanterScreen.this.list.getScrollAmount(), pButton)) {
+                if (guieventlistener1.mouseClicked(pMouseX, pMouseY, pButton)) {
                     guieventlistener = guieventlistener1;
                 }
             }
@@ -228,11 +228,13 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
             }
             guiGraphics.pose().pushPose();
 
-            if (pIsMouseOver) {
+
+            this.button.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
+
+            if (pIsMouseOver && !this.button.isHoveredOrFocused()) {
                 setTooltipForNextRenderPass(getTooltipFromItem(Minecraft.getInstance(), this.bookStack).stream().flatMap(a -> Tooltip.splitTooltip(Minecraft.getInstance(),a).stream()).toList());
             }
 
-            this.button.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
             guiGraphics.pose().popPose();
             RenderSystem.setShaderColor(1, 1, 1, 1);
         }
