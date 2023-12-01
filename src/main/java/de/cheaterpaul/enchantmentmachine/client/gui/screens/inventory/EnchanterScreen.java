@@ -154,6 +154,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
                 ((MutableComponent) this.name).withStyle(style.withColor(ChatFormatting.WHITE));
             }
             this.widgets.add(this.button = new ImageButton(0, 2, 11, 17, 1, 208, 18, new ResourceLocation("textures/gui/recipe_book.png"), 256, 256, (button) -> EnchanterScreen.this.apply(item.getKey()), Component.empty()));
+            this.requiredLevels = calculateRequiredLevels();
             MutableComponent text;
             if (isCompatible()) {
                 if (hasSufficientLevels()) {
@@ -165,7 +166,6 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
                 text = Component.translatable("text.enchantmentmachine.unavailable").withStyle(ChatFormatting.RED);
             }
             this.button.setTooltip(Tooltip.create(text));
-            this.requiredLevels = calculateRequiredLevels();
             this.widgets.add(this.text = new MultiLineTextWidget(this.name, Minecraft.getInstance().font).setMaxWidth(200));
             this.text.setPosition(25,5);
 
