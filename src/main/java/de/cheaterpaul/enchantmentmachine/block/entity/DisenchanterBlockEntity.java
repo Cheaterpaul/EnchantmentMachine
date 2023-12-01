@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -174,9 +175,12 @@ public class DisenchanterBlockEntity extends EnchantmentBaseBlockEntity implemen
     public boolean canPlaceItem(int index, @Nonnull ItemStack stack) {
         if (index == 0) {
             if (!ModConfig.SERVER.allowDisenchantingItems.get()) {
-                if (EnchantedBookItem.getEnchantments(stack).isEmpty()) return false;
+                Map<Enchantment, Integer> enchantmentIntegerMap = EnchantmentHelper.deserializeEnchantments(EnchantedBookItem.getEnchantments(stack));
+                return !enchantmentIntegerMap.isEmpty() && (ModConfig.SERVER.allowDisenchantingCurses.get() || !enchantmentIntegerMap.entrySet().stream().allMatch(s -> s.getKey().isCurse()));
+            } else {
+                Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(stack);
+                return !enchantments.isEmpty() && (!ModConfig.SERVER.allowDisenchantingCurses.get() && !enchantments.entrySet().stream().allMatch(s -> s.getKey().isCurse()));
             }
-            return !EnchantmentHelper.getEnchantments(stack).isEmpty();
         } else {
             return false;
         }

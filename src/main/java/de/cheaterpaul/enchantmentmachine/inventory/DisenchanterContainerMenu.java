@@ -8,9 +8,11 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 import javax.annotation.Nonnull;
+import java.util.Map;
 
 public class DisenchanterContainerMenu extends EnchantmentBaseContainerMenu {
 
@@ -23,7 +25,13 @@ public class DisenchanterContainerMenu extends EnchantmentBaseContainerMenu {
         this.addSlot(new Slot(inventory, 0, 80, 17) {
             @Override
             public boolean mayPlace(@Nonnull ItemStack itemStack) {
-                return !EnchantmentHelper.getEnchantments(itemStack).isEmpty() && (ModConfig.SERVER.allowDisenchantingItems.get() || !EnchantedBookItem.getEnchantments(itemStack).isEmpty());
+                Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(itemStack);
+                if (!enchantments.isEmpty()) {
+                    if (ModConfig.SERVER.allowDisenchantingItems.get() || !EnchantedBookItem.getEnchantments(itemStack).isEmpty()) {
+                        return ModConfig.SERVER.allowDisenchantingCurses.get() || !enchantments.entrySet().stream().allMatch(a -> a.getKey().isCurse());
+                    }
+                }
+                return false;
             }
         });
         this.addSlot(new Slot(inventory, 1, 80, 53) {
