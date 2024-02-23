@@ -1,5 +1,8 @@
 package de.cheaterpaul.enchantmentmachine.block;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import de.cheaterpaul.enchantmentmachine.EnchantmentMachineMod;
 import de.cheaterpaul.enchantmentmachine.block.entity.StorageBlockEntity;
 import de.cheaterpaul.enchantmentmachine.core.ModData;
@@ -15,7 +18,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -23,8 +28,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,18 +37,23 @@ import java.util.List;
 public class StorageBlock extends EnchantmentBaseBlock {
 
     protected static final VoxelShape SHAPE = makeShape();
+    private static final MapCodec<StorageBlock> CODEC = simpleCodec(StorageBlock::new);
 
     public StorageBlock(Properties properties) {
         super(properties);
     }
 
+    @Override
+    protected @NotNull MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
+    }
+
     @Nullable
     @Override
     public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
-        return ModData.storage_tile.map(tile ->tile.create(pos, state)).orElse(null);
+        return ModData.storage_tile.get().create(pos, state);
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(@Nonnull ItemStack stack, @Nullable BlockGetter worldIn, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
@@ -68,8 +77,8 @@ public class StorageBlock extends EnchantmentBaseBlock {
     @Override
     public InteractionResult use(@Nonnull BlockState blockState, Level world, @Nonnull BlockPos blockPos, @Nonnull Player playerEntity, @Nonnull InteractionHand p_225533_5_, @Nonnull BlockHitResult p_225533_6_) {
         BlockEntity tile = world.getBlockEntity(blockPos);
-        if (tile instanceof StorageBlockEntity && playerEntity instanceof ServerPlayer) {
-            EnchantmentMachineMod.DISPATCHER.sendTo(new EnchantmentPacket(((StorageBlockEntity) tile).getEnchantments(), true), ((ServerPlayer) playerEntity));
+        if (tile instanceof StorageBlockEntity && playerEntity instanceof ServerPlayer serverPlayer) {
+            serverPlayer.connection.send(new EnchantmentPacket(((StorageBlockEntity) tile).getEnchantments(), true));
             return InteractionResult.CONSUME;
         }
         return InteractionResult.SUCCESS;

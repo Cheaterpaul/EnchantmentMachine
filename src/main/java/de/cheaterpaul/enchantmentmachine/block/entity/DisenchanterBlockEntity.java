@@ -26,12 +26,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.Hopper;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.SidedInvWrapper;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -44,7 +40,6 @@ public class DisenchanterBlockEntity extends EnchantmentBaseBlockEntity implemen
 
     private static final Component name = Utils.genTranslation("tile", "disenchanter.name");
     private static final int DURATION = 20;
-    private final LazyOptional<? extends IItemHandler>[] itemHandler = SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
     private final NonNullList<ItemStack> inventory = NonNullList.withSize(2, ItemStack.EMPTY);
     /**
      * Countdown to disenchantment
@@ -220,28 +215,6 @@ public class DisenchanterBlockEntity extends EnchantmentBaseBlockEntity implemen
     @Override
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
         this.load(pkt.getTag());
-    }
-
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction facing) {
-        if (!this.remove && facing != null && cap == ForgeCapabilities.ITEM_HANDLER) {
-            if (facing == Direction.UP)
-                return itemHandler[0].cast();
-            else if (facing == Direction.DOWN)
-                return itemHandler[1].cast();
-            else
-                return itemHandler[2].cast();
-        }
-        return super.getCapability(cap, facing);
-    }
-
-    @Override
-    public void setRemoved() {
-        super.setRemoved();
-        for (LazyOptional<? extends IItemHandler> opt : itemHandler) {
-            opt.invalidate();
-        }
     }
 
     @Override

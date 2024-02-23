@@ -8,12 +8,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public class DisenchanterScreen extends EnchantmentBaseScreen<DisenchanterContainerMenu> {
 
     private static final ResourceLocation BACKGROUND = new ResourceLocation(REFERENCE.MODID, "textures/gui/container/disenchanter.png");
@@ -24,7 +21,6 @@ public class DisenchanterScreen extends EnchantmentBaseScreen<DisenchanterContai
 
     @Override
     protected void renderBg(@Nonnull GuiGraphics guiGraphics, float partialTicks, int x, int y) {
-        this.renderBackground(guiGraphics);
         int i = this.leftPos;
         int j = this.topPos;
         guiGraphics.blit(BACKGROUND, i, j, 0, 0, this.imageWidth, this.imageHeight);

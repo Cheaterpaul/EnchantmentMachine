@@ -1,5 +1,6 @@
 package de.cheaterpaul.enchantmentmachine.block;
 
+import com.mojang.serialization.MapCodec;
 import de.cheaterpaul.enchantmentmachine.block.entity.DisenchanterBlockEntity;
 import de.cheaterpaul.enchantmentmachine.core.ModData;
 import net.minecraft.ChatFormatting;
@@ -13,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -22,6 +24,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -31,6 +34,7 @@ import java.util.List;
 public class DisenchanterBlock extends EnchantmentBaseBlock {
 
     protected static final VoxelShape SHAPE = makeShape();
+    private static final MapCodec<DisenchanterBlock> CODEC = simpleCodec(DisenchanterBlock::new);
 
 
     public DisenchanterBlock(Properties properties) {
@@ -38,8 +42,13 @@ public class DisenchanterBlock extends EnchantmentBaseBlock {
     }
 
     @Override
+    protected @NotNull MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
+    }
+
+    @Override
     public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
-        return ModData.disenchanter_tile.map(tile -> tile.create(pos, state)).orElse(null);
+        return ModData.disenchanter_tile.get().create(pos, state);
     }
 
     @SuppressWarnings("deprecation")

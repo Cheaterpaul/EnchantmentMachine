@@ -1,5 +1,6 @@
 package de.cheaterpaul.enchantmentmachine.block;
 
+import com.mojang.serialization.MapCodec;
 import de.cheaterpaul.enchantmentmachine.EnchantmentMachineMod;
 import de.cheaterpaul.enchantmentmachine.block.entity.EnchanterBlockEntity;
 import de.cheaterpaul.enchantmentmachine.block.entity.StorageBlockEntity;
@@ -16,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,6 +25,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -33,10 +36,16 @@ import java.util.Optional;
 public class EnchanterBlock extends EnchantmentBaseBlock {
 
     protected static final VoxelShape SHAPE = makeShape();
+    private static final MapCodec<EnchanterBlock> CODEC = simpleCodec(EnchanterBlock::new);
 
 
     public EnchanterBlock(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    protected @NotNull MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
     }
 
     @Override
@@ -46,7 +55,7 @@ public class EnchanterBlock extends EnchantmentBaseBlock {
 
     @Override
     public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
-        return ModData.enchanter_tile.map(tile -> tile.create(pos, state)).orElse(null);
+        return ModData.enchanter_tile.get().create(pos, state);
     }
 
     @SuppressWarnings("deprecation")
@@ -56,9 +65,9 @@ public class EnchanterBlock extends EnchantmentBaseBlock {
         BlockEntity tile = world.getBlockEntity(blockPos);
         if (tile instanceof EnchanterBlockEntity) {
             playerEntity.openMenu(((EnchanterBlockEntity) tile));
-            if (!world.isClientSide() && playerEntity instanceof ServerPlayer) {
+            if (!world.isClientSide() && playerEntity instanceof ServerPlayer serverPlayer) {
                 Optional<StorageBlockEntity> s = ((EnchanterBlockEntity) tile).getConnectedEnchantmentTE();
-                s.ifPresent(enchantmentTileEntity -> EnchantmentMachineMod.DISPATCHER.sendTo(new EnchantmentPacket(enchantmentTileEntity.getEnchantments(), false), ((ServerPlayer) playerEntity)));
+                s.ifPresent(enchantmentTileEntity -> serverPlayer.connection.send(new EnchantmentPacket(enchantmentTileEntity.getEnchantments(), false)));
             }
             return InteractionResult.CONSUME;
         }

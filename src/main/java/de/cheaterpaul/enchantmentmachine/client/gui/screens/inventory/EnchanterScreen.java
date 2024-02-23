@@ -26,9 +26,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.gui.ScreenUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +33,6 @@ import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@OnlyIn(Dist.CLIENT)
 public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMenu> {
 
     private static final ResourceLocation BACKGROUND = new ResourceLocation(REFERENCE.MODID, "textures/gui/container/enchanter.png");
@@ -63,7 +59,6 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
 
     @Override
     protected void renderBg(@Nonnull GuiGraphics guiGraphics, float partialTicks, int x, int y) {
-        this.renderBackground(guiGraphics);
         int i = this.leftPos;
         int j = this.topPos;
         guiGraphics.blit(BACKGROUND, i, j, 0, 0, this.imageWidth, this.imageHeight);
@@ -111,7 +106,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
     private void apply(EnchantmentInstanceMod instance) {
         if (this.menu.getSlot(0).hasItem()) {
             if (ModConfig.SERVER.allowMixtureEnchantments.get() || EnchantmentHelper.isEnchantmentCompatible(itemEnchantments.keySet(), instance.getEnchantment()) || hasEqualEnchantments(itemEnchantments, instance)) {
-                EnchantmentMachineMod.DISPATCHER.sendToServer(new EnchantingPacket(Collections.singletonList(instance)));
+                this.minecraft.player.connection.send(new EnchantingPacket(Collections.singletonList(instance)));
                 Pair<EnchantmentInstanceMod, Integer> value = this.enchantments.get(instance);
                 if (value.getValue() > 1) {
                     this.enchantments.put(instance, Pair.of(instance, value.getValue() - 1));
@@ -136,6 +131,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
 
     private class EnchantmentItem extends ContainerList.Entry<EnchantmentItem> {
 
+        private static final WidgetSprites ENCHANT_BUTTON = new WidgetSprites(new ResourceLocation( "recipe_book/page_forward"), new ResourceLocation( "recipe_book/page_forward_highlighted"));
         private final ItemStack bookStack;
         private final Component name;
         private final Button button;
@@ -153,7 +149,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
             if(style.getColor() == null || style.getColor().getValue() == ChatFormatting.GRAY.getColor()) {
                 ((MutableComponent) this.name).withStyle(style.withColor(ChatFormatting.WHITE));
             }
-            this.widgets.add(this.button = new ImageButton(0, 2, 11, 17, 1, 208, 18, new ResourceLocation("textures/gui/recipe_book.png"), 256, 256, (button) -> EnchanterScreen.this.apply(item.getKey()), Component.empty()));
+            this.widgets.add(this.button = new ImageButton(0, 2, 11, 17, ENCHANT_BUTTON, (button) -> EnchanterScreen.this.apply(item.getKey()), Component.empty()));
             this.requiredLevels = calculateRequiredLevels();
             MutableComponent text;
             if (isCompatible()) {
@@ -208,7 +204,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
         @Override
         public void render(@NotNull GuiGraphics guiGraphics, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTick) {
             this.button.visible = EnchanterScreen.this.menu.getSlot(0).hasItem();
-            guiGraphics.blitWithBorder(WIDGETS_LOCATION, pLeft, pTop, 0, 46 + 21, pWidth, pHeight+5, 200, 18, 2, 3, 2, 2);
+            guiGraphics.blitSprite(WIDGETS_LOCATION.get(true, false), pLeft, pTop, pWidth, pHeight + 5);
             guiGraphics.renderItem(bookStack, pLeft+ 5, pTop+1);
             guiGraphics.drawString(EnchanterScreen.this.font, name, pLeft + 25, pTop +5,-1);
             String count = String.valueOf(bookStack.getCount());

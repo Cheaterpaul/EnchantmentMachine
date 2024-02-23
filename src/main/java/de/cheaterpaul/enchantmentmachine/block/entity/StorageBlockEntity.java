@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMaps;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
@@ -18,7 +19,6 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -180,7 +180,7 @@ public class StorageBlockEntity extends BlockEntity implements IEnchantmentMachi
                 ResourceLocation eID = new ResourceLocation(entry.getString("id"));
                 int level = entry.getInt("level");
                 int count = entry.getInt("count");
-                Enchantment enchantment = ForgeRegistries.ENCHANTMENTS.getValue(eID);
+                Enchantment enchantment = BuiltInRegistries.ENCHANTMENT.get(eID);
                 if (enchantment == null) {
                     LOGGER.info("Cannot find stored enchantment {} in registry", eID);
                 } else {
@@ -206,7 +206,7 @@ public class StorageBlockEntity extends BlockEntity implements IEnchantmentMachi
         enchantmentMaps.forEach((inst, count) -> {
             CompoundTag enchantment = new CompoundTag();
             //noinspection ConstantConditions
-            enchantment.putString("id", ForgeRegistries.ENCHANTMENTS.getKey(inst.getEnchantment()).toString());
+            enchantment.putString("id", BuiltInRegistries.ENCHANTMENT.getKey(inst.getEnchantment()).toString());
             enchantment.putInt("level", inst.getLevel());
             enchantment.putInt("count", count);
             enchantments.add(enchantment);

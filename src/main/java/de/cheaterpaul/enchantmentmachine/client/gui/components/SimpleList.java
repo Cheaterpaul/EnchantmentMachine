@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.tuple.Pair;
@@ -18,30 +19,36 @@ import java.util.function.Consumer;
 
 public class SimpleList<T extends SimpleList.Entry<T>> extends ObjectSelectionList<T> {
 
-    public SimpleList(Minecraft pMinecraft, int pWidth, int pHeight, int pY0, int pY1, int pItemHeight) {
-        super(pMinecraft, pWidth, pHeight, pY0, pY1, pItemHeight);
+    public SimpleList(Minecraft pMinecraft, int pWidth, int pHeight, int pY0, int pItemHeight) {
+        super(pMinecraft, pWidth, pHeight, pY0, pItemHeight);
         this.setRenderBackground(false);
-        this.setRenderTopAndBottom(false);
     }
 
     @Override
-    protected void renderDecorations(@NotNull GuiGraphics guiGraphics, int pMouseX, int pMouseY) {
-        guiGraphics.fillGradient(this.x0, this.y0, this.x1 - 6, this.y0 + 4 , -16777216, 0);
-        guiGraphics.fillGradient( this.x0, this.y1 - 4, this.x1 - 6, this.y1, 0, -16777216);
-    }
-    @Override
-    protected void renderItem(@NotNull GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick, int pIndex, int pLeft, int pTop, int pWidth, int pHeight) {
-        super.renderItem(guiGraphics, pMouseX, pMouseY, pPartialTick, pIndex, pLeft, pTop, pWidth - 6, pHeight);
+    protected void renderDecorations(@NotNull GuiGraphics graphics, int pMouseX, int pMouseY) {
+        graphics.fillGradient(this.getX(), this.getY(), this.getRight() - 6, this.getBottom() + 4, -16777216, 0);
+        graphics.fillGradient(this.getX(), this.getY() - 4, this.getRight() - 6, this.getBottom(), 0, -16777216);
     }
 
     @Override
-    protected void renderBackground(@NotNull GuiGraphics guiGraphics) {
-        guiGraphics.fillGradient(this.x0, this.y0, this.x1 - 6, this.y1, -1072689136, -804253680);
+    protected void renderItem(@NotNull GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick, int pIndex, int pLeft, int pTop, int pWidth, int pHeight) {
+        super.renderItem(graphics, pMouseX, pMouseY, pPartialTick, pIndex, pLeft, pTop, pWidth - 6, pHeight);
+    }
+
+    @Override
+    public void renderWidget(GuiGraphics guiGraphics, int p_283242_, int p_282891_, float p_283683_) {
+        guiGraphics.fillGradient(this.getX(), this.getY(), this.getRight() - 6, this.getBottom(), -1072689136, -804253680);
+        super.renderWidget(guiGraphics, p_283242_, p_282891_, p_283683_);
+    }
+
+    @Override
+    protected void renderSelection(GuiGraphics p_283589_, int p_240142_, int p_240143_, int p_240144_, int p_240145_, int p_240146_) {
+//        super.renderSelection(p_283589_, p_240142_,p_240143_ +6, p_240144_, p_240145_, p_240146_);
     }
 
     @Override
     protected int getScrollbarPosition() {
-        return this.x1 - 6;
+        return this.getRight() - 6;
     }
 
     @Override
@@ -51,16 +58,12 @@ public class SimpleList<T extends SimpleList.Entry<T>> extends ObjectSelectionLi
 
     @Override
     public int getRowLeft() {
-        return super.getRowLeft() -2;
+        return super.getRowLeft() - 2;
     }
 
     @Override
     protected int getRowTop(int pIndex) {
-        return super.getRowTop(pIndex) -4;
-    }
-
-    @Override
-    public void setSelected(@Nullable T pSelected) {
+        return super.getRowTop(pIndex) - 4;
     }
 
     @Override
@@ -68,21 +71,23 @@ public class SimpleList<T extends SimpleList.Entry<T>> extends ObjectSelectionLi
         return Math.max(0, super.getMaxScroll() - 4);
     }
 
-    public void replace(Collection<T> entries) {
-        this.replaceEntries(entries);
+    @Override
+    public void replaceEntries(@NotNull Collection<T> newEntries) {
+        super.replaceEntries(newEntries);
     }
 
     public static <T extends SimpleList.Entry<T>> Builder<T> builder(int x, int y, int pWidth, int pHeight) {
         return new Builder<T>(x, y, pWidth, pHeight);
     }
 
-    public static class Builder<T extends Entry<T>> {
+    public static class Builder<T extends SimpleList.Entry<T>> {
 
         protected final int x;
         protected final int y;
         protected final int pWidth;
         protected final int pHeight;
         protected int itemHeight = 19;
+        protected List<Pair<Component, Runnable>> components;
 
         public Builder(int x, int y, int pWidth, int pHeight) {
             this.x = x;
@@ -96,17 +101,35 @@ public class SimpleList<T extends SimpleList.Entry<T>> extends ObjectSelectionLi
             return this;
         }
 
+        public Builder<T> components(List<Component> components) {
+            this.components = components.stream().map(x -> Pair.of(x, (Runnable) () -> {
+            })).toList();
+            return this;
+        }
+
+        public Builder<T> componentsWithClick(List<Pair<Component, Runnable>> components) {
+            this.components = components;
+            return this;
+        }
+
+        public Builder<T> componentsWithClick(List<Component> components, Consumer<Integer> onClick) {
+            this.components = components.stream().map(x -> Pair.<Component, Runnable>of(x, () -> onClick.accept(components.indexOf(x)))).toList();
+            return this;
+        }
+
         public SimpleList<T> build() {
-            SimpleList<T> simpleList = new SimpleList<T>(Minecraft.getInstance(), this.pWidth, this.pHeight, this.y, this.y + this.pHeight, this.itemHeight);
-            simpleList.setLeftPos(this.x);
+            SimpleList<T> simpleList = new SimpleList<>(Minecraft.getInstance(), this.pWidth, this.pHeight, this.y, this.itemHeight);
+            simpleList.setX(this.x);
+            //noinspection unchecked
+            simpleList.replaceEntries(((Collection<T>) components.stream().map(x -> new Entry<T>(x.getKey(), x.getValue())).toList()));
             return simpleList;
         }
     }
 
     public static class Entry<T extends Entry<T>> extends ObjectSelectionList.Entry<T> {
-        protected static final ResourceLocation WIDGETS_LOCATION = new ResourceLocation("textures/gui/widgets.png");
+        protected static final WidgetSprites SPRITES = new WidgetSprites(new ResourceLocation("widget/button"), new ResourceLocation("widget/button_disabled"), new ResourceLocation("widget/button_highlighted"));
 
-        protected final Component component;
+        private final Component component;
         private final Runnable onClick;
 
         public Entry(Component component, Runnable onClick) {
@@ -120,29 +143,18 @@ public class SimpleList<T extends SimpleList.Entry<T>> extends ObjectSelectionLi
         }
 
         @Override
-        public void render(@NotNull GuiGraphics guiGraphics, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTick) {
+        public void render(@NotNull GuiGraphics graphics, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTick) {
             Minecraft minecraft = Minecraft.getInstance();
-            RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
-            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
             RenderSystem.enableBlend();
             RenderSystem.enableDepthTest();
-            guiGraphics.pose().pushPose();
-            if (pIsMouseOver) {
-                guiGraphics.pose().translate(0, 0, 1);
-            }
-            guiGraphics.blit(WIDGETS_LOCATION, pLeft, pTop, pWidth, pHeight, 20, 4, 200, 20, 0, this.getTextureY(pIsMouseOver));
+            PoseStack pose = graphics.pose();
+            pose.pushPose();
+            pose.translate(0, 0, pIsMouseOver ? 2 : 1);
+            graphics.blitSprite(SPRITES.get(true, pIsMouseOver), pLeft, pTop, pWidth, pHeight + 5);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-            guiGraphics.drawCenteredString(minecraft.font, this.component, pLeft + pWidth / 2, pTop + 5, 0xFFFFFF);
-            guiGraphics.pose().popPose();
-        }
-
-        public int getTextureY(boolean isMouseOver) {
-            int i = 1;
-            if (isMouseOver) {
-                i = 2;
-            }
-
-            return 46 + i * 20;
+            graphics.drawCenteredString(minecraft.font, this.component, pLeft + pWidth / 2, pTop + 5, 0xFFFFFF);
+            pose.popPose();
         }
 
         @Override

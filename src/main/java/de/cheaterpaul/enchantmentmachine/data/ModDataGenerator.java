@@ -7,13 +7,14 @@ import de.cheaterpaul.enchantmentmachine.core.ModData;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.EntityLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
@@ -28,15 +29,12 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.client.model.generators.ItemModelBuilder;
-import net.minecraftforge.client.model.generators.ItemModelProvider;
-import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.common.data.BlockTagsProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
+import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.common.data.BlockTagsProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -85,7 +83,7 @@ public class ModDataGenerator {
         protected void registerStatesAndModels() {
             ModelFile enchanter = new ModelFile.ExistingModelFile(blockTexture(ModData.enchanter_block.get()), models().existingFileHelper);
 
-            ModelFile enchantment_block = models().withExistingParent(ForgeRegistries.BLOCKS.getKey(ModData.storage_block.get()).toString(), "block/enchanting_table")
+            ModelFile enchantment_block = models().withExistingParent(BuiltInRegistries.BLOCK.getKey(ModData.storage_block.get()).toString(), "block/enchanting_table")
                     .texture("particle", new ResourceLocation(REFERENCE.MODID, "block/enchanting_table_bottom"))
                     .texture("top", new ResourceLocation(REFERENCE.MODID, "block/enchanting_table_top"))
                     .texture("side", new ResourceLocation(REFERENCE.MODID, "block/enchanting_table_side"))
@@ -105,7 +103,7 @@ public class ModDataGenerator {
         }
 
         @Override
-        protected void buildRecipes(@Nonnull Consumer<FinishedRecipe> consumer) {
+        protected void buildRecipes(@Nonnull RecipeOutput consumer) {
             ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModData.storage_block.get()).define('B', Items.BOOK).define('#', Blocks.CRYING_OBSIDIAN).define('D', Items.DIAMOND).pattern("BBB").pattern("D#D").pattern("###").unlockedBy("has_obsidian", has(Blocks.CRYING_OBSIDIAN)).save(consumer);
             ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModData.disenchanter_block.get()).define('B', Items.BOOK).define('#', Blocks.CRYING_OBSIDIAN).define('D', Items.DIAMOND_AXE).pattern(" B ").pattern("D#D").pattern("###").unlockedBy("has_obsidian", has(Blocks.CRYING_OBSIDIAN)).save(consumer);
             ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModData.enchanter_block.get()).define('B', Items.BOOK).define('#', Blocks.CRYING_OBSIDIAN).define('D', Items.DIAMOND).pattern(" B ").pattern("D#D").pattern("###").unlockedBy("has_obsidian", has(Blocks.CRYING_OBSIDIAN)).save(consumer);

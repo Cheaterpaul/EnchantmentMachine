@@ -7,6 +7,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.network.chat.Component;
@@ -21,16 +22,15 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class ContainerList<T extends ContainerObjectSelectionList.Entry<T>> extends ContainerObjectSelectionList<T> {
-    public ContainerList(Minecraft pMinecraft, int pWidth, int pHeight, int pY0, int pY1, int pItemHeight) {
-        super(pMinecraft, pWidth, pHeight, pY0, pY1, pItemHeight);
+    public ContainerList(Minecraft pMinecraft, int pWidth, int pHeight, int pY0, int pItemHeight) {
+        super(pMinecraft, pWidth, pHeight, pY0, pItemHeight);
         this.setRenderBackground(false);
-        this.setRenderTopAndBottom(false);
     }
 
     @Override
     protected void renderDecorations(@NotNull GuiGraphics guiGraphics, int pMouseX, int pMouseY) {
-        guiGraphics.fillGradient(this.x0, this.y0, this.x1 - 6, this.y0 + 4, -16777216, 0);
-        guiGraphics.fillGradient(this.x0, this.y1 - 4, this.x1 - 6, this.y1, 0, -16777216);
+        guiGraphics.fillGradient(this.getX(), this.getY(), this.getRight() - 6, this.getY() + 4, -16777216, 0);
+        guiGraphics.fillGradient(this.getX(), this.getBottom() - 4, this.getRight() - 6, this.getBottom(), 0, -16777216);
     }
 
     @Override
@@ -38,14 +38,14 @@ public class ContainerList<T extends ContainerObjectSelectionList.Entry<T>> exte
         super.renderItem(guiGraphics, pMouseX, pMouseY, pPartialTick, pIndex, pLeft, pTop, pWidth - 6, pHeight);
     }
 
-    @Override
-    protected void renderBackground(@NotNull GuiGraphics guiGraphics) {
-        guiGraphics.fillGradient(this.x0, this.y0, this.x1 - 6, this.y1, -1072689136, -804253680);
-    }
+//    @Override
+//    protected void renderBackground(@NotNull GuiGraphics guiGraphics) {
+//        guiGraphics.fillGradient(this.x0, this.y0, this.x1 - 6, this.y1, -1072689136, -804253680);
+//    }
 
     @Override
     protected int getScrollbarPosition() {
-        return this.x1 - 6;
+        return this.getRight() - 6;
     }
 
     @Override
@@ -97,14 +97,14 @@ public class ContainerList<T extends ContainerObjectSelectionList.Entry<T>> exte
         }
 
         public ContainerList<T> build() {
-            ContainerList<T> simpleList = new ContainerList<T>(Minecraft.getInstance(), this.pWidth, this.pHeight, this.y, this.y + this.pHeight, this.itemHeight);
-            simpleList.setLeftPos(this.x);
+            ContainerList<T> simpleList = new ContainerList<T>(Minecraft.getInstance(), this.pWidth, this.pHeight, this.y, this.itemHeight);
+            simpleList.setX(this.x);
             return simpleList;
         }
     }
 
     public static class Entry<T extends ContainerObjectSelectionList.Entry<T>> extends ContainerObjectSelectionList.Entry<T> {
-        protected static final ResourceLocation WIDGETS_LOCATION = new ResourceLocation("textures/gui/widgets.png");
+        protected static final WidgetSprites WIDGETS_LOCATION = new WidgetSprites(new ResourceLocation("widget/button"),new ResourceLocation("widget/button_highlighted") );
 
         protected final List<AbstractWidget> widgets = new ArrayList<>();
 

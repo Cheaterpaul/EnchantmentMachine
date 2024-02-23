@@ -21,19 +21,15 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-@OnlyIn(Dist.CLIENT)
 public class StorageScreen extends Screen {
 
     private static final ResourceLocation BACKGROUND = new ResourceLocation(REFERENCE.MODID, "textures/gui/container/enchantment.png");
@@ -59,7 +55,7 @@ public class StorageScreen extends Screen {
         super.init();
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
-        this.list = SimpleList.<EnchantmentItem>builder(this.guiLeft + 10, this.guiTop + 10, this.xSize - 25, this.ySize - 20).build();
+        this.list = SimpleList.<EnchantmentItem>builder(this.guiLeft + 10, this.guiTop + 10, this.xSize - 25, this.ySize - 20).components(List.of()).build();
         this.addRenderableWidget(this.list);
     }
 
@@ -69,22 +65,16 @@ public class StorageScreen extends Screen {
     }
 
     @Override
-    public void render(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(guiGraphics);
+    public void renderBackground(@NotNull GuiGraphics guiGraphics, int p_296369_, int p_296477_, float p_294317_) {
+        super.renderBackground(guiGraphics, p_296369_, p_296477_, p_294317_);
         int i = this.guiLeft;
         int j = this.guiTop;
         guiGraphics.blit(BACKGROUND, i, j, 0, 0, this.xSize, this.ySize);
-        super.render(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
     public void updateEnchantments(Object2IntMap<EnchantmentInstanceMod> enchantments) {
         this.enchantments = enchantments;
-        this.list.replace(this.enchantments.object2IntEntrySet().stream().map(entry -> new EnchantmentItem(Pair.of(entry.getKey(), entry.getValue()))).toList());
-    }
-
-    @Override
-    public boolean mouseDragged(double pMouseX, double pMouseY, int pButton, double pDragX, double pDragY) {
-        return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
+        this.list.replaceEntries(this.enchantments.object2IntEntrySet().stream().map(entry -> new EnchantmentItem(Pair.of(entry.getKey(), entry.getIntValue()))).toList());
     }
 
 }

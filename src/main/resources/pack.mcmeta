@@ -1,6 +1,6 @@
 {
     "pack": {
-        "description": "Enchantment Machine resources",
-        "pack_format": 9
+        "description": "${mod_id} resources",
+        "pack_format": ${pack_format_number}
     }
 }

@@ -17,12 +17,9 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public class EnchantmentBlockTileEntityRenderer implements BlockEntityRenderer<StorageBlockEntity> {
 
     public static final Material TEXTURE_BOOK = new Material(InventoryMenu.BLOCK_ATLAS, new ResourceLocation("entity/enchanting_table_book"));

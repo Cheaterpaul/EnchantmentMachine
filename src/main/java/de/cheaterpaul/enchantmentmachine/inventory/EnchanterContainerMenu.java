@@ -68,9 +68,9 @@ public class EnchanterContainerMenu extends EnchantmentBaseContainerMenu impleme
 
     @Override
     public void onEnchantmentsChanged(Object2IntMap<EnchantmentInstanceMod> updatedList) {
-        if (player instanceof ServerPlayer) {
+        if (player instanceof ServerPlayer serverPlayer) {
             EnchantmentPacket p = new EnchantmentPacket(updatedList, false);
-            EnchantmentMachineMod.DISPATCHER.sendTo(p, (ServerPlayer) player);
+            serverPlayer.connection.send(p);
         }
     }
 

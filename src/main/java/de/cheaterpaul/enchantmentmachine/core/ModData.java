@@ -25,31 +25,31 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegisterEvent;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;
 
 public class ModData {
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, REFERENCE.MODID);
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, REFERENCE.MODID);
-    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, REFERENCE.MODID);
-    public static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(ForgeRegistries.MENU_TYPES, REFERENCE.MODID);
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, REFERENCE.MODID);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, REFERENCE.MODID);
+    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, REFERENCE.MODID);
+    public static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(Registries.MENU, REFERENCE.MODID);
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, REFERENCE.MODID);
 
-    public static final RegistryObject<CreativeModeTab> creative_tab = CREATIVE_MODE_TABS.register("main", ModData::createTab);
-    public static final RegistryObject<EnchanterBlock> enchanter_block = registerItemBlock("enchanter_block", () ->new EnchanterBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 1200.0F)), new Item.Properties());
-    public static final RegistryObject<DisenchanterBlock> disenchanter_block = registerItemBlock("disenchanter_block", () ->new DisenchanterBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 1200.0F)), new Item.Properties());
-    public static final RegistryObject<StorageBlock> storage_block = registerItemBlock("enchantment_block",() ->new StorageBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 1200.0F).noOcclusion()), new Item.Properties().stacksTo(1).rarity(Rarity.EPIC) );
-    public static final RegistryObject<BlockEntityType<EnchanterBlockEntity>> enchanter_tile = BLOCK_ENTITIES.register("enchanter_tile", () ->BlockEntityType.Builder.of(EnchanterBlockEntity::new, enchanter_block.get()).build(null));
-    public static final RegistryObject<BlockEntityType<DisenchanterBlockEntity>> disenchanter_tile = BLOCK_ENTITIES.register("disenchanter_tile", () ->BlockEntityType.Builder.of(DisenchanterBlockEntity::new, disenchanter_block.get()).build(null) );
-    public static final RegistryObject<BlockEntityType<StorageBlockEntity>> storage_tile = BLOCK_ENTITIES.register("storage_tile", () ->BlockEntityType.Builder.of(StorageBlockEntity::new, storage_block.get()).build(null));
-    public static final RegistryObject<MenuType<EnchanterContainerMenu>> enchanter_container = MENU_TYPES.register("enchanter_container", () -> new MenuType<>(EnchanterContainerMenu::new, FeatureFlags.DEFAULT_FLAGS));
-    public static final RegistryObject<MenuType<DisenchanterContainerMenu>> disenchanter_container = MENU_TYPES.register("disenchanter_container",() -> new MenuType<>(DisenchanterContainerMenu::new, FeatureFlags.DEFAULT_FLAGS));
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> creative_tab = CREATIVE_MODE_TABS.register("main", ModData::createTab);
+    public static final DeferredHolder<Block, EnchanterBlock> enchanter_block = registerItemBlock("enchanter_block", () ->new EnchanterBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 1200.0F)), new Item.Properties());
+    public static final DeferredHolder<Block, DisenchanterBlock> disenchanter_block = registerItemBlock("disenchanter_block", () ->new DisenchanterBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 1200.0F)), new Item.Properties());
+    public static final DeferredHolder<Block, StorageBlock> storage_block = registerItemBlock("enchantment_block",() ->new StorageBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 1200.0F).noOcclusion()), new Item.Properties().stacksTo(1).rarity(Rarity.EPIC) );
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EnchanterBlockEntity>> enchanter_tile = BLOCK_ENTITIES.register("enchanter_tile", () ->BlockEntityType.Builder.of(EnchanterBlockEntity::new, enchanter_block.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DisenchanterBlockEntity>> disenchanter_tile = BLOCK_ENTITIES.register("disenchanter_tile", () ->BlockEntityType.Builder.of(DisenchanterBlockEntity::new, disenchanter_block.get()).build(null) );
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StorageBlockEntity>> storage_tile = BLOCK_ENTITIES.register("storage_tile", () ->BlockEntityType.Builder.of(StorageBlockEntity::new, storage_block.get()).build(null));
+    public static final DeferredHolder<MenuType<?>, MenuType<EnchanterContainerMenu>> enchanter_container = MENU_TYPES.register("enchanter_container", () -> new MenuType<>(EnchanterContainerMenu::new, FeatureFlags.DEFAULT_FLAGS));
+    public static final DeferredHolder<MenuType<?>, MenuType<DisenchanterContainerMenu>> disenchanter_container = MENU_TYPES.register("disenchanter_container",() -> new MenuType<>(DisenchanterContainerMenu::new, FeatureFlags.DEFAULT_FLAGS));
 
 
     public static void register(IEventBus bus) {
@@ -58,12 +58,25 @@ public class ModData {
         BLOCK_ENTITIES.register(bus);
         MENU_TYPES.register(bus);
         CREATIVE_MODE_TABS.register(bus);
+        bus.addListener(ModData::registerCapability);
     }
 
-    static <T extends Block> RegistryObject<T> registerItemBlock(String name, Supplier<T> block, Item.Properties properties) {
-        RegistryObject<T> blockreg = BLOCKS.register(name, block);
+    static <T extends Block> DeferredHolder<Block, T> registerItemBlock(String name, Supplier<T> block, Item.Properties properties) {
+        DeferredHolder<Block, T> blockreg = BLOCKS.register(name, block);
         ITEMS.register(name, () -> new BlockItem(blockreg.get(), properties));
         return blockreg;
+    }
+
+    static void registerCapability(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, disenchanter_tile.get(), (block, side) -> {
+            if (side == null) {
+                return null;
+            }
+            return switch (side) {
+                case UP,DOWN, WEST -> new SidedInvWrapper(block, side);
+                default -> null;
+            };
+        });
     }
 
     private static CreativeModeTab createTab() {

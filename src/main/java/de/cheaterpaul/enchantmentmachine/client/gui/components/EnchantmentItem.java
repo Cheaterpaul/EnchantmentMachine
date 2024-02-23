@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -27,7 +28,7 @@ import java.util.function.BiFunction;
 import static net.minecraft.client.gui.screens.Screen.getTooltipFromItem;
 
 public class EnchantmentItem extends SimpleList.Entry<EnchantmentItem> {
-    public static final ResourceLocation WIDGETS_LOCATION = new ResourceLocation("textures/gui/widgets.png");
+    public static final WidgetSprites WIDGETS_LOCATION = new WidgetSprites(new ResourceLocation("widget/button"), new ResourceLocation("widget/button_highlighted"));
 
     private final ItemStack bookStack;
 
@@ -39,7 +40,7 @@ public class EnchantmentItem extends SimpleList.Entry<EnchantmentItem> {
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTick) {
-        guiGraphics.blitWithBorder(WIDGETS_LOCATION, pLeft, pTop, 0, 46 + 21, pWidth, pHeight +5, 200, 18, 2, 3, 2, 2);
+        guiGraphics.blitSprite(WIDGETS_LOCATION.get(true, false), pLeft, pTop, pWidth, pHeight);
 
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
@@ -50,7 +51,7 @@ public class EnchantmentItem extends SimpleList.Entry<EnchantmentItem> {
         guiGraphics.renderItem(bookStack, pLeft+5, pTop +1);
         modelViewStack.popPose();
         RenderSystem.applyModelViewMatrix();
-        guiGraphics.drawString(font, this.component, pLeft + 25, pTop + 5, -1);
+        guiGraphics.drawString(font, this.getNarration(), pLeft + 25, pTop + 5, -1);
 
         String count = String.valueOf(bookStack.getCount());
 

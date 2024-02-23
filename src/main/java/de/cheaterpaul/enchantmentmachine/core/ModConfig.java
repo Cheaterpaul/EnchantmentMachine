@@ -1,14 +1,15 @@
 package de.cheaterpaul.enchantmentmachine.core;
 
 
+import com.electronwill.nightconfig.core.ConfigSpec;
 import net.minecraft.ResourceLocationException;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Collections;
@@ -25,18 +26,18 @@ public class ModConfig {
      */
     public static final Server SERVER;
 
-    private static final ForgeConfigSpec serverSpec;
+    private static final ModConfigSpec serverSpec;
 
     static {
-        final Pair<Server, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Server::new);
+        final Pair<Server, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(Server::new);
         serverSpec = specPair.getRight();
         SERVER = specPair.getLeft();
     }
 
-    public static void init() {
+    public static void init(IEventBus modbus) {
         //This initiates the static initializers
-        ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.SERVER, serverSpec);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(SERVER::onConfigLoad);
+        ModLoadingContext.get().registerConfig(net.neoforged.fml.config.ModConfig.Type.SERVER, serverSpec);
+        modbus.addListener(SERVER::onConfigLoad);
     }
 
     /**
@@ -45,15 +46,15 @@ public class ModConfig {
      */
     public static class Server {
 
-        public final ForgeConfigSpec.BooleanValue allowDisenchantingItems;
-        public final ForgeConfigSpec.BooleanValue allowMixtureEnchantments;
-        public final ForgeConfigSpec.ConfigValue<List<? extends String>> maxEnchantmentLevels;
-        public final ForgeConfigSpec.BooleanValue allowDisenchantingCurses;
-        public final ForgeConfigSpec.ConfigValue<List<? extends String>> disallowedDisenchantingEnchantments;
+        public final ModConfigSpec.BooleanValue allowDisenchantingItems;
+        public final ModConfigSpec.BooleanValue allowMixtureEnchantments;
+        public final ModConfigSpec.ConfigValue<List<? extends String>> maxEnchantmentLevels;
+        public final ModConfigSpec.BooleanValue allowDisenchantingCurses;
+        public final ModConfigSpec.ConfigValue<List<? extends String>> disallowedDisenchantingEnchantments;
 
         private Set<Enchantment> disallowedDisenchantingEnchantmentsMap;
 
-        Server(ForgeConfigSpec.Builder builder) {
+        Server(ModConfigSpec.Builder builder) {
             builder.comment("Server configuration settings")
                     .push("server");
             allowDisenchantingItems = builder.comment("Whether items can be disenchanted. More vanilla like would be false").define("allowDisenchantingItems", true);
@@ -91,7 +92,7 @@ public class ModConfig {
 
         public void onConfigLoad(ModConfigEvent event) {
             if (serverSpec.isLoaded()) {
-                this.disallowedDisenchantingEnchantmentsMap = this.disallowedDisenchantingEnchantments.get().stream().map(ResourceLocation::new).map(ForgeRegistries.ENCHANTMENTS::getValue).collect(Collectors.toSet());
+                this.disallowedDisenchantingEnchantmentsMap = this.disallowedDisenchantingEnchantments.get().stream().map(ResourceLocation::new).map(BuiltInRegistries.ENCHANTMENT::get).collect(Collectors.toSet());
             }
         }
     }
