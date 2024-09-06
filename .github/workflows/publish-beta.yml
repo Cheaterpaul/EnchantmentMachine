@@ -34,4 +34,4 @@ jobs:
       - name: Publish
         uses: gradle/gradle-build-action@v2.4.2
         with:
-          arguments: build publish curseforge modrinth -PMAVEN_URL=${{ secrets.MAVEN_URL }} -PMAVEN_USER=${{ secrets.MAVEN_USER }} -PMAVEN_TOKEN=${{ secrets.MAVEN_TOKEN }} -PCURSEFORGE_API=${{ secrets.CURSEFORGE_API }} -PMODRINTH_API=${{ secrets.MODRINTH_API }} -Pbeta=${{ github.event.inputs.version }}
+          arguments: publishAll -PMAVEN_URL=${{ secrets.MAVEN_URL }} -PMAVEN_USER=${{ secrets.MAVEN_USER }} -PMAVEN_TOKEN=${{ secrets.MAVEN_TOKEN }} -PCURSEFORGE_API=${{ secrets.CURSEFORGE_API }} -PMODRINTH_API=${{ secrets.MODRINTH_API }} -Pbeta=${{ github.event.inputs.version }}
