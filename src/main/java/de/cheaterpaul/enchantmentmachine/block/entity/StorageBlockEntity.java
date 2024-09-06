@@ -8,10 +8,12 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMaps;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -24,9 +26,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import java.util.Optional;
-import java.util.Random;
-import java.util.WeakHashMap;
+import java.util.*;
 
 public class StorageBlockEntity extends BlockEntity implements IEnchantmentMachine {
 
@@ -171,25 +171,23 @@ public class StorageBlockEntity extends BlockEntity implements IEnchantmentMachi
     }
 
     @Override
-    public void load(@Nonnull CompoundTag nbt) {
-        super.load(nbt);
+    public void loadAdditional(@Nonnull CompoundTag nbt, HolderLookup.Provider pRegistries) {
+        super.loadAdditional(nbt, pRegistries);
         enchantmentMaps.clear();
+        HolderLookup.RegistryLookup<Enchantment> enchantments = pRegistries.lookupOrThrow(Registries.ENCHANTMENT);
         nbt.getList("enchantments", 10).forEach(i -> {
             CompoundTag entry = (CompoundTag) i;
             try {
-                ResourceLocation eID = new ResourceLocation(entry.getString("id"));
+                ResourceLocation eID = ResourceLocation.parse(entry.getString("id"));
                 int level = entry.getInt("level");
                 int count = entry.getInt("count");
-                Enchantment enchantment = BuiltInRegistries.ENCHANTMENT.get(eID);
-                if (enchantment == null) {
-                    LOGGER.info("Cannot find stored enchantment {} in registry", eID);
-                } else {
+                enchantments.get(ResourceKey.create(Registries.ENCHANTMENT, eID)).ifPresent(enchantment -> {
                     EnchantmentInstanceMod inst = new EnchantmentInstanceMod(enchantment, level);
                     if (enchantmentMaps.containsKey(inst)) {
                         LOGGER.warn("Multiple entries of the same enchantment instance in NBT");
                     }
                     enchantmentMaps.put(inst, count);
-                }
+                });
             } catch (NullPointerException | ResourceLocationException e) {
                 LOGGER.error("Illegal enchantment id in NBT {} {}", entry.getString("id"), e);
             }
@@ -197,22 +195,26 @@ public class StorageBlockEntity extends BlockEntity implements IEnchantmentMachi
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag compound) {
-        writeEnchantments(compound);
+    protected void saveAdditional(@NotNull CompoundTag compound, HolderLookup.Provider pRegistries) {
+        writeEnchantments(compound, pRegistries);
     }
 
-    public void writeEnchantments(CompoundTag compound) {
+    public void writeEnchantments(CompoundTag compound, HolderLookup.Provider pRegistries) {
         ListTag enchantments = new ListTag();
         enchantmentMaps.forEach((inst, count) -> {
             CompoundTag enchantment = new CompoundTag();
             //noinspection ConstantConditions
-            enchantment.putString("id", BuiltInRegistries.ENCHANTMENT.getKey(inst.getEnchantment()).toString());
-            enchantment.putInt("level", inst.getLevel());
+            enchantment.putString("id", inst.enchantment().getKey().location().toString());
+            enchantment.putInt("level", inst.level());
             enchantment.putInt("count", count);
             enchantments.add(enchantment);
         });
 
         compound.put("enchantments", enchantments);
+    }
+
+    public Map<EnchantmentInstanceMod, Integer> getAllEnchantments() {
+        return Collections.unmodifiableMap(enchantmentMaps);
     }
 
     @Override

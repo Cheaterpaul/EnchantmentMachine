@@ -3,19 +3,19 @@ package de.cheaterpaul.enchantmentmachine.core;
 
 import com.electronwill.nightconfig.core.ConfigSpec;
 import net.minecraft.ResourceLocationException;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ModConfig {
@@ -34,9 +34,9 @@ public class ModConfig {
         SERVER = specPair.getLeft();
     }
 
-    public static void init(IEventBus modbus) {
+    public static void init(IEventBus modbus, ModContainer container) {
         //This initiates the static initializers
-        ModLoadingContext.get().registerConfig(net.neoforged.fml.config.ModConfig.Type.SERVER, serverSpec);
+        container.registerConfig(net.neoforged.fml.config.ModConfig.Type.SERVER, serverSpec);
         modbus.addListener(SERVER::onConfigLoad);
     }
 
@@ -52,7 +52,8 @@ public class ModConfig {
         public final ModConfigSpec.BooleanValue allowDisenchantingCurses;
         public final ModConfigSpec.ConfigValue<List<? extends String>> disallowedDisenchantingEnchantments;
 
-        private Set<Enchantment> disallowedDisenchantingEnchantmentsMap;
+        private Set<ResourceLocation> disallowedDisenchantingEnchantmentsMap;
+        private Map<ResourceLocation, Integer> maxEnchantmentLevelsMap;
 
         Server(ModConfigSpec.Builder builder) {
             builder.comment("Server configuration settings")
@@ -63,7 +64,7 @@ public class ModConfig {
                 if (string instanceof String) {
                     try {
                         String[] value = ((String) string).split("\\|");
-                        new ResourceLocation(value[0]);
+                        ResourceLocation.parse(value[0]);
                         Integer.parseInt(value[1]);
                         return true;
                     } catch (ResourceLocationException | ArrayIndexOutOfBoundsException | NumberFormatException e) {
@@ -86,13 +87,22 @@ public class ModConfig {
             }
         }
 
-        public Set<Enchantment> getDisallowedDisenchantingEnchantments() {
+        public Set<ResourceLocation> getDisallowedDisenchantingEnchantments() {
             return Objects.requireNonNullElse(this.disallowedDisenchantingEnchantmentsMap, Collections.emptySet());
+        }
+
+        @Unmodifiable
+        public Map<ResourceLocation, Integer> getMaxEnchantmentLevels() {
+            return Objects.requireNonNullElse(this.maxEnchantmentLevelsMap, Collections.emptyMap());
         }
 
         public void onConfigLoad(ModConfigEvent event) {
             if (serverSpec.isLoaded()) {
-                this.disallowedDisenchantingEnchantmentsMap = this.disallowedDisenchantingEnchantments.get().stream().map(ResourceLocation::new).map(BuiltInRegistries.ENCHANTMENT::get).collect(Collectors.toSet());
+                this.disallowedDisenchantingEnchantmentsMap = this.disallowedDisenchantingEnchantments.get().stream().map(ResourceLocation::parse).collect(Collectors.toSet());
+                this.maxEnchantmentLevelsMap = this.maxEnchantmentLevels.get().stream().map(s -> {
+                    String[] maxLevels = s.split("\\|");
+                    return Pair.of(ResourceLocation.parse(maxLevels[0]), Integer.parseInt(maxLevels[1]));
+                }).collect(Collectors.toUnmodifiableMap(Pair::getLeft, Pair::getRight));
             }
         }
     }

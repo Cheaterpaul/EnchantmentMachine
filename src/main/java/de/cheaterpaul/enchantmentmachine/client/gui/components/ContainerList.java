@@ -24,7 +24,6 @@ import java.util.function.Consumer;
 public class ContainerList<T extends ContainerObjectSelectionList.Entry<T>> extends ContainerObjectSelectionList<T> {
     public ContainerList(Minecraft pMinecraft, int pWidth, int pHeight, int pY0, int pItemHeight) {
         super(pMinecraft, pWidth, pHeight, pY0, pItemHeight);
-        this.setRenderBackground(false);
     }
 
     @Override
@@ -104,7 +103,7 @@ public class ContainerList<T extends ContainerObjectSelectionList.Entry<T>> exte
     }
 
     public static class Entry<T extends ContainerObjectSelectionList.Entry<T>> extends ContainerObjectSelectionList.Entry<T> {
-        protected static final WidgetSprites WIDGETS_LOCATION = new WidgetSprites(new ResourceLocation("widget/button"),new ResourceLocation("widget/button_highlighted") );
+        protected static final WidgetSprites WIDGETS_LOCATION = new WidgetSprites(ResourceLocation.withDefaultNamespace("widget/button"), ResourceLocation.withDefaultNamespace("widget/button_highlighted") );
 
         protected final List<AbstractWidget> widgets = new ArrayList<>();
 

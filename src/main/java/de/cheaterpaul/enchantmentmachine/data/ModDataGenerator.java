@@ -55,8 +55,8 @@ public class ModDataGenerator {
         PackOutput packOutput = generator.getPackOutput();
         generator.addProvider(event.includeClient(), new BlockStateGenerator(packOutput, event.getExistingFileHelper()));
         generator.addProvider(event.includeClient(), new ItemModelGenerator(packOutput, event.getExistingFileHelper()));
-        generator.addProvider(event.includeServer(), new ModLootTableProvider(packOutput));
-        generator.addProvider(event.includeServer(), new RecipeGenerator(packOutput));
+        generator.addProvider(event.includeServer(), new ModLootTableProvider(packOutput, event.getLookupProvider()));
+        generator.addProvider(event.includeServer(), new RecipeGenerator(packOutput, event.getLookupProvider()));
         generator.addProvider(event.includeServer(), new ModBlockTagsProvider(packOutput, event.getLookupProvider(), event.getExistingFileHelper()));
     }
 
@@ -84,10 +84,10 @@ public class ModDataGenerator {
             ModelFile enchanter = new ModelFile.ExistingModelFile(blockTexture(ModData.enchanter_block.get()), models().existingFileHelper);
 
             ModelFile enchantment_block = models().withExistingParent(BuiltInRegistries.BLOCK.getKey(ModData.storage_block.get()).toString(), "block/enchanting_table")
-                    .texture("particle", new ResourceLocation(REFERENCE.MODID, "block/enchanting_table_bottom"))
-                    .texture("top", new ResourceLocation(REFERENCE.MODID, "block/enchanting_table_top"))
-                    .texture("side", new ResourceLocation(REFERENCE.MODID, "block/enchanting_table_side"))
-                    .texture("bottom", new ResourceLocation(REFERENCE.MODID, "block/enchanting_table_bottom")).renderType(new ResourceLocation("cutout"));
+                    .texture("particle", ResourceLocation.fromNamespaceAndPath(REFERENCE.MODID, "block/enchanting_table_bottom"))
+                    .texture("top", ResourceLocation.fromNamespaceAndPath(REFERENCE.MODID, "block/enchanting_table_top"))
+                    .texture("side", ResourceLocation.fromNamespaceAndPath(REFERENCE.MODID, "block/enchanting_table_side"))
+                    .texture("bottom", ResourceLocation.fromNamespaceAndPath(REFERENCE.MODID, "block/enchanting_table_bottom")).renderType(ResourceLocation.withDefaultNamespace("cutout"));
 
             ModelFile disenchanter = new ModelFile.ExistingModelFile(blockTexture(ModData.disenchanter_block.get()), models().existingFileHelper);
 
@@ -98,8 +98,8 @@ public class ModDataGenerator {
     }
 
     public static class RecipeGenerator extends RecipeProvider {
-        public RecipeGenerator(PackOutput packOutput) {
-            super(packOutput);
+        public RecipeGenerator(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> pRegistries) {
+            super(packOutput, pRegistries);
         }
 
         @Override
@@ -113,14 +113,14 @@ public class ModDataGenerator {
 
     private static class ModLootTableProvider extends LootTableProvider {
 
-        public ModLootTableProvider(PackOutput packOutput) {
-            super(packOutput, Collections.emptySet(), ImmutableList.of(new SubProviderEntry(Tables::new, LootContextParamSets.BLOCK)));
+        public ModLootTableProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> pRegistries) {
+            super(packOutput, Collections.emptySet(), ImmutableList.of(new SubProviderEntry(Tables::new, LootContextParamSets.BLOCK)), pRegistries);
         }
 
         private static class Tables extends BlockLootSubProvider {
 
-            protected Tables() {
-                super(Collections.emptySet(), FeatureFlags.REGISTRY.allFlags());
+            protected Tables(HolderLookup.Provider provider) {
+                super(Collections.emptySet(), FeatureFlags.REGISTRY.allFlags(), provider);
             }
 
             @Override

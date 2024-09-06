@@ -6,15 +6,18 @@ import de.cheaterpaul.enchantmentmachine.client.renderer.blockentity.Enchantment
 import de.cheaterpaul.enchantmentmachine.core.ModData;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class ModClientData {
 
-    public static void registerScreens() {
-        MenuScreens.register(ModData.enchanter_container.get(), EnchanterScreen::new);
-        MenuScreens.register(ModData.disenchanter_container.get(), DisenchanterScreen::new);
+    public static void registerTileEntityRenderer(EntityRenderersEvent.@NotNull RegisterRenderers event) {
+        event.registerBlockEntityRenderer(ModData.storage_tile.get(), EnchantmentBlockTileEntityRenderer::new);
     }
 
-    public static void registerTileEntityRenderer() {
-        BlockEntityRenderers.register(ModData.storage_tile.get(), EnchantmentBlockTileEntityRenderer::new);
+    public static void registerScreens(RegisterMenuScreensEvent event) {
+        event.register(ModData.enchanter_container.get(), EnchanterScreen::new);
+        event.register(ModData.disenchanter_container.get(), DisenchanterScreen::new);
     }
 }

@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
 
 public class DisenchanterScreen extends EnchantmentBaseScreen<DisenchanterContainerMenu> {
 
-    private static final ResourceLocation BACKGROUND = new ResourceLocation(REFERENCE.MODID, "textures/gui/container/disenchanter.png");
+    private static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(REFERENCE.MODID, "textures/gui/container/disenchanter.png");
 
     public DisenchanterScreen(DisenchanterContainerMenu container, Inventory playerInventory, Component name) {
         super(container, playerInventory, name);

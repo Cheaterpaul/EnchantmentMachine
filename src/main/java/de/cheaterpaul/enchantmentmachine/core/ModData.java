@@ -9,9 +9,12 @@ import de.cheaterpaul.enchantmentmachine.block.entity.EnchanterBlockEntity;
 import de.cheaterpaul.enchantmentmachine.block.entity.StorageBlockEntity;
 import de.cheaterpaul.enchantmentmachine.inventory.DisenchanterContainerMenu;
 import de.cheaterpaul.enchantmentmachine.inventory.EnchanterContainerMenu;
+import de.cheaterpaul.enchantmentmachine.util.EnchantmentStore;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.flag.FeatureFlag;
@@ -21,6 +24,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -40,6 +44,7 @@ public class ModData {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, REFERENCE.MODID);
     public static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(Registries.MENU, REFERENCE.MODID);
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, REFERENCE.MODID);
+    public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENTS = DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, REFERENCE.MODID);
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> creative_tab = CREATIVE_MODE_TABS.register("main", ModData::createTab);
     public static final DeferredHolder<Block, EnchanterBlock> enchanter_block = registerItemBlock("enchanter_block", () ->new EnchanterBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 1200.0F)), new Item.Properties());
@@ -50,6 +55,7 @@ public class ModData {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StorageBlockEntity>> storage_tile = BLOCK_ENTITIES.register("storage_tile", () ->BlockEntityType.Builder.of(StorageBlockEntity::new, storage_block.get()).build(null));
     public static final DeferredHolder<MenuType<?>, MenuType<EnchanterContainerMenu>> enchanter_container = MENU_TYPES.register("enchanter_container", () -> new MenuType<>(EnchanterContainerMenu::new, FeatureFlags.DEFAULT_FLAGS));
     public static final DeferredHolder<MenuType<?>, MenuType<DisenchanterContainerMenu>> disenchanter_container = MENU_TYPES.register("disenchanter_container",() -> new MenuType<>(DisenchanterContainerMenu::new, FeatureFlags.DEFAULT_FLAGS));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<EnchantmentStore>> CONTAINED_ENCHANTMENTS = DATA_COMPONENTS.register("contained_enchantments", () -> DataComponentType.<EnchantmentStore>builder().persistent(EnchantmentStore.CODEC).networkSynchronized(EnchantmentStore.STREAM_CODEC).cacheEncoding().build());
 
 
     public static void register(IEventBus bus) {
@@ -58,6 +64,7 @@ public class ModData {
         BLOCK_ENTITIES.register(bus);
         MENU_TYPES.register(bus);
         CREATIVE_MODE_TABS.register(bus);
+        DATA_COMPONENTS.register(bus);
         bus.addListener(ModData::registerCapability);
     }
 

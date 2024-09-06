@@ -10,6 +10,7 @@ import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
@@ -51,13 +52,11 @@ public class DisenchanterBlock extends EnchantmentBaseBlock {
         return ModData.disenchanter_tile.get().create(pos, state);
     }
 
-    @SuppressWarnings("deprecation")
-    @Nonnull
     @Override
-    public InteractionResult use(@Nonnull BlockState p_225533_1_, Level p_225533_2_, @Nonnull BlockPos p_225533_3_, @Nonnull Player p_225533_4_, @Nonnull InteractionHand p_225533_5_, @Nonnull BlockHitResult p_225533_6_) {
-        BlockEntity tile = p_225533_2_.getBlockEntity(p_225533_3_);
+    protected InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHitResult) {
+        BlockEntity tile = pLevel.getBlockEntity(pPos);
         if (tile instanceof DisenchanterBlockEntity) {
-            p_225533_4_.openMenu(((DisenchanterBlockEntity) tile));
+            pPlayer.openMenu(((DisenchanterBlockEntity) tile));
             return InteractionResult.CONSUME;
         }
         return InteractionResult.SUCCESS;
@@ -76,8 +75,8 @@ public class DisenchanterBlock extends EnchantmentBaseBlock {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack itemStack, @Nullable BlockGetter p_49817_, @NotNull List<Component> tooltips, @NotNull TooltipFlag flag) {
-        super.appendHoverText(itemStack, p_49817_, tooltips, flag);
+    public void appendHoverText(@NotNull ItemStack itemStack, @Nullable Item.TooltipContext context, @NotNull List<Component> tooltips, @NotNull TooltipFlag flag) {
+        super.appendHoverText(itemStack, context, tooltips, flag);
         tooltips.add(Component.translatable("text.enchantmentmachine.next_to_storage_block", ModData.storage_block.get().getName()).withStyle(ChatFormatting.GRAY));
 
     }

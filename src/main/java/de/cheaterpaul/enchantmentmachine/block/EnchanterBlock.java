@@ -13,6 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
@@ -58,14 +59,12 @@ public class EnchanterBlock extends EnchantmentBaseBlock {
         return ModData.enchanter_tile.get().create(pos, state);
     }
 
-    @SuppressWarnings("deprecation")
-    @Nonnull
     @Override
-    public InteractionResult use(@Nonnull BlockState blockState, Level world, @Nonnull BlockPos blockPos, @Nonnull Player playerEntity, @Nonnull InteractionHand hand, @Nonnull BlockHitResult rayTraceResult) {
-        BlockEntity tile = world.getBlockEntity(blockPos);
+    protected InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHitResult) {
+        BlockEntity tile = pLevel.getBlockEntity(pPos);
         if (tile instanceof EnchanterBlockEntity) {
-            playerEntity.openMenu(((EnchanterBlockEntity) tile));
-            if (!world.isClientSide() && playerEntity instanceof ServerPlayer serverPlayer) {
+            pPlayer.openMenu(((EnchanterBlockEntity) tile));
+            if (!pLevel.isClientSide() && pPlayer instanceof ServerPlayer serverPlayer) {
                 Optional<StorageBlockEntity> s = ((EnchanterBlockEntity) tile).getConnectedEnchantmentTE();
                 s.ifPresent(enchantmentTileEntity -> serverPlayer.connection.send(new EnchantmentPacket(enchantmentTileEntity.getEnchantments(), false)));
             }
@@ -75,8 +74,8 @@ public class EnchanterBlock extends EnchantmentBaseBlock {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack itemStack, @Nullable BlockGetter p_49817_, @NotNull List<Component> tooltips, @NotNull TooltipFlag flag) {
-        super.appendHoverText(itemStack, p_49817_, tooltips, flag);
+    public void appendHoverText(@NotNull ItemStack itemStack, @Nullable Item.TooltipContext context, @NotNull List<Component> tooltips, @NotNull TooltipFlag flag) {
+        super.appendHoverText(itemStack, context, tooltips, flag);
         tooltips.add(Component.translatable("text.enchantmentmachine.next_to_storage_block", ModData.storage_block.get().getName()).withStyle(ChatFormatting.GRAY));
 
     }

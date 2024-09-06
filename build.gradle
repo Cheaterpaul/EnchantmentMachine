@@ -2,7 +2,7 @@ plugins {
     id "me.modmuss50.mod-publish-plugin" version "0.4.2"
     id 'idea'
     id 'eclipse'
-    id 'net.neoforged.gradle.userdev' version '7.0.+'
+    id 'net.neoforged.gradle.userdev' version '7.0.145'
 }
 
 ext.mod_version="Test"
@@ -21,7 +21,7 @@ apply from: 'gradle/artifacts.gradle'
 apply from: 'gradle/crowdin.gradle'
 apply from: 'gradle/deploy.gradle'
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -82,7 +82,7 @@ tasks.withType(ProcessResources).configureEach {
     ]
     inputs.properties replaceProperties
 
-    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+    filesMatching(['META-INF/neoforge.mods.toml', 'pack.mcmeta']) {
         expand replaceProperties + [project: project]
     }
 }

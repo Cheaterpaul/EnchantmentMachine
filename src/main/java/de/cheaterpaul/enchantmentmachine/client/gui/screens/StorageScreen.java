@@ -1,38 +1,26 @@
 package de.cheaterpaul.enchantmentmachine.client.gui.screens;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.cheaterpaul.enchantmentmachine.client.gui.components.EnchantmentItem;
 import de.cheaterpaul.enchantmentmachine.client.gui.components.SimpleList;
 import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstanceMod;
-import de.cheaterpaul.enchantmentmachine.util.MultilineTooltip;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
 
 public class StorageScreen extends Screen {
 
-    private static final ResourceLocation BACKGROUND = new ResourceLocation(REFERENCE.MODID, "textures/gui/container/enchantment.png");
+    private static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(REFERENCE.MODID, "textures/gui/container/enchantment.png");
     private final int xSize = 197;
     private final int ySize = 222;
     private Object2IntMap<EnchantmentInstanceMod> enchantments = new Object2IntArrayMap<>();

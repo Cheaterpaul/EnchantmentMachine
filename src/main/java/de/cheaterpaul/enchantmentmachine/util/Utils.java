@@ -1,8 +1,12 @@
 package de.cheaterpaul.enchantmentmachine.util;
 
 import de.cheaterpaul.enchantmentmachine.core.ModConfig;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
@@ -19,37 +23,38 @@ public class Utils {
     }
 
     /**
-     * Tries to combine the given enchantment instance with an existing list of enchantments.
-     * Returns the resulting enchantment instance (can be the same as passed or a combined (higher level) one) as well as the required XP levels
+     * Tries to combine the given enchantment instance into the mutable enchantment instance.
+     * Returns the enchantment cost.
      *
      * @param enchInst             toApply
-     * @param existingEnchantments exiting
+     * @param existingEnchantments mutable copy of the exiting enchantments
      * @param reducedPrice         use reduced price (vanilla does this when enchantment comes from a book and not when combining items)
-     * @return Null if incompatible
+     * @return -1 if incompatible
      */
-    @Nullable
-    public static Pair<EnchantmentInstanceMod, Integer> tryApplyEnchantment(EnchantmentInstanceMod enchInst, Map<Enchantment, Integer> existingEnchantments, boolean reducedPrice) {
-        for (Map.Entry<Enchantment, Integer> entry : existingEnchantments.entrySet()) {
-            Enchantment enchantment = entry.getKey();
-            if (enchantment == enchInst.getEnchantment()) { //Combine enchantments if it is already present. Choose highest level or level +1 if both have the same.
-                int newLevel = Math.min(enchantment.getMaxLevel(), enchInst.getLevel() == entry.getValue() ? enchInst.getLevel() + 1 : Math.max(enchInst.getLevel(), entry.getValue()));
-                enchInst = new EnchantmentInstanceMod(enchantment, newLevel); //Override enchInst in loop.
-            } else if (!(enchInst.getEnchantment().isCompatibleWith(enchantment) || ModConfig.SERVER.allowMixtureEnchantments.get())) {
-                return null;
+    public static int tryApplyEnchantment(EnchantmentInstanceMod enchInst, ItemEnchantments.Mutable existingEnchantments, boolean reducedPrice) {
+        if(!ModConfig.SERVER.allowMixtureEnchantments.get() && !existingEnchantments.keySet().isEmpty() && !EnchantmentHelper.isEnchantmentCompatible(existingEnchantments.keySet(), enchInst.enchantment())) {
+            return -1;
+        }
+        int level = existingEnchantments.getLevel(enchInst.enchantment());
+        if (level > 0) {
+            if (level == enchInst.level()) {
+                enchInst = new EnchantmentInstanceMod(enchInst.enchantment(), level + 1);
+            } else if (level > enchInst.level()) {
+                return -1;
+            } else {
+                enchInst = new EnchantmentInstanceMod(enchInst.enchantment(), enchInst.level());
             }
         }
-        if (!enchInst.canEnchant()) return null;
 
-        int baseCost = switch (enchInst.getEnchantment().getRarity()) {
-            case COMMON -> 1;
-            case UNCOMMON -> 2;
-            case RARE -> 4;
-            case VERY_RARE -> 8;
-        };
+        if (!enchInst.canEnchant()) return -1;
+
+        var cost = enchInst.getEnchantment().definition().maxCost().calculate(enchInst.level());
+
 
         if (reducedPrice) {
-            baseCost = Math.max(1, baseCost / 2);
+            cost = Math.max(1, cost / 2);
         }
-        return Pair.of(enchInst, baseCost * enchInst.getLevel());
+        existingEnchantments.upgrade(enchInst.enchantment(), enchInst.level());
+        return cost;
     }
 }

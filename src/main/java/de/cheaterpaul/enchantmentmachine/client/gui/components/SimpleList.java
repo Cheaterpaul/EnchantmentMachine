@@ -21,13 +21,17 @@ public class SimpleList<T extends SimpleList.Entry<T>> extends ObjectSelectionLi
 
     public SimpleList(Minecraft pMinecraft, int pWidth, int pHeight, int pY0, int pItemHeight) {
         super(pMinecraft, pWidth, pHeight, pY0, pItemHeight);
-        this.setRenderBackground(false);
+    }
+
+    @Override
+    protected void renderListBackground(GuiGraphics pGuiGraphics) {
+        pGuiGraphics.fillGradient(this.getX(), this.getY(), this.getRight() - 6, this.getBottom() + 4, -16777216, 0);
+        pGuiGraphics.fillGradient(this.getX(), this.getY() - 4, this.getRight() - 6, this.getBottom(), 0, -16777216);
     }
 
     @Override
     protected void renderDecorations(@NotNull GuiGraphics graphics, int pMouseX, int pMouseY) {
-        graphics.fillGradient(this.getX(), this.getY(), this.getRight() - 6, this.getBottom() + 4, -16777216, 0);
-        graphics.fillGradient(this.getX(), this.getY() - 4, this.getRight() - 6, this.getBottom(), 0, -16777216);
+
     }
 
     @Override
@@ -127,7 +131,7 @@ public class SimpleList<T extends SimpleList.Entry<T>> extends ObjectSelectionLi
     }
 
     public static class Entry<T extends Entry<T>> extends ObjectSelectionList.Entry<T> {
-        protected static final WidgetSprites SPRITES = new WidgetSprites(new ResourceLocation("widget/button"), new ResourceLocation("widget/button_disabled"), new ResourceLocation("widget/button_highlighted"));
+        protected static final WidgetSprites SPRITES = new WidgetSprites(ResourceLocation.withDefaultNamespace("widget/button"), ResourceLocation.withDefaultNamespace("widget/button_disabled"), ResourceLocation.withDefaultNamespace("widget/button_highlighted"));
 
         private final Component component;
         private final Runnable onClick;

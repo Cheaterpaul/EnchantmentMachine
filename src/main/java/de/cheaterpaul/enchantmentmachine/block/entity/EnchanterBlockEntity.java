@@ -5,7 +5,11 @@ import de.cheaterpaul.enchantmentmachine.inventory.EnchanterContainerMenu;
 import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstanceMod;
 import de.cheaterpaul.enchantmentmachine.util.Utils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
@@ -16,17 +20,21 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.EnchantedBookItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +44,7 @@ public class EnchanterBlockEntity extends EnchantmentBaseBlockEntity {
 
     private static final Component name = Utils.genTranslation("tile", "enchanter.name");
 
-    private final NonNullList<ItemStack> inventory = NonNullList.withSize(1, ItemStack.EMPTY);
+    private NonNullList<ItemStack> inventory = NonNullList.withSize(1, ItemStack.EMPTY);
 
 
     public EnchanterBlockEntity(BlockPos pos, BlockState state) {
@@ -47,6 +55,16 @@ public class EnchanterBlockEntity extends EnchantmentBaseBlockEntity {
     @Override
     protected Component getDefaultName() {
         return name;
+    }
+
+    @Override
+    protected @NotNull NonNullList<ItemStack> getItems() {
+        return inventory;
+    }
+
+    @Override
+    protected void setItems(@NotNull NonNullList<ItemStack> nonNullList) {
+        this.inventory = nonNullList;
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -112,29 +130,25 @@ public class EnchanterBlockEntity extends EnchantmentBaseBlockEntity {
         if (getConnectedEnchantmentTE().isEmpty()) return false;
         ItemStack stack = inventory.get(0);
         if (stack.isEmpty()) return false;
-        Map<Enchantment, Integer> enchantmentMap = EnchantmentHelper.getEnchantments(stack);
+        stack = stack.getItem().applyEnchantments(stack, Collections.emptyList());
+        var type = EnchantmentHelper.getComponentType(stack);
+        var mutable = new ItemEnchantments.Mutable(EnchantmentHelper.getEnchantmentsForCrafting(stack));
         StorageBlockEntity te = getConnectedEnchantmentTE().get();
-
-        boolean book = stack.getItem() == Items.BOOK || stack.getItem() == Items.ENCHANTED_BOOK;
-        if (book) {
-            stack = new ItemStack(Items.ENCHANTED_BOOK);
-        }
         int requiredLevels = 0;
         for (EnchantmentInstanceMod enchInst : enchantments) {
             if (!te.hasEnchantment(enchInst)) {
                 LOGGER.warn("Enchantment {} requested but not available", enchInst);
                 return false;
             }
-            if (!(enchInst.getEnchantment().canEnchant(stack) || book)) {
+            if (!(type == DataComponents.STORED_ENCHANTMENTS || stack.is(enchInst.getEnchantment().definition().supportedItems()))) {
                 LOGGER.warn("Enchantment {} cannot be applied to {}", enchInst.getEnchantment(), stack);
                 return false;
             }
-            Pair<EnchantmentInstanceMod, Integer> result = Utils.tryApplyEnchantment(enchInst, enchantmentMap, true);
-            if (result == null) {
+            int levelCost = Utils.tryApplyEnchantment(enchInst, mutable, true);
+            if (levelCost == -1) {
                 return false;
             }
-            requiredLevels += result.getRight();
-            enchantmentMap.put(result.getLeft().getEnchantment(), result.getLeft().getLevel()); //Override previous entry for this enchantment
+            requiredLevels += levelCost;
         }
         if (!user.getAbilities().instabuild) {
             if (user.experienceLevel < requiredLevels) {
@@ -143,28 +157,21 @@ public class EnchanterBlockEntity extends EnchantmentBaseBlockEntity {
             }
             user.giveExperienceLevels(-requiredLevels);
         }
-        //Everything good
-        if (book) {
-            ItemStack finalStack = stack;
-            enchantmentMap.forEach((ench, lvl) -> EnchantedBookItem.addEnchantment(finalStack, new EnchantmentInstance(ench, lvl)));
-            this.inventory.set(0, stack);
-        } else {
-            EnchantmentHelper.setEnchantments(enchantmentMap, stack);
-        }
+        stack.set(type, mutable.toImmutable());
         enchantments.forEach(te::consumeEnchantment);
+        inventory.set(0, stack);
         return true;
     }
 
-    @Nonnull
     @Override
-    public CompoundTag getUpdateTag() {
+    public CompoundTag getUpdateTag(HolderLookup.Provider pRegistries) {
         CompoundTag tag = new CompoundTag();
-        saveAdditional(tag);
+        saveAdditional(tag, pRegistries);
         return tag;
     }
 
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-        this.load(pkt.getTag());
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookupProvider) {
+        super.onDataPacket(net, pkt, lookupProvider);
     }
 }

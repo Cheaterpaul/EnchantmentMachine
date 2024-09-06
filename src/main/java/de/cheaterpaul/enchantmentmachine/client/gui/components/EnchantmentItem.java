@@ -2,50 +2,48 @@ package de.cheaterpaul.enchantmentmachine.client.gui.components;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import de.cheaterpaul.enchantmentmachine.client.gui.screens.StorageScreen;
 import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstanceMod;
-import de.cheaterpaul.enchantmentmachine.util.MultilineTooltip;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
-import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
-import java.util.function.BiFunction;
 
 import static net.minecraft.client.gui.screens.Screen.getTooltipFromItem;
 
 public class EnchantmentItem extends SimpleList.Entry<EnchantmentItem> {
-    public static final WidgetSprites WIDGETS_LOCATION = new WidgetSprites(new ResourceLocation("widget/button"), new ResourceLocation("widget/button_highlighted"));
+    public static final WidgetSprites WIDGETS_LOCATION = new WidgetSprites(ResourceLocation.withDefaultNamespace("widget/button"), ResourceLocation.withDefaultNamespace("widget/button_highlighted"));
 
     private final ItemStack bookStack;
 
     public EnchantmentItem(Pair<EnchantmentInstanceMod, Integer> item) {
         super(makeWhite(item.getKey().getEnchantmentName()), () -> {});
         this.bookStack = new ItemStack(Items.ENCHANTED_BOOK, item.getRight());
-        EnchantmentHelper.setEnchantments(Collections.singletonMap(item.getKey().getEnchantment(), item.getKey().getLevel()), bookStack);
+        ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
+        mutable.set(item.getKey().enchantment(), item.getKey().level());
+        EnchantmentHelper.setEnchantments(bookStack, mutable.toImmutable());
     }
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTick) {
-        guiGraphics.blitSprite(WIDGETS_LOCATION.get(true, false), pLeft, pTop, pWidth, pHeight);
+        guiGraphics.blitSprite(WIDGETS_LOCATION.get(true, false), pLeft, pTop, pWidth, pHeight +4 );
 
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
 
-        PoseStack modelViewStack = RenderSystem.getModelViewStack();
+        PoseStack modelViewStack = guiGraphics.pose();
         modelViewStack.pushPose();
         RenderSystem.applyModelViewMatrix();
         guiGraphics.renderItem(bookStack, pLeft+5, pTop +1);

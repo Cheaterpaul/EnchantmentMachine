@@ -2,8 +2,11 @@ package de.cheaterpaul.enchantmentmachine.block.entity;
 
 import de.cheaterpaul.enchantmentmachine.core.ModData;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -70,16 +73,16 @@ public abstract class EnchantmentBaseBlockEntity extends BaseContainerBlockEntit
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag compound) {
-        super.saveAdditional(compound);
+    protected void saveAdditional(@NotNull CompoundTag compound, HolderLookup.Provider provider) {
+        super.saveAdditional(compound, provider);
         if (this.storageBlockPos != null) {
             compound.putIntArray("storageblock", new int[]{this.storageBlockPos.getX(), this.storageBlockPos.getY(), this.storageBlockPos.getZ()});
         }
     }
 
     @Override
-    public void load(@Nonnull CompoundTag nbt) {
-        super.load(nbt);
+    public void loadAdditional(@Nonnull CompoundTag nbt, HolderLookup.Provider provider) {
+        super.loadAdditional(nbt, provider);
         if (nbt.contains("storageblock")) {
             int[] pos = nbt.getIntArray("storageblock");
             this.storageBlockPos = new BlockPos(pos[0], pos[1], pos[2]);

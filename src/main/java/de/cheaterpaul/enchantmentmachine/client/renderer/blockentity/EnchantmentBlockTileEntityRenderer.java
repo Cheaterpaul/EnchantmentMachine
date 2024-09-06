@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 
 public class EnchantmentBlockTileEntityRenderer implements BlockEntityRenderer<StorageBlockEntity> {
 
-    public static final Material TEXTURE_BOOK = new Material(InventoryMenu.BLOCK_ATLAS, new ResourceLocation("entity/enchanting_table_book"));
+    public static final Material TEXTURE_BOOK = new Material(InventoryMenu.BLOCK_ATLAS, ResourceLocation.withDefaultNamespace("entity/enchanting_table_book"));
     private final BookModel modelBook = new BookModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.BOOK));
 
     public EnchantmentBlockTileEntityRenderer(BlockEntityRendererProvider.Context context) {
@@ -55,7 +55,7 @@ public class EnchantmentBlockTileEntityRenderer implements BlockEntityRenderer<S
         float f6 = Mth.lerp(partialTicks, tileEntityIn.pageTurningSpeed, tileEntityIn.nextPageTurningSpeed);
         this.modelBook.setupAnim(f, Mth.clamp(f4, 0.0F, 1.0F), Mth.clamp(f5, 0.0F, 1.0F), f6);
         VertexConsumer vertexConsumer = TEXTURE_BOOK.buffer(bufferIn, RenderType::entitySolid);
-        this.modelBook.render(matrixStackIn, vertexConsumer, combinedLightIn, combinedOverlayIn, 1.0F, 1.0F, 1.0F, 1.0F);
+        this.modelBook.render(matrixStackIn, vertexConsumer, combinedLightIn, combinedOverlayIn, -1);
         matrixStackIn.popPose();
     }
 }

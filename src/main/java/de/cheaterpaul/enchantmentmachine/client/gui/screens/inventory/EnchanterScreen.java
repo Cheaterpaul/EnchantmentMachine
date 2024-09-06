@@ -1,16 +1,12 @@
 package de.cheaterpaul.enchantmentmachine.client.gui.screens.inventory;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import de.cheaterpaul.enchantmentmachine.EnchantmentMachineMod;
 import de.cheaterpaul.enchantmentmachine.client.gui.components.ContainerList;
 import de.cheaterpaul.enchantmentmachine.client.gui.components.EnchantmentItem;
-import de.cheaterpaul.enchantmentmachine.client.gui.components.SimpleList;
 import de.cheaterpaul.enchantmentmachine.core.ModConfig;
 import de.cheaterpaul.enchantmentmachine.inventory.EnchanterContainerMenu;
 import de.cheaterpaul.enchantmentmachine.network.message.EnchantingPacket;
 import de.cheaterpaul.enchantmentmachine.util.EnchantmentInstanceMod;
-import de.cheaterpaul.enchantmentmachine.util.MultilineTooltip;
 import de.cheaterpaul.enchantmentmachine.util.REFERENCE;
 import de.cheaterpaul.enchantmentmachine.util.Utils;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
@@ -19,6 +15,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -26,6 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,11 +34,11 @@ import java.util.stream.Collectors;
 
 public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMenu> {
 
-    private static final ResourceLocation BACKGROUND = new ResourceLocation(REFERENCE.MODID, "textures/gui/container/enchanter.png");
+    private static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(REFERENCE.MODID, "textures/gui/container/enchanter.png");
 
     private final Map<EnchantmentInstanceMod, Pair<EnchantmentInstanceMod, Integer>> enchantments = new HashMap<>();
     private ContainerList<EnchantmentItem> list;
-    private Map<Enchantment, Integer> itemEnchantments = new HashMap<>();
+    private ItemEnchantments itemEnchantments = ItemEnchantments.EMPTY;
 
 
     public EnchanterScreen(EnchanterContainerMenu container, Inventory playerInventory, Component name) {
@@ -92,7 +91,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
 
     public void refreshActiveEnchantments() {
         ItemStack stack = this.menu.getSlot(0).getItem();
-        this.itemEnchantments = EnchantmentHelper.getEnchantments(stack);
+        this.itemEnchantments = EnchantmentHelper.getEnchantmentsForCrafting(stack);
 
         List<Pair<EnchantmentInstanceMod, Integer>> availableEnchantments;
         if (stack.isEmpty()) {
@@ -101,11 +100,12 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
             availableEnchantments = this.enchantments.values().stream().filter(pair -> stack.getItem() == Items.BOOK || stack.getItem() == Items.ENCHANTED_BOOK || pair.getKey().getEnchantment().canEnchant(stack)).sorted(Comparator.comparing(o -> o.getKey().getEnchantmentName().getString())).collect(Collectors.toList());
         }
         this.list.replace(availableEnchantments.stream().map(entry -> new EnchantmentItem(Pair.of(entry.getKey(), entry.getValue()))).collect(Collectors.toList()));
+        this.list.clampScrollAmount();
     }
 
     private void apply(EnchantmentInstanceMod instance) {
         if (this.menu.getSlot(0).hasItem()) {
-            if (ModConfig.SERVER.allowMixtureEnchantments.get() || EnchantmentHelper.isEnchantmentCompatible(itemEnchantments.keySet(), instance.getEnchantment()) || hasEqualEnchantments(itemEnchantments, instance)) {
+            if (Utils.tryApplyEnchantment(instance, new ItemEnchantments.Mutable(this.itemEnchantments), true) > -1) {
                 this.minecraft.player.connection.send(new EnchantingPacket(Collections.singletonList(instance)));
                 Pair<EnchantmentInstanceMod, Integer> value = this.enchantments.get(instance);
                 if (value.getValue() > 1) {
@@ -118,10 +118,10 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
         refreshActiveEnchantments();
     }
 
-    private boolean hasEqualEnchantments(Map<Enchantment, Integer> itemEnchantments, EnchantmentInstanceMod enchantment) {
-        for (Map.Entry<Enchantment, Integer> entry : itemEnchantments.entrySet()) {
-            if (entry.getKey() == enchantment.getEnchantment()) {
-                if (entry.getKey().getMaxLevel() != entry.getValue() && entry.getValue() <= enchantment.getLevel()) {
+    private boolean hasEqualEnchantments(ItemEnchantments itemEnchantments, EnchantmentInstanceMod enchantment) {
+        for (Object2IntMap.Entry<Holder<Enchantment>> entry : itemEnchantments.entrySet()) {
+            if (entry.getKey().value() == enchantment.getEnchantment()) {
+                if (entry.getKey().value().getMaxLevel() != entry.getIntValue() && entry.getIntValue() <= enchantment.level()) {
                     return true;
                 }
             }
@@ -131,18 +131,21 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
 
     private class EnchantmentItem extends ContainerList.Entry<EnchantmentItem> {
 
-        private static final WidgetSprites ENCHANT_BUTTON = new WidgetSprites(new ResourceLocation( "recipe_book/page_forward"), new ResourceLocation( "recipe_book/page_forward_highlighted"));
+        private static final WidgetSprites ENCHANT_BUTTON = new WidgetSprites(ResourceLocation.withDefaultNamespace( "recipe_book/page_forward"), ResourceLocation.withDefaultNamespace( "recipe_book/page_forward_highlighted"));
         private final ItemStack bookStack;
         private final Component name;
         private final Button button;
         private final AbstractWidget text;
         private final int requiredLevels;
         private final Pair<EnchantmentInstanceMod, Integer> item;
+        private final boolean isCompatible;
 
         public EnchantmentItem(Pair<EnchantmentInstanceMod, Integer> item) {
             this.bookStack = new ItemStack(Items.ENCHANTED_BOOK, item.getRight());
             this.item = item;
-            EnchantmentHelper.setEnchantments(Collections.singletonMap(item.getKey().getEnchantment(), item.getKey().getLevel()), bookStack);
+            ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
+            mutable.set(item.getKey().enchantment(), item.getKey().level());
+            EnchantmentHelper.setEnchantments(bookStack, mutable.toImmutable());
             this.name = item.getKey().getEnchantmentName();
             Style style = this.name.getStyle();
             //noinspection ConstantConditions
@@ -151,8 +154,9 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
             }
             this.widgets.add(this.button = new ImageButton(0, 2, 11, 17, ENCHANT_BUTTON, (button) -> EnchanterScreen.this.apply(item.getKey()), Component.empty()));
             this.requiredLevels = calculateRequiredLevels();
+            this.isCompatible = isCompatible();
             MutableComponent text;
-            if (isCompatible()) {
+            if (this.isCompatible) {
                 if (hasSufficientLevels()) {
                     text = Component.translatable("text.enchantmentmachine.enchant_for_level", EnchantmentItem.this.requiredLevels).withStyle(ChatFormatting.GREEN);
                 } else {
@@ -190,20 +194,11 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
         }
 
         private boolean isCompatible() {
-            EnchantmentInstanceMod s = this.item.getKey();
-            for (Map.Entry<Enchantment, Integer> entry : EnchanterScreen.this.itemEnchantments.entrySet()) {
-                Enchantment enchantment = entry.getKey();
-                if (enchantment == s.getEnchantment()) { //Combine enchantments if it is already present. Choose highest level or level +1 if both have the same.
-                    int newLevel = Math.min(enchantment.getMaxLevel(), s.getLevel() == entry.getValue() ? s.getLevel() + 1 : Math.max(s.getLevel(), entry.getValue()));
-                    s = new EnchantmentInstanceMod(enchantment, newLevel); //Override enchInst in loop.
-                }
-            }
-            return s.canEnchant() && ((ModConfig.SERVER.allowMixtureEnchantments.get() || EnchantmentHelper.isEnchantmentCompatible(EnchanterScreen.this.itemEnchantments.keySet(), this.item.getKey().getEnchantment())) || hasEqualEnchantments(EnchanterScreen.this.itemEnchantments, this.item.getKey()));
+            return Utils.tryApplyEnchantment(this.item.getKey(), new ItemEnchantments.Mutable(EnchanterScreen.this.itemEnchantments), false) != -1;
         }
 
         @Override
         public void render(@NotNull GuiGraphics guiGraphics, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTick) {
-            this.button.visible = EnchanterScreen.this.menu.getSlot(0).hasItem();
             guiGraphics.blitSprite(WIDGETS_LOCATION.get(true, false), pLeft, pTop, pWidth, pHeight + 5);
             guiGraphics.renderItem(bookStack, pLeft+ 5, pTop+1);
             guiGraphics.drawString(EnchanterScreen.this.font, name, pLeft + 25, pTop +5,-1);
@@ -213,7 +208,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
             this.text.setPosition(pLeft + 25,pTop + 5);
 
             this.button.visible = EnchanterScreen.this.menu.getSlot(0).hasItem();
-            if (isCompatible()) {
+            if (this.isCompatible) {
                 if (hasSufficientLevels()) {
                     RenderSystem.setShaderColor(0.2f, 1f, 0.4f, 1);
                 } else {
@@ -236,8 +231,7 @@ public class EnchanterScreen extends EnchantmentBaseScreen<EnchanterContainerMen
         }
 
         private int calculateRequiredLevels() {
-            Pair<EnchantmentInstanceMod, Integer> result = Utils.tryApplyEnchantment(this.item.getKey(), EnchanterScreen.this.itemEnchantments, true);
-            return result == null ? -1 : result.getRight();
+            return Utils.tryApplyEnchantment(this.item.getKey(), new ItemEnchantments.Mutable(EnchanterScreen.this.itemEnchantments), true);
         }
 
         private boolean hasSufficientLevels() {
