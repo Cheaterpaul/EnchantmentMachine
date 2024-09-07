@@ -9,6 +9,7 @@ tasks.register('checkIfPublicVersion') {
 }
 
 tasks.register('publishAll') {
+    dependsOn('build')
     dependsOn('checkIfPublicVersion')
     dependsOn('publish')
     dependsOn('publishMods')
@@ -39,14 +40,6 @@ publishMods {
         projectSlug = "enchantment-machine"
     }
 }
-
-tasks.register('publishAll') {
-    dependsOn('build')
-    dependsOn('checkIfPublicVersion')
-    dependsOn('publish')
-    dependsOn('publishMods')
-}
-
 
 tasks.withType(GenerateModuleMetadata).configureEach {
     enabled = false
