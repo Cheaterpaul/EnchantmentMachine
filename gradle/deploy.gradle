@@ -24,7 +24,7 @@ publishMods {
     file = jar.archiveFile
     modLoaders.add("neoforge")
     version = "${project.minecraft_version}-${project.mod_version}"
-    displayName = "Wallets-${project.minecraft_version}-${project.mod_version}"
+    displayName = "EnchantmentMachine-${project.minecraft_version}-${project.mod_version}"
     dryRun = !(project.hasProperty("MODRINTH_API") && project.hasProperty("CURSEFORGE_API"))
 
     modrinth {
