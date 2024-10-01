@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "minecraft:crying_obsidian"
-            ]
+            "items": "minecraft:crying_obsidian"
           }
         ]
       },
@@ -15,21 +13,20 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "enchantmentmachine:disenchanter_block"
+        "recipe": "enchantmentmachine:enchanter_block"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
   },
   "requirements": [
     [
-      "has_obsidian",
-      "has_the_recipe"
+      "has_the_recipe",
+      "has_obsidian"
     ]
   ],
   "rewards": {
     "recipes": [
-      "enchantmentmachine:disenchanter_block"
+      "enchantmentmachine:enchanter_block"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

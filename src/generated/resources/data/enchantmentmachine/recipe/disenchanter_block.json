@@ -18,7 +18,7 @@
     "###"
   ],
   "result": {
-    "item": "enchantmentmachine:disenchanter_block"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "enchantmentmachine:disenchanter_block"
+  }
 }

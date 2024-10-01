@@ -5,6 +5,17 @@ plugins {
     id 'net.neoforged.gradle.userdev' version '7.0.145'
 }
 
+repositories {
+    maven {
+        // location of a maven mirror for JEI files
+        name = "ModMaven"
+        url = "https://modmaven.dev/"
+        content {
+            includeGroup "mezz.jei"
+        }
+    }
+}
+
 ext.mod_version="Test"
 ext.type="test"
 ext.classification = "test"
@@ -55,6 +66,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
     implementation "net.neoforged:neoforge:${forge_version}"
+    runtimeOnly "mezz.jei:jei-1.21-neoforge:19.3.1.24"
 }
 
 tasks.named('jar', Jar).configure {

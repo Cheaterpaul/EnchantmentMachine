@@ -18,7 +18,7 @@
     "###"
   ],
   "result": {
-    "item": "enchantmentmachine:enchanter_block"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "enchantmentmachine:enchanter_block"
+  }
 }
