@@ -51,6 +51,7 @@ public class ModConfig {
         public final ModConfigSpec.ConfigValue<List<? extends String>> maxEnchantmentLevels;
         public final ModConfigSpec.BooleanValue allowDisenchantingCurses;
         public final ModConfigSpec.ConfigValue<List<? extends String>> disallowedDisenchantingEnchantments;
+        public final ModConfigSpec.ConfigValue<Double> priceModifier;
 
         private Set<ResourceLocation> disallowedDisenchantingEnchantmentsMap;
         private Map<ResourceLocation, Integer> maxEnchantmentLevelsMap;
@@ -76,6 +77,7 @@ public class ModConfig {
             });
             allowDisenchantingCurses = builder.comment("Whether curses can be removed from items", "Only relevant when `allowDisenchantingItems` is enabled").define("allowDisenchantingCurses", false);
             disallowedDisenchantingEnchantments = builder.comment("List of enchantments that can not be removed from items", "Only relevant when `allowDisenchantingItems` is enabled", "This overrides `allowDisenchantingCurses`").defineList("disallowedDisenchantingEnchantments", Collections.emptyList(), this::isResourceLocation);
+            priceModifier = builder.comment("Multiplies the final price of applying an enchantment", "Set to 0 to disable cost").define("priceModifier", 1.0);
             builder.pop();
         }
 

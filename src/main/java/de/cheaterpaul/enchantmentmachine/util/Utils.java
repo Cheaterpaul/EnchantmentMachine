@@ -55,6 +55,6 @@ public class Utils {
             cost = Math.max(1, cost / 2);
         }
         existingEnchantments.upgrade(enchInst.enchantment(), enchInst.level());
-        return cost;
+        return (int) Math.round(Math.abs(((double) cost) * ModConfig.SERVER.priceModifier.get()));
     }
 }
