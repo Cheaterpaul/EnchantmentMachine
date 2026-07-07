@@ -14,6 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -54,6 +55,14 @@ public class StorageBlock extends EnchantmentBaseBlock {
     @Override
     public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         return ModData.storage_tile.get().create(pos, state);
+    }
+
+    @Override
+    public void setPlacedBy(Level pLevel, BlockPos pPos, BlockState pState, @org.jetbrains.annotations.Nullable LivingEntity pPlacer, ItemStack pStack) {
+        EnchantmentStore enchantmentStore = pStack.get(ModData.CONTAINED_ENCHANTMENTS);
+        if (enchantmentStore != null && pLevel.getBlockEntity(pPos) instanceof StorageBlockEntity storage) {
+            enchantmentStore.enchantments().forEach(storage::addEnchantment);
+        }
     }
 
     @Override
